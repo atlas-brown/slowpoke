@@ -13,7 +13,7 @@ class Runner:
         self.num_conns = args.num_conns
         self.target_service = args.target_service
         self.request_type = args.request_type
-        self.request_ratio = config.get_request_ratio(self.benchmark)
+        self.request_ratio = config.get_request_ratio(self.benchmark, self.request_type)
         self.baseline_service_processing_time = config.get_baseline_service_processing_time(self.benchmark)
         self.repetitions = args.repetitions
         self.target_processing_time_range = args.range
