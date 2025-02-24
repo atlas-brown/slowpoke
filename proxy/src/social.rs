@@ -28,11 +28,11 @@ static SAMPLE_POST: OnceCell<String> = OnceCell::new();
 
 #[derive(Parser)]
 pub struct Social {
-    #[clap(long, value_parser, multiple = true)]
+    #[clap(long, value_parser, multiple = true, default_value = "composepost")]
     compose_post: Vec<String>,
-    #[clap(long, value_parser, multiple = true)]
+    #[clap(long, value_parser, multiple = true, default_value = "hometimeline")]
     home_timeline: Vec<String>,
-    #[clap(long, value_parser, multiple = true)]
+    #[clap(long, value_parser, multiple = true, default_value = "usertimeline")]
     user_timeline: Vec<String>,
 }
 
