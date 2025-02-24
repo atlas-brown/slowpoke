@@ -2,14 +2,20 @@
 
 cd $(dirname $0)
 
-request=${1:-home}
-thread=${2:-16}
-conn=${3:-512}
-duration=${4:-60}
+benchmark=${1:-boutique}
+request=${2:-home}
+thread=${3:-16}
+conn=${4:-512}
+duration=${5:-60}
 
 check_connectivity() {
+    
     local pod_name=$1
     local service_name=$2
+    # if service name is the same as the pod name (prefix), skip the check
+    if [[ $1 == $2* ]]; then
+        return 0
+    fi
     # if the pod is ubuntu client
     if [[ $pod_name == *"ubuntu-client"* ]]; then
         kubectl exec $pod_name -- curl $service_name:80/heartbeat --max-time 1 | grep Heartbeat > /dev/null
@@ -20,15 +26,61 @@ check_connectivity() {
     return $?
 }
 
-echo "[run.sh] Running $request with $thread threads, $conn connections, and $duration seconds"
+run_test() {
+    local benchmark=$1
+    local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
+    if [[ $benchmark == "boutique" ]]; then
+        run the load generator
+        echo "[run.sh] Running warmup test" 
+        echo "kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
+        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
+        sleep 10
+        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
+        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80 
+    else
+        echo "Unknown benchmark" > /dev/stderr
+    fi
+}
+
+populate() {
+    local benchmark=$1
+}
+
+echo "[run.sh] Running benchmark $benchmark with request $request, thread $thread, conn $conn, duration $duration"
 
 # delete all services
 echo "[run.sh] Deleting all services"
-kubectl delete -f yamls/ --ignore-not-found=true
+kubectl delete -f $benchmark/yamls/ --ignore-not-found=true
 # wait for all pods to be deleted
 echo "[run.sh] Waiting for all pods to be deleted"
 while [[ $(kubectl get pods | grep -v -E 'STATUS|ubuntu' | wc -l) -ne 0 ]]; do
     sleep 1
+done
+
+
+
+# # deploy client
+# echo "[run.sh] Deploying client"
+# kubectl apply -f client.yaml
+
+# we might not this after packaing the client in the image
+# echo "[run.sh] Waiting for client to be ready"
+# while true
+# do 
+#     kubectl logs $ubuntu_client | grep "Init" > /dev/null
+#     if [ $? -eq 0 ]
+#     then
+#         break
+#     fi
+#     sleep 1
+# done
+# echo "[run.sh] Client is ready"
+
+# deploy all services
+echo "[run.sh] Deploying all services"
+for file in $(ls -d $benchmark/yamls/*.yaml)
+do
+    envsubst < $file | kubectl apply -f - 
 done
 
 kubectl get pod | grep ubuntu-client- 
@@ -37,29 +89,6 @@ then
     echo "[run.sh] Client pod not found, deploying client"
     kubectl apply -f client.yaml  
 fi
-# # deploy client
-# echo "[run.sh] Deploying client"
-# kubectl apply -f client.yaml
-
-echo "[run.sh] Waiting for client to be ready"
-ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
-while true
-do 
-    kubectl logs $ubuntu_client | grep "Init" > /dev/null
-    if [ $? -eq 0 ]
-    then
-        break
-    fi
-    sleep 1
-done
-echo "[run.sh] Client is ready"
-
-# deploy all services
-echo "[run.sh] Deploying all services"
-for file in $(ls -d yamls/*.yaml)
-do
-    envsubst < $file | kubectl apply -f - 
-done
 
 # wait until all pods are ready by checking the log to see if the "server started" message is printed
 echo "[run.sh] Waiting for all pods to be running"
@@ -120,12 +149,7 @@ do
     fi
 done
 
-# run the load generator
-echo "[run.sh] Running warmup test"
-kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
-sleep 10
-echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
-kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80 &
+run_test $benchmark &
 pid=$!
 
 # sleep 0.9*duration
@@ -134,3 +158,6 @@ echo "[run.sh] Checking the resource usage"
 kubectl top pods
 
 wait $pid
+status=$?
+echo "[run.sh] Test finished with status $status"
+exit $status
