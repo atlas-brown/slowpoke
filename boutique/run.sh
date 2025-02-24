@@ -6,6 +6,20 @@ request=${1:-home}
 thread=${2:-16}
 conn=${3:-512}
 duration=${4:-60}
+
+check_connectivity() {
+    local pod_name=$1
+    local service_name=$2
+    # if the pod is ubuntu client
+    if [[ $pod_name == *"ubuntu-client"* ]]; then
+        kubectl exec $pod_name -- curl $service_name:80/heartbeat --max-time 1 | grep Heartbeat > /dev/null
+        return $?
+    fi
+    kubectl exec $pod_name -- sh -c "(echo -e \"GET /heartbeat HTTP/1.1\r\nHost: $service_name\r\nConnection: close\r\n\r\n\") \
+        | nc -w 1 $service_name 80" | grep Heartbeat > /dev/null
+    return $?
+}
+
 echo "[run.sh] Running $request with $thread threads, $conn connections, and $duration seconds"
 
 # delete all services
@@ -81,27 +95,30 @@ done
 echo "[run.sh] Checking heartbeat for all services"
 while true
 do
-    res=$(kubectl get svc | cut -f 1 -d " " | grep -vE "kube")
-    check=0
-    IFS=$'\n' read -rd '' -a array <<< "$res"
-    for value in "${array[@]:1:${#array[@]}-1}"
+    all_connected=1
+    for pod in $(kubectl get pods | grep -v -E 'NAME' | cut -f 1 -d " ")
     do
-        kubectl exec $ubuntu_client -- curl $value:80/heartbeat --max-time 1 | grep Heartbeat > /dev/null
-        if [ $? -ne 0 ]
+        for service in $(kubectl get svc | grep -v -E 'NAME|kube' | cut -f 1 -d " ")
+        do
+            check_connectivity $pod $service
+            if [ $? -ne 0 ]
+            then
+                echo "[run.sh] $pod cannot connect to $service"
+                all_connected=0
+                break
+            fi
+        done
+        if [ $all_connected -eq 0 ]
         then
-            echo "[run.sh] $value is not reachable"
-            check=1
-            sleep 1
             break
         fi
     done
-    if [ $check -eq 0 ]
+    if [ $all_connected -eq 1 ]
     then
-        echo "[run.sh] All services are ready"
+        echo "[run.sh] All pods can connect to all services"
         break
     fi
 done
-sleep 10
 
 # run the load generator
 echo "[run.sh] Running warmup test"
@@ -111,7 +128,8 @@ echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/
 kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80 &
 pid=$!
 
-sleep 50
+# sleep 0.9*duration
+sleep $(echo "$duration*0.9" | bc -l)
 echo "[run.sh] Checking the resource usage"
 kubectl top pods
 
