@@ -45,7 +45,7 @@ impl util::Backend for Social {
         SHARD.set(self.compose_post.len()).unwrap();
         let username = whoami::username();
         let social_file =
-            format!("/users/{username}/mucache/experiments/social/socfb/socfb-analysis.txt");
+            format!("/socfb-analysis.txt");
         info!("Reading social graph from {}", social_file);
         read_social_graph_analysis_file(&social_file);
         SAMPLE_POST
