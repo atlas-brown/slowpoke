@@ -2,25 +2,26 @@ package social
 
 import (
 	"context"
-	"github.com/eniac/mucache/pkg/invoke"
-	"github.com/eniac/mucache/pkg/state"
+	// "github.com/eniac/mucache/pkg/invoke"
+	"github.com/eniac/mucache/pkg/slowpoke"
+	// "github.com/eniac/mucache/pkg/state"
 )
 
 func ReadHomeTimeline(ctx context.Context, userId string) []Post {
-	postIds, err := state.GetState[[]string](ctx, userId)
+	postIds, err := slowpoke.GetState[[]string](ctx, userId)
 	if err != nil {
 		return []Post{}
 	}
 	req := ReadPostsRequest{PostIds: postIds}
-	postsResp := invoke.Invoke[ReadPostsResponse](ctx, "poststorage", "ro_read_posts", req)
+	postsResp := slowpoke.Invoke[ReadPostsResponse](ctx, "poststorage", "ro_read_posts", req)
 	return postsResp.Posts
 }
 
 func WriteHomeTimeline(ctx context.Context, creatorId string, newPostIds []string) {
 	req := GetFollowersRequest{UserId: creatorId}
-	resp := invoke.Invoke[GetFollowersResponse](ctx, "socialgraph", "ro_get_followers", req)
+	resp := slowpoke.Invoke[GetFollowersResponse](ctx, "socialgraph", "ro_get_followers", req)
 	for _, follower := range resp.Followers {
-		postIds, err := state.GetState[[]string](ctx, follower)
+		postIds, err := slowpoke.GetState[[]string](ctx, follower)
 		if err != nil {
 			postIds = []string{}
 		}
@@ -28,6 +29,7 @@ func WriteHomeTimeline(ctx context.Context, creatorId string, newPostIds []strin
 			postIds = postIds[1:]
 		}
 		postIds = append(postIds, newPostIds...)
-		state.SetState(ctx, follower, postIds)
+		// state.SetState(ctx, follower, postIds)
+		slowpoke.SetState(ctx, follower, postIds)
 	}
 }

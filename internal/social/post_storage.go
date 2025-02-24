@@ -2,8 +2,9 @@ package social
 
 import (
 	"context"
-	"github.com/eniac/mucache/pkg/state"
+	// "github.com/eniac/mucache/pkg/state"
 	"github.com/lithammer/shortuuid"
+	"github.com/eniac/mucache/pkg/slowpoke"
 	"time"
 )
 
@@ -29,13 +30,15 @@ func StorePostMulti(ctx context.Context, creatorId string, text string, number i
 		}
 		postIds[i] = postId
 	}
-	state.SetBulkState(ctx, posts)
+	// state.SetBulkState(ctx, posts)
+	slowpoke.SetBulkState(ctx, posts)
 	//fmt.Printf("[StorePostMulti] Returning %+v\n", postIds)
 	return postIds
 }
 
 func ReadPost(ctx context.Context, postId string) Post {
-	post, err := state.GetState[Post](ctx, postId)
+	// post, err := state.GetState[Post](ctx, postId)
+	post, err := slowpoke.GetState[Post](ctx, postId)
 	if err != nil {
 		panic(err)
 	}
@@ -51,7 +54,8 @@ func ReadPosts(ctx context.Context, postIds []string) []Post {
 	//	}
 	//	retPosts = append(retPosts, post)
 	//}
-	retPosts, err := state.GetBulkState[Post](ctx, postIds)
+	// retPosts, err := state.GetBulkState[Post](ctx, postIds)
+	retPosts, err := slowpoke.GetBulkState[Post](ctx, postIds)
 	if err != nil {
 		panic(err)
 	}

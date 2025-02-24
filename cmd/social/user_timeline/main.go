@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/eniac/mucache/pkg/cm"
+	// "github.com/eniac/mucache/pkg/cm"
 	"github.com/eniac/mucache/pkg/common"
 	"github.com/eniac/mucache/pkg/wrappers"
 	"net/http"
 	"runtime"
-
+	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/eniac/mucache/internal/social"
 )
 
@@ -20,6 +20,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func readUserTimeline(ctx context.Context, req *social.ReadUserTimelineRequest) *social.ReadUserTimelineResponse {
+	slowpoke.SlowpokeCheck("readUserTimeline")
 	posts := social.ReadUserTimeline(ctx, req.UserId)
 	//fmt.Printf("Posts read: %+v\n", posts)
 	resp := social.ReadUserTimelineResponse{Posts: posts}
@@ -27,6 +28,7 @@ func readUserTimeline(ctx context.Context, req *social.ReadUserTimelineRequest) 
 }
 
 func writeUserTimeline(ctx context.Context, req *social.WriteUserTimelineRequest) *string {
+	slowpoke.SlowpokeCheck("writeUserTimeline")
 	social.WriteUserTimeline(ctx, req.UserId, req.PostIds)
 	resp := "OK"
 	return &resp
@@ -38,10 +40,13 @@ func main() {
 	} else {
 		fmt.Println(runtime.GOMAXPROCS(8))
 	}
-	go cm.ZmqProxy()
+	// go cm.ZmqProxy()
+	fmt.Println("Max procs: ", runtime.GOMAXPROCS(0))
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/ro_read_user_timeline", wrappers.ROWrapper[social.ReadUserTimelineRequest, social.ReadUserTimelineResponse](readUserTimeline))
 	http.HandleFunc("/write_user_timeline", wrappers.NonROWrapper[social.WriteUserTimelineRequest, string](writeUserTimeline))
+	slowpoke.SlowpokeInit()
+	fmt.Println("Starting server on port 3000")
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)
