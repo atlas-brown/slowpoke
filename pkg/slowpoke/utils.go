@@ -13,6 +13,7 @@ import (
 	"github.com/eniac/mucache/pkg/common"
 	"github.com/eniac/mucache/pkg/utility"
 	"sync"
+	"sync/atomic"
 )
 
 const printIntervalMillis = 30*1000
@@ -22,8 +23,15 @@ var (
 	delayMicros int
 	prerun bool
 	requestCounters sync.Map
+	sleepSurplus int64 = 0
 )
 
+func min(a, b int64) int64 {
+	if a < b {
+			return a
+	}
+	return b
+}
 // func printCounters() {
 // 	time_now := time.Now()
 // 	func_counters := make(map[string]int)
@@ -165,20 +173,31 @@ func SlowpokeCheck(serviceFuncName string) {
 			counter, _ = requestCounters.Load(serviceFuncName)
 		}
 	}
-	
+
 	// Delay
 	lockThread := true
 	if delayMicros >= 0 {
 		// Threads need to be locked because otherwise util.ThreadCPUTime() can change in the middle of execution
+		takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
+		sleepTime := int64(delayMicros*1000.0);
+		common := min(takenSurplus, sleepTime);
+		takenSurplus -= common;
+		sleepTime -= common;
 		if lockThread {
 			runtime.LockOSThread()
 		}
 
-		start := getThreadCPUTime()
-		target := start + int64(delayMicros*1000.0)
+		current := getThreadCPUTime()
+		target := current + sleepTime
 
-		for getThreadCPUTime() < target {
+		for current < target {
+			for i := int64(0) ; i < 200000; i++ {
+			}
+			current = getThreadCPUTime();
 		}
+
+		takenSurplus += current - target;
+		atomic.AddInt64(&sleepSurplus, takenSurplus);
 
 		if lockThread {
 			runtime.UnlockOSThread()
