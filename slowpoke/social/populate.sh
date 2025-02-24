@@ -1,3 +1,7 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
 # Get the IP address of a service
 function kip() {
   local service
@@ -9,10 +13,4 @@ function kip() {
   kubectl get svc "$service" | tail -n 1 | awk '{print $3}'
 }
 
-python3 experiments/boutique/populate.py \
-    --users 10000 \
-    --products 10000 \
-    --product_size 10000 \
-    --frontend $(kip frontend) \
-    --product_catalog $(kip product_catalog) \
-    --currency $(kip currency)
+python3 populate.py --post_size 100 --number_posts_per_user 10 --social_graph $(kip social_graph) --compose_post $(kip compose_post)

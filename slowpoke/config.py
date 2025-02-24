@@ -26,6 +26,14 @@ def get_request_ratio(benchmark, request="mix"):
             }
         else:
             raise ValueError(f"[config.py] Unknown request type: {request} for benchmark: {benchmark}")
+    elif benchmark == "social":
+        return {
+            "composepost": 1.0,
+            "hometimeline": 1.0,
+            "poststorage": 1.0,
+            "socialgraph": 1.0,
+            "usertimeline": 1.0
+        }
     else:
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
@@ -41,6 +49,14 @@ def get_baseline_service_processing_time(benchmark, request="mix"):
             "product_catalog":0,
             "recommendations":0,
             "shipping":0
+        }
+    elif benchmark == "social":
+        return {
+            "composepost": 0,
+            "hometimeline": 0,
+            "poststorage": 0,
+            "socialgraph": 0,
+            "usertimeline": 0
         }
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")

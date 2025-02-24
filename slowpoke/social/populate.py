@@ -16,8 +16,8 @@ BAR_GRANULARITY = 100
 BATCH_SIZE = 1000
 
 ## Taken from https://stackoverflow.com/questions/10272879/how-do-i-import-a-python-script-from-a-sibling-directory
-sys.path.append(
-    os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'tests', 'social')))
+# sys.path.append(
+#     os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'tests', 'social')))
 import utility
 
 
@@ -38,10 +38,10 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--social_graph_file",
                         help="the path that contains the social_graph_file",
-                        default="./experiments/social/socfb/socfb-Reed98.mtx")
+                        default="./data/socfb-Reed98.mtx")
     parser.add_argument("--analysis_file",
                         help="the path that contains the analysis of the social_graph",
-                        default="./experiments/social/socfb/socfb-analysis.txt")
+                        default="./data/socfb-analysis.txt")
     parser.add_argument("--post_size",
                         help="the size of the post to create",
                         type=int,

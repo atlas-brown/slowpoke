@@ -32,18 +32,38 @@ run_test() {
     if [[ $benchmark == "boutique" ]]; then
         run the load generator
         echo "[run.sh] Running warmup test" 
-        echo "kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
+        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
         sleep 10
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
-        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80 
+        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
+    elif [[ $benchmark == "social" ]]; then
+        echo "[run.sh] Running social benchmark"
+        echo "[run.sh] Starting the rust proxy first"
+        kubectl exec $ubuntu_client -- bash -c "/mucache/proxy/target/release/proxy social &"
+        sleep 3
+        echo "[run.sh] Running warmup test"
+        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L http://localhost:3000"
+        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s http://localhost:3000
+        sleep 10
+        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L http://localhost:3000"
+        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L http://localhost:3000
     else
-        echo "Unknown benchmark" > /dev/stderr
+        echo "Unknown benchmark"
     fi
 }
 
 populate() {
     local benchmark=$1
+    local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
+    if [[ $benchmark == "social" ]]; then
+        echo "[run.sh] Populating social benchmark"
+        bash social/populate.sh 
+        kubectl cp social/data/socfb-analysis.txt $ubuntu_client:/socfb-analysis.txt
+    else
+        echo "[run.sh] No population needed for $benchmark"
+    fi
+    echo "[run.sh] Finished populating $benchmark"
 }
 
 echo "[run.sh] Running benchmark $benchmark with request $request, thread $thread, conn $conn, duration $duration"
@@ -51,30 +71,12 @@ echo "[run.sh] Running benchmark $benchmark with request $request, thread $threa
 # delete all services
 echo "[run.sh] Deleting all services"
 kubectl delete -f $benchmark/yamls/ --ignore-not-found=true
+kubectl delete -f client.yaml --ignore-not-found=true
 # wait for all pods to be deleted
 echo "[run.sh] Waiting for all pods to be deleted"
-while [[ $(kubectl get pods | grep -v -E 'STATUS|ubuntu' | wc -l) -ne 0 ]]; do
+while [[ $(kubectl get pods | grep -v -E 'STATUS' | wc -l) -ne 0 ]]; do
     sleep 1
 done
-
-
-
-# # deploy client
-# echo "[run.sh] Deploying client"
-# kubectl apply -f client.yaml
-
-# we might not this after packaing the client in the image
-# echo "[run.sh] Waiting for client to be ready"
-# while true
-# do 
-#     kubectl logs $ubuntu_client | grep "Init" > /dev/null
-#     if [ $? -eq 0 ]
-#     then
-#         break
-#     fi
-#     sleep 1
-# done
-# echo "[run.sh] Client is ready"
 
 # deploy all services
 echo "[run.sh] Deploying all services"
@@ -96,30 +98,29 @@ while [[ $(kubectl get pods | grep -v -E 'Running|Completed|STATUS' | wc -l) -ne
   sleep 1
 done
 
-echo "[run.sh] Waiting for all pods to be ready"
-while true
-do
-    res=$(kubectl get pods | cut -f 1 -d " " | grep -vE "ubuntu|NAME|redis")
-    check=0
-    echo $res
-    IFS=$'\n' read -rd '' -a array <<< "$res"
-    for value in "${array[@]:1:${#array[@]}-1}"
-    do
-        kubectl logs $value | grep "Server started" > /dev/null
-        if [ $? -ne 0 ]
-        then
-            check=1
-            # echo "waiting for $value"
-            sleep 1
-            break
-        fi
-    done
-    if [ $check -eq 0 ]
-    then
-        echo "[run.sh] All pods are ready"
-        break
-    fi
-done
+# echo "[run.sh] Waiting for all pods to be ready"
+# while true
+# do
+#     res=$(kubectl get pods | cut -f 1 -d " " | grep -vE "|NAME|redis")
+#     check=0
+#     IFS=$'\n' read -rd '' -a array <<< "$res"
+#     for value in "${array[@]:1:${#array[@]}-1}"
+#     do
+#         kubectl logs $value | grep "Server started" > /dev/null
+#         if [ $? -ne 0 ]
+#         then
+#             check=1
+#             # echo "waiting for $value"
+#             sleep 1
+#             break
+#         fi
+#     done
+#     if [ $check -eq 0 ]
+#     then
+#         echo "[run.sh] All pods are ready"
+#         break
+#     fi
+# done
 
 echo "[run.sh] Checking heartbeat for all services"
 while true
@@ -148,6 +149,9 @@ do
         break
     fi
 done
+
+populate $benchmark
+sleep 5
 
 run_test $benchmark &
 pid=$!

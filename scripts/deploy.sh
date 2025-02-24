@@ -49,7 +49,7 @@ for idx in "${!services[@]}"; do
     APP_NAMESPACE="$application_namespace" \
     APP_NAME="$app_name" \
     APP_NAME_NO_UNDERSCORES="$app_name_no_underscores" \
-    envsubst <"${MUCACHE_TOP}/deploy/app.yaml" > boutique-yamls/"$app_name.yaml"
+    envsubst <"${MUCACHE_TOP}/deploy/app.yaml" > "$app_name.yaml"
 done
 
 if [ "$cm_enabled" = "true" ]; then
