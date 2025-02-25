@@ -2,7 +2,7 @@ package movie
 
 import (
 	"context"
-	"github.com/eniac/mucache/pkg/invoke"
+	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/lithammer/shortuuid"
 	"time"
 )
@@ -13,7 +13,7 @@ func Compose(ctx context.Context, username string, password string, title string
 		Password: password,
 	}
 	//fmt.Printf("[Page] Movie id asked: %v\n", req)
-	tokenRes := invoke.Invoke[LoginResponse](ctx, "user", "login", req1)
+	tokenRes := slowpoke.Invoke[LoginResponse](ctx, "user", "login", req1)
 	if tokenRes.Token != "OK" {
 		return false
 	}
@@ -21,11 +21,11 @@ func Compose(ctx context.Context, username string, password string, title string
 
 	// TODO: Make them async
 	req2 := GetUniqueIdRequest{ReqId: reqId}
-	reviewIdRes := invoke.Invoke[GetUniqueIdResponse](ctx, "uniqueid", "get_unique_id", req2)
+	reviewIdRes := slowpoke.Invoke[GetUniqueIdResponse](ctx, "uniqueid", "get_unique_id", req2)
 	req3 := GetUserIdRequest{Username: username}
-	userIdRes := invoke.Invoke[GetUserIdResponse](ctx, "user", "ro_get_user_id", req3)
+	userIdRes := slowpoke.Invoke[GetUserIdResponse](ctx, "user", "ro_get_user_id", req3)
 	req4 := GetMovieIdRequest{Title: title}
-	movieIdRes := invoke.Invoke[GetMovieIdResponse](ctx, "movieid", "ro_get_movie_id", req4)
+	movieIdRes := slowpoke.Invoke[GetMovieIdResponse](ctx, "movieid", "ro_get_movie_id", req4)
 	//fmt.Printf("[Frontend] Title: %v was tied to id: %v\n", title, movieIdRes)
 	ts := time.Now().Unix()
 	review := Review{
@@ -39,6 +39,6 @@ func Compose(ctx context.Context, username string, password string, title string
 	}
 	// This is the only sync call (all the previous ones can be async
 	req5 := ComposeReviewRequest{Review: review}
-	invoke.Invoke[ComposeReviewResponse](ctx, "composereview", "compose_review", req5)
+	slowpoke.Invoke[ComposeReviewResponse](ctx, "composereview", "compose_review", req5)
 	return true
 }

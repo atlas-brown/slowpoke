@@ -20,6 +20,10 @@
 # Stage 1: Build Stage
 FROM golang:alpine AS builder
 
+ARG BENCHMARK="boutique"
+
+RUN echo "Building image for ${BENCHMARK} benchmark"
+
 # Install dependencies
 RUN apk add --no-cache gcc musl-dev zeromq-dev iftop
 
@@ -36,7 +40,7 @@ COPY ./pkg ./pkg
 
 # Build all applications inside /app/cmd/boutique/
 RUN mkdir -p /app/bin && \
-    for d in /app/cmd/boutique/*; do \
+    for d in /app/cmd/${BENCHMARK}/*; do \
         if [ -d "$d" ]; then \
             APP_NAME=$(basename "$d"); \
             echo "Building $APP_NAME"; \

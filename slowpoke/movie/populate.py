@@ -25,13 +25,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--movies_file",
                         help="the path that contains the movie file",
-                        default="./experiments/movie/data/movies_1_500.json")
+                        default="./data/movies_1_500.json")
     parser.add_argument("--cast_file",
                         help="the path that contains the cast",
-                        default="./experiments/movie/data/casts_1_500.json")
+                        default="./data/casts_1_500.json")
     parser.add_argument("--analysis_file",
                         help="the path that contains the analysis file",
-                        default="./experiments/movie/data/analysis.txt")
+                        default="./data/analysis.txt")
     parser.add_argument("--num_of_users",
                         help="the number of users",
                         type=int,

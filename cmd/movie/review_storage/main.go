@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/eniac/mucache/internal/movie"
-	"github.com/eniac/mucache/pkg/cm"
+	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/eniac/mucache/pkg/wrappers"
 	"net/http"
 	"runtime"
@@ -18,6 +18,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func storeReview(ctx context.Context, req *movie.StoreReviewRequest) *movie.StoreReviewResponse {
+    slowpoke.SlowpokeCheck("storeReview");
 	reviewId := movie.StoreReview(ctx, req.Review)
 	//fmt.Println("Movie info stored for id: " + movieId)
 	resp := movie.StoreReviewResponse{ReviewId: reviewId}
@@ -25,6 +26,7 @@ func storeReview(ctx context.Context, req *movie.StoreReviewRequest) *movie.Stor
 }
 
 func readReviews(ctx context.Context, req *movie.ReadReviewsRequest) *movie.ReadReviewsResponse {
+    slowpoke.SlowpokeCheck("readReviews");
 	reviews := movie.ReadReviews(ctx, req.ReviewIds)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := movie.ReadReviewsResponse{Reviews: reviews}
@@ -33,8 +35,9 @@ func readReviews(ctx context.Context, req *movie.ReadReviewsRequest) *movie.Read
 }
 
 func main() {
+    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
-	go cm.ZmqProxy()
+	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/store_review", wrappers.NonROWrapper[movie.StoreReviewRequest, movie.StoreReviewResponse](storeReview))
 	http.HandleFunc("/ro_read_reviews", wrappers.ROWrapper[movie.ReadReviewsRequest, movie.ReadReviewsResponse](readReviews))

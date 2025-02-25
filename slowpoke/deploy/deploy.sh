@@ -1,17 +1,20 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+cd $(dirname $0)
 
 export MUCACHE_TOP=${MUCACHE_TOP:-$(git rev-parse --show-toplevel --show-superproject-working-tree)}
 
 ## Make sure that the containers exist and have been built first
-export docker_io_username=${1?docker.io username not given}
-export application_namespace=${2?application name not given, e.g., social}
-export cm_enabled=${3:-true} # {false, true, upper}
-## The optional fourth argument only makes sense when the third argument is upper
-## It saves items in the cache using a TTL of the specified value (0 means no expiration)
-export ttl=${4:-0}
-## The optional fifth argument sets whether we run all services on a <NUM> limited set of nodes,
-## or whether we run each on its own node. Options: standard, <NUM> 
-export single_node_flag=${5:-standard}
+export docker_io_username=yizhengx
+export application_namespace=${1?application name not given, e.g., social}
+export single_node_flag=${2:-3}
+
+# Keep this for now as it might be used for condition checks
+export cm_enabled=false
+export ttl=0
+
+mkdir -p ../${application_namespace}/yamls
+echo "Caution: This will overwrite any existing files in ../${application_namespace}/yamls"
 
 declare -A all_services
 all_services["singleservice"]="service"
@@ -27,7 +30,6 @@ all_services["movie"]="cast_info compose_review frontend movie_id movie_info mov
 all_services["hotel"]="frontend profile rate reservation search user"
 all_services["social"]="post_storage home_timeline user_timeline social_graph compose_post"
 all_services["boutique"]="cart checkout currency email frontend payment product_catalog recommendations shipping"
-
 
 ## TODO: Add acmeair, and onlineboutique
 
@@ -49,23 +51,7 @@ for idx in "${!services[@]}"; do
     APP_NAMESPACE="$application_namespace" \
     APP_NAME="$app_name" \
     APP_NAME_NO_UNDERSCORES="$app_name_no_underscores" \
-    envsubst <"${MUCACHE_TOP}/deploy/app.yaml" > "$app_name.yaml"
+    APP_NAME_NO_UNDERSCORES_UPPERCASE="${app_name_no_underscores^^}" \
+    SLOWPOKE_PRERUN="\${SLOWPOKE_PRERUN}" \
+    envsubst <"./app.yaml" > "../${application_namespace}/yamls/$app_name.yaml"
 done
-
-if [ "$cm_enabled" = "true" ]; then
-  ## Cache Manager
-  for idx in "${!services[@]}"; do
-    cm_adds="/app/experiments/k8s_cm/$application_namespace.txt"
-    if [ "$single_node_flag" = "standard" ]; then
-      node_idx=$((idx + 1))
-    else
-      NUM=$single_node_flag
-      node_idx=$((idx%NUM + 1))
-    fi
-    NODE_IDX="${node_idx}" \
-      CM_ADDS=$cm_adds \
-      HTTP_BATCH_SIZE=${mucache_http_batch_size:-20} \
-      envsubst <"${MUCACHE_TOP}/deploy/cm/cm.yaml" | kubectl apply -f -
-  done
-fi
-

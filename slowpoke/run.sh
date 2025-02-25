@@ -8,8 +8,19 @@ thread=${3:-16}
 conn=${4:-512}
 duration=${5:-60}
 
+supported_benchmarks=("boutique" "social" "movie")
+
+check_benchmark_supported() {
+    local benchmark=$1
+    for b in "${supported_benchmarks[@]}"; do
+        if [[ $b == $benchmark ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 check_connectivity() {
-    
     local pod_name=$1
     local service_name=$2
     # if service name is the same as the pod name (prefix), skip the check
@@ -30,17 +41,16 @@ run_test() {
     local benchmark=$1
     local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
     if [[ $benchmark == "boutique" ]]; then
-        run the load generator
+        # run the load generator
         echo "[run.sh] Running warmup test" 
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
         sleep 10
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
-    elif [[ $benchmark == "social" ]]; then
-        echo "[run.sh] Running social benchmark"
-        echo "[run.sh] Starting the rust proxy first"
-        kubectl exec $ubuntu_client -- bash -c "/mucache/proxy/target/release/proxy social &"
+    else
+        echo "[run.sh] Starting the rust proxy first for $benchmark"
+        kubectl exec $ubuntu_client -- bash -c "/mucache/proxy/target/release/proxy ${benchmark} &"
         sleep 3
         echo "[run.sh] Running warmup test"
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L http://localhost:3000"
@@ -48,23 +58,28 @@ run_test() {
         sleep 10
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L http://localhost:3000"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L http://localhost:3000
-    else
-        echo "Unknown benchmark"
     fi
 }
 
 populate() {
     local benchmark=$1
-    local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
-    if [[ $benchmark == "social" ]]; then
-        echo "[run.sh] Populating social benchmark"
-        bash social/populate.sh 
-        kubectl cp social/data/socfb-analysis.txt $ubuntu_client:/socfb-analysis.txt
-    else
+    if [[ $benchmark == "boutique" ]]; then
         echo "[run.sh] No population needed for $benchmark"
+        return
     fi
+    local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
+    echo "[run.sh] Populating social benchmark"
+    bash $benchmark/populate.sh 
+    echo "[run.sh] Copying $benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
+    kubectl cp $benchmark/data/analysis.txt $ubuntu_client:/analysis.txt
     echo "[run.sh] Finished populating $benchmark"
 }
+
+check_benchmark_supported $benchmark
+if [ $? -ne 0 ]; then
+    echo "[run.sh] Benchmark $benchmark is not supported"
+    exit 1
+fi
 
 echo "[run.sh] Running benchmark $benchmark with request $request, thread $thread, conn $conn, duration $duration"
 

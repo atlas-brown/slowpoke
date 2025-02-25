@@ -34,6 +34,19 @@ func GetBulkState[T interface{}](ctx context.Context, keys []string) ([]T, error
     return results, nil
 }
 
+func GetBulkStateDefault[T interface{}](ctx context.Context, keys []string, defaultValue T) []T {
+    var results []T
+    for _, key := range keys {
+        value, err := GetState[T](ctx, key)
+        if err != nil {
+            results = append(results, defaultValue)
+        } else {
+            results = append(results, value)
+        }
+    }
+    return results
+}
+
 func SetState(ctx context.Context, key string, value interface{}) {
     valueBytes, err := json.Marshal(value)
 	if err != nil {

@@ -24,9 +24,9 @@ static TITLES: OnceCell<Vec<String>> = OnceCell::new();
 
 #[derive(Parser)]
 pub struct Movie {
-    #[clap(long, value_parser)]
+    #[clap(long, value_parser, default_value = "frontend")]
     frontend: String,
-    #[clap(long, value_parser)]
+    #[clap(long, value_parser, default_value = "page")]
     page: String,
 }
 
@@ -39,7 +39,7 @@ impl util::Backend for Movie {
         PAGE_IP.set(self.page.clone()).unwrap();
         let username = whoami::username();
         let analysis_file =
-            format!("/users/{username}/mucache/experiments/movie/data/analysis.txt");
+            format!("/analysis.txt");
         info!("Reading movie analysis data from {}", analysis_file);
         read_analysis_file(&analysis_file);
     }
