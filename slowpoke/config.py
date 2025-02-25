@@ -28,11 +28,11 @@ def get_request_ratio(benchmark, request="mix"):
             raise ValueError(f"[config.py] Unknown request type: {request} for benchmark: {benchmark}")
     elif benchmark == "social":
         return {
-            "composepost": 1.0,
-            "hometimeline": 1.0,
-            "poststorage": 1.0,
-            "socialgraph": 1.0,
-            "usertimeline": 1.0
+            "composepost": 0.09979209979,
+            "hometimeline": 0.7005428505,
+            "poststorage": 0.9497747748,
+            "socialgraph": 0.099792099790,
+            "usertimeline": 0.4022002772
         }
     else:
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
