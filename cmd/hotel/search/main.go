@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/eniac/mucache/internal/hotel"
-	"github.com/eniac/mucache/pkg/cm"
+	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/eniac/mucache/pkg/wrappers"
 	"net/http"
 	"runtime"
@@ -18,6 +18,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func nearby(ctx context.Context, req *hotel.NearbyRequest) *hotel.NearbyResponse {
+    slowpoke.SlowpokeCheck("nearby");
 	rates := hotel.Nearby(ctx, req.InDate, req.OutDate, req.Location)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := hotel.NearbyResponse{Rates: rates}
@@ -26,6 +27,7 @@ func nearby(ctx context.Context, req *hotel.NearbyRequest) *hotel.NearbyResponse
 }
 
 func storeHotelLocation(ctx context.Context, req *hotel.StoreHotelLocationRequest) *hotel.StoreHotelLocationResponse {
+    slowpoke.SlowpokeCheck("storeHotelLocation");
 	hotelId := hotel.StoreHotelLocation(ctx, req.HotelId, req.Location)
 	resp := hotel.StoreHotelLocationResponse{HotelId: hotelId}
 	//fmt.Printf("[ReviewStorage] Response: %v\n", resp)
@@ -33,8 +35,9 @@ func storeHotelLocation(ctx context.Context, req *hotel.StoreHotelLocationReques
 }
 
 func main() {
+    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
-	go cm.ZmqProxy()
+	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/ro_nearby", wrappers.ROWrapper[hotel.NearbyRequest, hotel.NearbyResponse](nearby))
 	http.HandleFunc("/store_hotel_location", wrappers.NonROWrapper[hotel.StoreHotelLocationRequest, hotel.StoreHotelLocationResponse](storeHotelLocation))

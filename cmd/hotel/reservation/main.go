@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/eniac/mucache/internal/hotel"
-	"github.com/eniac/mucache/pkg/cm"
+	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/eniac/mucache/pkg/wrappers"
 	"net/http"
 	"runtime"
@@ -18,6 +18,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkAvailability(ctx context.Context, req *hotel.CheckAvailabilityRequest) *hotel.CheckAvailabilityResponse {
+    slowpoke.SlowpokeCheck("checkAvailability");
 	hotelIds := hotel.CheckAvailability(ctx, req.CustomerName, req.HotelIds, req.InDate, req.OutDate, req.RoomNumber)
 	//fmt.Println("Movie info stored for id: " + movieId)
 	resp := hotel.CheckAvailabilityResponse{HotelIds: hotelIds}
@@ -25,6 +26,7 @@ func checkAvailability(ctx context.Context, req *hotel.CheckAvailabilityRequest)
 }
 
 func makeReservation(ctx context.Context, req *hotel.MakeReservationRequest) *hotel.MakeReservationResponse {
+    slowpoke.SlowpokeCheck("makeReservation");
 	success := hotel.MakeReservation(ctx, req.CustomerName, req.HotelId, req.InDate, req.OutDate, req.RoomNumber)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := hotel.MakeReservationResponse{Success: success}
@@ -33,14 +35,16 @@ func makeReservation(ctx context.Context, req *hotel.MakeReservationRequest) *ho
 }
 
 func addHotelAvailability(ctx context.Context, req *hotel.AddHotelAvailabilityRequest) *hotel.AddHotelAvailabilityResponse {
+    slowpoke.SlowpokeCheck("addHotelAvailability");
 	hotelId := hotel.AddHotelAvailability(ctx, req.HotelId, req.Capacity)
 	resp := hotel.AddHotelAvailabilityResponse{Hotelid: hotelId}
 	return &resp
 }
 
 func main() {
+    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
-	go cm.ZmqProxy()
+	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
 	// Note: Even though checkAvailability is ReadOnly, the developers could explicitly decide to not have it be cached,
 	//       because that could lead to stale results being seen by users
