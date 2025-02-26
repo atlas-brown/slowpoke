@@ -34,6 +34,21 @@ def get_request_ratio(benchmark, request="mix"):
             "socialgraph": 0.099792099790,
             "usertimeline": 0.4022002772
         }
+    elif benchmark == "movie":
+        return {
+            "castinfo": 0.9050900514,
+            "composereview": 0.1003336848,
+            "frontend": 0.1003336848,
+            "movieid": 0.1003336848,
+            "movieinfo": 0.9050900514,
+            "moviereviews": 0.9050900514,
+            "page": 0.9050900514,
+            "plot": 0.9050900514,
+            "reviewstorage": 1.005423736183,
+            "uniqueid": 0.1003336848,
+            "user": 0.2006673695,
+            "userreviews": 0.1003336848
+        }
     else:
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
@@ -57,6 +72,21 @@ def get_baseline_service_processing_time(benchmark, request="mix"):
             "poststorage": 0,
             "socialgraph": 0,
             "usertimeline": 0
+        }
+    elif benchmark == "movie":
+        return {
+            "castinfo": 0,
+            "composereview": 0,
+            "frontend": 0,
+            "movieid": 0,
+            "movieinfo": 0,
+            "moviereviews": 0,
+            "page": 0,
+            "plot": 0,
+            "reviewstorage": 0,
+            "uniqueid": 0,
+            "user": 0,
+            "userreviews": 0
         }
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
