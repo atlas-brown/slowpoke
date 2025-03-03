@@ -2,8 +2,7 @@ package movie
 
 import (
 	"context"
-	"github.com/eniac/mucache/pkg/invoke"
-	"github.com/eniac/mucache/pkg/state"
+	"github.com/eniac/mucache/pkg/slowpoke"
 )
 
 // This service simply keeps indexes of reviews for each movie
@@ -15,12 +14,12 @@ func UploadMovieReview(ctx context.Context, movieId string, reviewId string, tim
 		reviews = reviews[1:]
 	}
 	reviews = append(reviews, MovieReview{ReviewId: reviewId, Timestamp: timestamp})
-	state.SetState(ctx, movieId, reviews)
+	slowpoke.SetState(ctx, movieId, reviews)
 	return movieId
 }
 
 func getMovieReviews(ctx context.Context, movieId string) []MovieReview {
-	reviews, err := state.GetState[[]MovieReview](ctx, movieId)
+	reviews, err := slowpoke.GetState[[]MovieReview](ctx, movieId)
 	// If err != nil then the key does not exist
 	if err != nil {
 		return []MovieReview{}
@@ -37,7 +36,7 @@ func ReadMovieReviews(ctx context.Context, movieId string) []Review {
 	}
 	req := ReadReviewsRequest{ReviewIds: reviewIds}
 	//fmt.Printf("[MovieReviews] Asking review ids: %v\n", req)
-	reviewStorageResp := invoke.Invoke[ReadReviewsResponse](ctx, "reviewstorage", "ro_read_reviews", req)
+	reviewStorageResp := slowpoke.Invoke[ReadReviewsResponse](ctx, "reviewstorage", "ro_read_reviews", req)
 	reviews := reviewStorageResp.Reviews
 	//fmt.Printf("[MovieReviews] Reviews read: %v\n", reviewStorageResp)
 	return reviews

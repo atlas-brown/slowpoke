@@ -2,15 +2,15 @@ package movie
 
 import (
 	"context"
-	"github.com/eniac/mucache/pkg/state"
+	"github.com/eniac/mucache/pkg/slowpoke"
 )
 
 func RegisterMovieId(ctx context.Context, title string, movieId string) {
-	state.SetState(ctx, title, movieId)
+	slowpoke.SetState(ctx, title, movieId)
 }
 
 func GetMovieId(ctx context.Context, title string) string {
-	movieId, err := state.GetState[string](ctx, title)
+	movieId, err := slowpoke.GetState[string](ctx, title)
 	if err != nil {
 		panic(err)
 	}

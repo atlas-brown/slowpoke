@@ -41,7 +41,7 @@ def parse_arguments():
                         default="./data/socfb-Reed98.mtx")
     parser.add_argument("--analysis_file",
                         help="the path that contains the analysis of the social_graph",
-                        default="./data/socfb-analysis.txt")
+                        default="./data/analysis.txt")
     parser.add_argument("--post_size",
                         help="the size of the post to create",
                         type=int,

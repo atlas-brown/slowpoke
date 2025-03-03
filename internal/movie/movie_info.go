@@ -2,7 +2,7 @@ package movie
 
 import (
 	"context"
-	"github.com/eniac/mucache/pkg/state"
+	"github.com/eniac/mucache/pkg/slowpoke"
 )
 
 func StoreMovieInfo(ctx context.Context, movieId string, info string, castIds []string, plotId string) string {
@@ -12,12 +12,12 @@ func StoreMovieInfo(ctx context.Context, movieId string, info string, castIds []
 		CastIds: castIds,
 		PlotId:  plotId,
 	}
-	state.SetState(ctx, movieId, movieInfo)
+	slowpoke.SetState(ctx, movieId, movieInfo)
 	return movieId
 }
 
 func ReadMovieInfo(ctx context.Context, movieId string) MovieInfo {
-	movieInfo, err := state.GetState[MovieInfo](ctx, movieId)
+	movieInfo, err := slowpoke.GetState[MovieInfo](ctx, movieId)
 	if err != nil {
 		panic(err)
 	}

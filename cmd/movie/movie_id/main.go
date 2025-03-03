@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/eniac/mucache/internal/movie"
-	"github.com/eniac/mucache/pkg/cm"
+	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/eniac/mucache/pkg/wrappers"
 	"net/http"
 	"runtime"
@@ -18,6 +18,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func registerMovieId(ctx context.Context, req *movie.RegisterMovieIdRequest) *movie.RegisterMovieIdResponse {
+    slowpoke.SlowpokeCheck("registerMovieId");
 	movie.RegisterMovieId(ctx, req.Title, req.MovieId)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := movie.RegisterMovieIdResponse{Ok: "OK"}
@@ -25,14 +26,16 @@ func registerMovieId(ctx context.Context, req *movie.RegisterMovieIdRequest) *mo
 }
 
 func getMovieId(ctx context.Context, req *movie.GetMovieIdRequest) *movie.GetMovieIdResponse {
+    slowpoke.SlowpokeCheck("getMovieId");
 	movieId := movie.GetMovieId(ctx, req.Title)
 	resp := movie.GetMovieIdResponse{MovieId: movieId}
 	return &resp
 }
 
 func main() {
+    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
-	go cm.ZmqProxy()
+	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/register_movie_id", wrappers.NonROWrapper[movie.RegisterMovieIdRequest, movie.RegisterMovieIdResponse](registerMovieId))
 	http.HandleFunc("/ro_get_movie_id", wrappers.ROWrapper[movie.GetMovieIdRequest, movie.GetMovieIdResponse](getMovieId))

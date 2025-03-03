@@ -1,0 +1,84 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "page"
+  labels:
+    app: "page"
+spec:
+  selector:
+    app: "page"
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      name: http
+    - protocol: TCP
+      port: 5550
+      targetPort: 5550
+      name: zmq1
+    - protocol: TCP
+      port: 5551
+      targetPort: 5551
+      name: zmq2
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "page"
+  labels:
+    app: "page"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "page"
+  template:
+    metadata:
+      labels:
+        app: "page"
+    spec:
+      containers:
+        - name: "page"
+          image: yizhengx/mucache:movie
+          env:
+            - name: APP_PORT
+              value: "3000"
+            - name: APP_NAME
+              value: "page"
+            - name: APP_NAME_NO_UNDERSCORES
+              value: "page"
+            - name: APP_NAMESPACE
+              value: "movie"
+            - name: NODE_IDX
+              value: "1"
+            - name: CM_ENABLED
+              value: "false"
+            - name: EXPIRATION_TTL
+              value: "0"
+            - name: SLOWPOKE_DELAY_MICROS
+              value: "${SLOWPOKE_DELAY_MICROS_PAGE}"
+            - name: SLOWPOKE_PRERUN
+              value: "${SLOWPOKE_PRERUN}"
+          ports:
+            - containerPort: 3000
+            - containerPort: 5550
+            - containerPort: 5551
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 4Gi
+            requests:
+              cpu: 1000m
+              memory: 4Gi
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - worker1

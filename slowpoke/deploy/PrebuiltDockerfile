@@ -1,0 +1,57 @@
+# FROM golang:alpine
+
+# #RUN apk add --no-cache --update libzmq git go gcc g++ pkgconfig musl-dev zeromq-dev
+# RUN apk add --no-cache --update gcc musl-dev zeromq-dev iftop
+
+# RUN mkdir /app
+# COPY ./cmd /app/cmd
+# COPY ./internal /app/internal
+# COPY ./pkg /app/pkg
+# COPY ./go.mod /app/
+# COPY ./go.sum /app/
+# WORKDIR /app
+
+# ENV CM_ENABLED=$CM_ENABLED
+# ENV EXPIRATION_TTL=$EXPIRATION_TTL
+
+# CMD CGO_ENABLED=1 GOOS=linux go run -tags k8s,node1 /app/cmd/boutique/${APP_NAME}/main.go -logtostderr=true
+
+
+# Stage 1: Build Stage
+FROM golang:alpine AS builder
+
+ARG BENCHMARK="boutique"
+
+RUN echo "Building image for ${BENCHMARK} benchmark"
+
+# Install dependencies
+RUN apk add --no-cache gcc musl-dev zeromq-dev iftop
+
+WORKDIR /app
+
+# Copy dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source files
+COPY ./cmd ./cmd
+COPY ./internal ./internal
+COPY ./pkg ./pkg
+
+# Build all applications inside /app/cmd/boutique/
+RUN mkdir -p /app/bin && \
+    for d in /app/cmd/${BENCHMARK}/*; do \
+        if [ -d "$d" ]; then \
+            APP_NAME=$(basename "$d"); \
+            echo "Building $APP_NAME"; \
+            CGO_ENABLED=1 GOOS=linux go build -tags k8s,node1 -o /app/bin/${APP_NAME} "$d/main.go"; \
+        fi \
+    done
+
+ENV APP_NAME=$APP_NAME
+ENV APP_NAMESPACE=$APP_NAMESPACE
+ENV NODE_IDX=$NODE_IDX
+ENV CM_ENABLED=$CM_ENABLED
+ENV EXPIRATION_TTL=$EXPIRATION_TTL
+
+ENTRYPOINT ["/bin/sh", "-c", "/app/bin/${APP_NAME} -logtostderr=true"]

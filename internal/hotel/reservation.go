@@ -2,7 +2,7 @@ package hotel
 
 import (
 	"context"
-	"github.com/eniac/mucache/pkg/state"
+	"github.com/eniac/mucache/pkg/slowpoke"
 )
 
 func datesIntersect(inDate1 string, outDate1 string, inDate2 string, outDate2 string) bool {
@@ -32,7 +32,7 @@ func CheckAvailability(ctx context.Context, customerName string, hotelIds []stri
 	// Get all reservations for that hotel
 	availableHotelIds := []string{}
 	for _, hotelId := range hotelIds {
-		availability, err := state.GetState[HotelAvailability](ctx, hotelId)
+		availability, err := slowpoke.GetState[HotelAvailability](ctx, hotelId)
 		if err != nil {
 			panic(err)
 		}
@@ -47,7 +47,7 @@ func CheckAvailability(ctx context.Context, customerName string, hotelIds []stri
 }
 
 func MakeReservation(ctx context.Context, customerName string, hotelId string, inDate string, outDate string, numberOfRooms int) bool {
-	availability, err := state.GetState[HotelAvailability](ctx, hotelId)
+	availability, err := slowpoke.GetState[HotelAvailability](ctx, hotelId)
 	if err != nil {
 		panic(err)
 	}
@@ -69,11 +69,11 @@ func MakeReservation(ctx context.Context, customerName string, hotelId string, i
 		RoomNumber:   numberOfRooms,
 	}
 	availability.Reservations = append(availability.Reservations, newReservation)
-	state.SetState(ctx, hotelId, availability)
+	slowpoke.SetState(ctx, hotelId, availability)
 	return true
 }
 
 func AddHotelAvailability(ctx context.Context, hotelId string, capacity int) string {
-	state.SetState(ctx, hotelId, HotelAvailability{Reservations: []Reservation{}, Capacity: capacity})
+	slowpoke.SetState(ctx, hotelId, HotelAvailability{Reservations: []Reservation{}, Capacity: capacity})
 	return hotelId
 }
