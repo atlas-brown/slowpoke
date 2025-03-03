@@ -26,14 +26,22 @@ check_connectivity() {
     return $?
 }
 
+fix_req_num() {
+    local benchmark=$1
+    local client=$2
+    kubectl cp ./fix_req_n.lua ${client}:/wrk
+    kubectl exec ${client} -- /bin/sh -c "cat /wrk/fix_req_n.lua >> ${benchmark}"
+}
+
 run_test() {
     local benchmark=$1
     local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
     if [[ $benchmark == "boutique" ]]; then
-        run the load generator
+        # run the load generator
         echo "[run.sh] Running warmup test" 
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
+	fix_req_num "/wrk/scripts/online-boutique/${request}.lua" $ubuntu_client
         sleep 10
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
