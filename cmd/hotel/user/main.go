@@ -34,9 +34,9 @@ func login(ctx context.Context, req *hotel.LoginRequest) *hotel.LoginResponse {
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
+	hotel.InitUsers()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/register_user", wrappers.NonROWrapper[hotel.RegisterUserRequest, hotel.RegisterUserResponse](registerUser))
 	http.HandleFunc("/login", wrappers.NonROWrapper[hotel.LoginRequest, hotel.LoginResponse](login))

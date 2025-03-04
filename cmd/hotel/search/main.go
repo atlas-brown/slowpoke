@@ -35,9 +35,9 @@ func storeHotelLocation(ctx context.Context, req *hotel.StoreHotelLocationReques
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
+	hotel.InitLocations()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/ro_nearby", wrappers.ROWrapper[hotel.NearbyRequest, hotel.NearbyResponse](nearby))
 	http.HandleFunc("/store_hotel_location", wrappers.NonROWrapper[hotel.StoreHotelLocationRequest, hotel.StoreHotelLocationResponse](storeHotelLocation))

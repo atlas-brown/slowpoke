@@ -8,7 +8,7 @@ thread=${3:-16}
 conn=${4:-512}
 duration=${5:-60}
 
-supported_benchmarks=("boutique" "social" "movie")
+supported_benchmarks=("boutique" "social" "movie" "hotel")
 
 check_benchmark_supported() {
     local benchmark=$1
