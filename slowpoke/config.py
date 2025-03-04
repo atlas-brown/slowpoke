@@ -49,6 +49,15 @@ def get_request_ratio(benchmark, request="mix"):
             "user": 0.2006673695,
             "userreviews": 0.1003336848
         }
+    elif benchmark == "hotel":
+        return {
+            "frontend": 1,
+            "profile": 0.8,
+            "rate": 0.8,
+            "reservation": 1,
+            "search": 0.8,
+            "user": 0.198478617
+        }
     else:
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
@@ -87,6 +96,15 @@ def get_baseline_service_processing_time(benchmark, request="mix"):
             "uniqueid": 0,
             "user": 0,
             "userreviews": 0
+        }
+    elif benchmark == "hotel":
+        return {
+            "frontend": 0,
+            "profile": 0,
+            "rate": 0,
+            "reservation": 0,
+            "search": 0,
+            "user": 0
         }
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")

@@ -37,6 +37,13 @@ check_connectivity() {
     return $?
 }
 
+fix_req_num() {
+    local benchmark=$1
+    local client=$2
+    kubectl cp ./fix_req_n.lua ${client}:/wrk
+    kubectl exec ${client} -- /bin/sh -c "cat /wrk/fix_req_n.lua >> ${benchmark}"
+}
+
 run_test() {
     local benchmark=$1
     local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
@@ -45,6 +52,7 @@ run_test() {
         echo "[run.sh] Running warmup test" 
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
+	fix_req_num "/wrk/scripts/online-boutique/${request}.lua" $ubuntu_client
         sleep 10
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
@@ -62,12 +70,18 @@ run_test() {
 }
 
 populate() {
+    local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
     local benchmark=$1
     if [[ $benchmark == "boutique" ]]; then
         echo "[run.sh] No population needed for $benchmark"
         return
     fi
-    local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
+    if [[ $benchmark == "hotel" ]]; then
+        echo "[run.sh] Copying $benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
+        kubectl cp $benchmark/data/analysis.txt $ubuntu_client:/analysis.txt
+        echo "[run.sh] Finished populating $benchmark"
+        return
+    fi
     echo "[run.sh] Populating social benchmark"
     bash $benchmark/populate.sh 
     echo "[run.sh] Copying $benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
@@ -167,6 +181,9 @@ done
 
 populate $benchmark
 sleep 5
+
+# exit 1
+
 
 run_test $benchmark &
 pid=$!
