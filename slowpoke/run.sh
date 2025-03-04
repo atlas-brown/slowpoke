@@ -8,7 +8,7 @@ thread=${3:-16}
 conn=${4:-512}
 duration=${5:-60}
 
-supported_benchmarks=("boutique" "social" "movie")
+supported_benchmarks=("boutique" "social" "movie" "hotel")
 
 check_benchmark_supported() {
     local benchmark=$1
@@ -62,12 +62,18 @@ run_test() {
 }
 
 populate() {
+    local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
     local benchmark=$1
     if [[ $benchmark == "boutique" ]]; then
         echo "[run.sh] No population needed for $benchmark"
         return
     fi
-    local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
+    if [[ $benchmark == "hotel" ]]; then
+        echo "[run.sh] Copying $benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
+        kubectl cp $benchmark/data/analysis.txt $ubuntu_client:/analysis.txt
+        echo "[run.sh] Finished populating $benchmark"
+        return
+    fi
     echo "[run.sh] Populating social benchmark"
     bash $benchmark/populate.sh 
     echo "[run.sh] Copying $benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
@@ -167,6 +173,9 @@ done
 
 populate $benchmark
 sleep 5
+
+# exit 1
+
 
 run_test $benchmark &
 pid=$!
