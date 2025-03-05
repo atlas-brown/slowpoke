@@ -44,7 +44,7 @@ benchmark=boutique
 request=${2:-mix}
 thread=${3:-4}
 conn=${4:-128}
-duration=${5:-60}
+# duration=${5:-10}
 
-bash run.sh $benchmark $request $thread $conn $duration
+bash run.sh $benchmark $request $thread $conn
 # bash run-wrk2.sh $request $thread $conn $duration $rate
