@@ -3,7 +3,36 @@ package hotel
 import (
 	"context"
 	"github.com/eniac/mucache/pkg/slowpoke"
+	"os"
+	"github.com/goccy/go-json"
+	"fmt"
 )
+
+func InitHotelAvailability() {
+	ctx := context.Background()
+	catalogJSON, err := os.ReadFile("/app/internal/hotel/data/hotels.json")
+	if err != nil {
+		panic(err)
+	}
+	var data []map[string]interface{}
+	err = json.Unmarshal(catalogJSON, &data)
+	if err != nil {
+		panic(err)
+	}
+	for _, item := range data {
+		hotelId, _ := item["id"].(string)
+		// name, _ := item["name"].(string)
+		// phone, _ := item["phone"].(string)
+		// addr, _ := item["address"].(map[string]interface{})
+		// location, _ := addr["city"].(string)
+		// rate := 100
+		capacity := 11
+		// info := getRandomString(1000)
+
+		AddHotelAvailability(ctx, hotelId, capacity)
+	}
+	fmt.Printf("Initialized %d avalibilities\n", len(data))
+}
 
 func datesIntersect(inDate1 string, outDate1 string, inDate2 string, outDate2 string) bool {
 	// Note: This is a little hacky since there is no check that the dates are in the same format.

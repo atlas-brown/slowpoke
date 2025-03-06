@@ -3,7 +3,39 @@ package hotel
 import (
 	"context"
 	"github.com/eniac/mucache/pkg/slowpoke"
+	"os"
+	"github.com/goccy/go-json"
+	"fmt"
 )
+
+func InitRates() {
+	ctx := context.Background()
+	catalogJSON, err := os.ReadFile("/app/internal/hotel/data/hotels.json")
+	if err != nil {
+		panic(err)
+	}
+	var data []map[string]interface{}
+	err = json.Unmarshal(catalogJSON, &data)
+	if err != nil {
+		panic(err)
+	}
+	for _, item := range data {
+		hotelId, _ := item["id"].(string)
+		// name, _ := item["name"].(string)
+		// phone, _ := item["phone"].(string)
+		// addr, _ := item["address"].(map[string]interface{})
+		// location, _ := addr["city"].(string)
+		// rate := 100
+		rate := Rate{
+			HotelId: hotelId,
+			Price: 100,
+		}
+		// capacity := 11
+		// info := getRandomString(1000)
+		StoreRate(ctx, rate)
+	}
+	fmt.Printf("Initialized %d rates \n", len(data))
+}
 
 func StoreRate(ctx context.Context, rate Rate) string {
 	slowpoke.SetState(ctx, rate.HotelId, rate)

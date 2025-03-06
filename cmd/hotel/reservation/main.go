@@ -42,9 +42,9 @@ func addHotelAvailability(ctx context.Context, req *hotel.AddHotelAvailabilityRe
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
+	hotel.InitHotelAvailability()
 	http.HandleFunc("/heartbeat", heartbeat)
 	// Note: Even though checkAvailability is ReadOnly, the developers could explicitly decide to not have it be cached,
 	//       because that could lead to stale results being seen by users

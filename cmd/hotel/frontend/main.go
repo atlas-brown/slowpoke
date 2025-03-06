@@ -43,7 +43,6 @@ func reservation(ctx context.Context, req *hotel.FrontendReservationRequest) *ho
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
