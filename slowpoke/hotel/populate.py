@@ -6,6 +6,8 @@ import requests
 import random
 import string
 import sys
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 import concurrent.futures
 
@@ -21,6 +23,21 @@ import utility
 IPS = None
 
 SERVICES = ["frontend", "user"]
+
+def create_session():
+    """Create a requests session with retries and connection pooling."""
+    session = requests.Session()
+    retries = Retry(
+        total=5,  # Maximum number of retries
+        backoff_factor=0.1,  # Delay between retries
+        status_forcelist=[500, 502, 503, 504]  # Retry on these status codes
+    )
+    adapter = HTTPAdapter(max_retries=retries, pool_connections=10, pool_maxsize=10)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return session
+
+SESSION=create_session()
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -69,7 +86,7 @@ def add_hotel(hotel, info_size):
         "info": get_random_string(info_size),
     }
     # print(data)
-    r = requests.post(url, json=data)
+    r = SESSION.post(url, json=data)
     assert (r.status_code == 200)
 
 def upload_user(user_index):
@@ -78,7 +95,7 @@ def upload_user(user_index):
         "username": f'username{user_index}', 
         "password": f'password{user_index}'
     }
-    r = requests.post(url, json=data)
+    r = SESSION.post(url, json=data)
     assert (r.status_code == 200)
     r_ok = r.json()['ok']
     assert(r_ok == True)
@@ -129,7 +146,12 @@ def populate_everything(num_of_users: int, info_size: int, hotels):
             f = executor.submit(add_hotel, hotel, info_size)
             pending_futures.append(f)
         for f in tqdm(pending_futures):
-            f.result()
+            try:
+                f.result()
+            except Exception as e:
+                with open("error.log", "a") as ef:
+                    ef.write(str(e))
+                    ef.write("\n")
 
 
 def main(args):
