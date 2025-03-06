@@ -6,6 +6,8 @@ import copy
 import argparse
 import config
 
+REQ_COUNT = 12500
+
 class Runner:
     def __init__(self, args):
         self.benchmark = args.benchmark
@@ -35,11 +37,19 @@ class Runner:
         process = subprocess.Popen(cmd, shell=True, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(f"[test.py] Executing cmd `{cmd}`:")
         throughput = -1
-        for line in process.stdout:
-            line_output = line.decode().strip()
-            if "Requests/sec" in line_output:
-                throughput = float(line_output.split()[1])
-            print(f"    {line.decode().strip()}", flush=True)
+        times = []
+        output = process.stdout.read().decode('utf-8')
+        for line in output.split('\n'):
+            line_output = line.strip()
+            # if "Requests/sec" in line_output:
+            #     throughput = float(line_output.split()[1])
+            time_prefix = 'stop time: '
+            if line_output.startswith(time_prefix):
+                times.append(float(line_output[len(time_prefix):]))
+            # print(f"    {line.decode().strip()}", flush=True)
+        print(output, flush=True)
+
+        throughput = self.num_threads * REQ_COUNT / (sum(times)/len(times))
         if process.wait() != 0:
             print(f"Error running {cmd}")
             for line in process.stderr:
@@ -126,11 +136,11 @@ def parse():
     parser.add_argument("-t", "--num_threads",
                         help="the number of threads to run the experiment on",
                         type=int,
-                        default=16)
+                        default=4)
     parser.add_argument("-c", "--num_conns", 
                         help="the number of connections to run the experiment on",
                         type=int,
-                        default=512)
+                        default=128)
     parser.add_argument("-d", "--duration",
                         help="the duration of the experiment",
                         type=int,

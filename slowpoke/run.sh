@@ -6,7 +6,10 @@ benchmark=${1:-boutique}
 request=${2:-home}
 thread=${3:-16}
 conn=${4:-512}
-duration=${5:-60}
+# duration=${5:-60}
+duration=0
+
+TOTAL_REQ=50000
 
 supported_benchmarks=("boutique" "social" "movie" "hotel")
 
@@ -44,6 +47,17 @@ fix_req_num() {
     kubectl exec ${client} -- /bin/sh -c "cat /wrk/fix_req_n.lua >> ${benchmark}"
 }
 
+warmup_and_speed() {
+    local client=$1
+    local thread=$2
+    local conn=$3
+    local script=$4
+    local host=$5
+    speed=$(kubectl exec $client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s $script $host | grep "Requests/sec:" | awk '{print $2}')
+    duration=$(echo "2 * $TOTAL_REQ / $speed" | bc)
+    echo $duration
+}
+
 run_test() {
     local benchmark=$1
     local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
@@ -51,7 +65,8 @@ run_test() {
         # run the load generator
         echo "[run.sh] Running warmup test" 
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
-        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
+        duration=$(warmup_and_speed $ubuntu_client ${thread} ${conn} /wrk/scripts/online-boutique/${request}.lua http://frontend:80)
+	echo duration is $duration
 	fix_req_num "/wrk/scripts/online-boutique/${request}.lua" $ubuntu_client
         sleep 10
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
