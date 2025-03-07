@@ -17,6 +17,7 @@ class Runner:
         self.request_type = args.request_type
         self.request_ratio = config.get_request_ratio(self.benchmark, self.request_type)
         self.baseline_service_processing_time = config.get_baseline_service_processing_time(self.benchmark)
+        self.cpu_quota = config.get_cpu_quota(self.benchmark)
         self.repetitions = args.repetitions
         self.target_processing_time_range = args.range
         self.target_num_exp = args.num_exp
@@ -79,7 +80,7 @@ class Runner:
                         delay = 0
                     else:
                         delay = int(
-                            ((self.target_processing_time_range[1] - p_t)*self.request_ratio[self.target_service]) / self.request_ratio[service]
+                            ((self.target_processing_time_range[1] - p_t)*self.request_ratio[self.target_service])*self.cpu_quota[service] / self.request_ratio[service]*self.cpu_quota[target_service]
                         )
                     service_delay[service] = self.baseline_service_processing_time[service] + delay
             res = self.exp(service_delay)
