@@ -44,43 +44,62 @@ fix_req_num() {
     local benchmark=$1
     local client=$2
     kubectl cp ./fix_req_n.lua ${client}:/wrk
-    kubectl exec ${client} -- /bin/sh -c "cat /wrk/fix_req_n.lua >> ${benchmark}"
+    if [[ $benchmark == *"boutique"* ]]; then
+        kubectl exec ${client} -- /bin/sh -c "cat /wrk/fix_req_n.lua >> /wrk/scripts/online-boutique/${request}.lua"
+        return
+    fi
 }
 
 warmup_and_speed() {
     local client=$1
     local thread=$2
     local conn=$3
-    local script=$4
-    local host=$5
-    speed=$(kubectl exec $client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s $script $host | grep "Requests/sec:" | awk '{print $2}')
-    duration=$(echo "2 * $TOTAL_REQ / $speed" | bc)
-    echo $duration
+    local host=$4
+    local script="-s $5"
+    if [[ -z $5 ]]; then
+        script=""
+    fi
+    output=$(kubectl exec $client -- /wrk/wrk -t${thread} -c${conn} -d3s -L $script $host)
+    echo $output
 }
 
 run_test() {
     local benchmark=$1
     local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
-    if [[ $benchmark == "boutique" ]]; then
-        # run the load generator
-        echo "[run.sh] Running warmup test" 
-        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
-        duration=$(warmup_and_speed $ubuntu_client ${thread} ${conn} /wrk/scripts/online-boutique/${request}.lua http://frontend:80)
-	echo duration is $duration
-	fix_req_num "/wrk/scripts/online-boutique/${request}.lua" $ubuntu_client
-        sleep 10
-        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
-        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
-    else
+
+    echo "[run.sh] Fix the request number."
+    fix_req_num $benchmark $ubuntu_client
+
+    if [[ $benchmark != "boutique" ]]; then
         echo "[run.sh] Starting the rust proxy first for $benchmark"
         kubectl exec $ubuntu_client -- bash -c "/mucache/proxy/target/release/proxy ${benchmark} &"
         sleep 3
-        echo "[run.sh] Running warmup test"
+    fi
+
+    echo "[run.sh] Running warmup test" 
+    if [[ $benchmark == "boutique" ]]; then
+       # run the load generator
+        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
+        output=$(kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80)
+    else 
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L http://localhost:3000"
-        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s http://localhost:3000
-        sleep 10
-        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L http://localhost:3000"
-        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L http://localhost:3000
+        output=$(kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L http://localhost:3000)
+    fi
+    echo "$output"
+
+    # get the speed of the warmup test and estimate the duration
+    speed=$(echo "$output" | grep "Requests/sec:" | awk '{print $2}')
+    duration=$(echo "1.5 * $TOTAL_REQ / $speed" | bc)
+    echo "[run.sh] Duration is $duration"
+
+    echo "[run.sh] Running the actual test"
+    sleep 10
+    if [[ $benchmark == "boutique" ]]; then
+        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
+        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
+    else
+        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000"
+        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000
     fi
 }
 

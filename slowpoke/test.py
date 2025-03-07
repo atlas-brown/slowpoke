@@ -38,17 +38,12 @@ class Runner:
         print(f"[test.py] Executing cmd `{cmd}`:")
         throughput = -1
         times = []
-        output = process.stdout.read().decode('utf-8')
-        for line in output.split('\n'):
-            line_output = line.strip()
-            # if "Requests/sec" in line_output:
-            #     throughput = float(line_output.split()[1])
+        for line in process.stdout:
+            line_output = line.decode().strip()
+            print(f"    {line_output}", flush=True)
             time_prefix = 'stop time: '
             if line_output.startswith(time_prefix):
                 times.append(float(line_output[len(time_prefix):]))
-            # print(f"    {line.decode().strip()}", flush=True)
-        print(output, flush=True)
-
         throughput = self.num_threads * REQ_COUNT / (sum(times)/len(times))
         if process.wait() != 0:
             print(f"Error running {cmd}")
