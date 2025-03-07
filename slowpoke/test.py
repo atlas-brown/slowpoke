@@ -90,7 +90,7 @@ class Runner:
             slowdown.append(res)
 
             try:
-                delay = (self.target_processing_time_range[1] - p_t)*self.request_ratio[self.target_service]
+                delay = (self.target_processing_time_range[1] - p_t)*self.request_ratio[self.target_service]/self.cpu_quota[self.target_service]
                 predicted_throughput = 1000000/(1000000/slowdown[-1]-delay)
             except:
                 print("[test.py] Error: Division by zero")
