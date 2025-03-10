@@ -112,47 +112,47 @@ def get_baseline_service_processing_time(benchmark, request="mix"):
 def get_cpu_quota(benchmark):
     if benchmark == "boutique":
         return {
-            "cart":1000,
-            "checkout":1000,
-            "currency":1000,
-            "email":1000,
-            "frontend":1000,
-            "payment":1000,
-            "product_catalog":1000,
-            "recommendations":1000,
-            "shipping":1000
+            "cart":1,
+            "checkout":1,
+            "currency":1,
+            "email":1,
+            "frontend":1,
+            "payment":1,
+            "product_catalog":1,
+            "recommendations":1,
+            "shipping":1
         }
     elif benchmark == "social":
         return {
-            "composepost": 1000,
-            "hometimeline": 1000,
-            "poststorage": 1000,
-            "socialgraph": 1000,
-            "usertimeline": 1000
+            "composepost": 0.98,
+            "hometimeline": 0.98,
+            "poststorage": 0.98,
+            "socialgraph": 0.98,
+            "usertimeline": 0.98
         }
     elif benchmark == "movie":
         return {
-            "castinfo": 1000,
-            "composereview": 1000,
-            "frontend": 1000,
-            "movieid": 1000,
-            "movieinfo": 1000,
-            "moviereviews": 1000,
-            "page": 1000,
-            "plot": 1000,
-            "reviewstorage": 1000,
-            "uniqueid": 1000,
-            "user": 1000,
-            "userreviews": 1000
+            "castinfo": 1,
+            "composereview": 1,
+            "frontend": 1,
+            "movieid": 1,
+            "movieinfo": 1,
+            "moviereviews": 1,
+            "page": 1,
+            "plot": 1,
+            "reviewstorage": 1,
+            "uniqueid": 1,
+            "user": 1,
+            "userreviews": 1
         }
     elif benchmark == "hotel":
         return {
-            "frontend": 1000,
-            "profile": 1000,
-            "rate": 1000,
-            "reservation": 1000,
-            "search": 1000,
-            "user": 1000
+            "frontend": 1,
+            "profile": 1,
+            "rate": 1,
+            "reservation": 1,
+            "search": 1,
+            "user": 1
         }
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
