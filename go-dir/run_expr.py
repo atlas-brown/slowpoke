@@ -79,10 +79,10 @@ def sanitize_env():
     
 if __name__ == '__main__':
     os.chdir(basedir)
-    # r = build_image()
-    # if not r:
-    #     print('docker image build problem')
-    #     exit(1)
+    r = build_image()
+    if not r:
+        print('docker image build problem')
+        exit(1)
     sanitize_env()
     for kind in ['getpid', 'spin', 'spinx']:
         for num in range(11):
