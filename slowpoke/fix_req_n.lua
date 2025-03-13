@@ -15,7 +15,7 @@ function init(args)
 end
 
 function response()
-   if counter == 12500 then
+   if counter == $PER_THREAD_COUNTER then
       wrk.thread:stop()
       local x = wrk.thread:get("x")
       y = socket.gettime() - x

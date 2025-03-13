@@ -1,5 +1,43 @@
-def get_request_ratio(benchmark, request="mix"):
-    if benchmark == "boutique":
+#!/usr/bin/env python3
+
+import random
+
+service_reuse = {
+    "dag-relay": [1, 1, 1, 1, 3, 3, 3],
+    "dag-cross": [1, 1, 2, 1, 4],
+    "dynamic-once": [1, 1, 0.8, 0.2, 0.8],
+    "dynamic-twice": [1, 0.2, 0.3, 0.5, 0.16, 0.15, 0.35],
+    "dynamic-cache": [1, 1, 0.25],
+    "dynamic-cycle": [1, 1.34, 0.34, 0.5, 0.5],
+    "chain-d2": [1, 1, 1],
+    "chain-d4": [1, 1, 1, 1, 1, 1],
+    "chain-d8": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    "fanout-w3": [1, 1, 1, 1],
+    "fanout-w10": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    "dag-balanced": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    "dag-unbalanced": [1, 1, 1, 1, 1, 1, 1, 1]
+}
+
+leaf_nodes = {
+    "chain-d2": [2],
+    "chain-d4": [5],
+    "chain-d8": [9],
+    "fanout-w3": [1,2,3],
+    "fanout-w10": [1,2,3,4,5,6,7,8,9,10],
+    "dag-balanced": [4,5,6,7,8,9,10,11,12],
+    "dag-unbalanced": [5,6],
+    "dag-relay": [5,6],
+    "dag-cross": [4],
+    "dynamic-once": [3,4],
+    "dynamic-cache": [2],
+    "dynamic-cycle": [3,4],
+    "dynamic-twice": [2,5,6]
+}
+
+def get_request_ratio(benchmark, request):
+    if benchmark == "syncthetic":
+        return get_request_ratio_syncthetic(request)
+    elif benchmark == "boutique":
         if request == "mix":
             return {
                 'cart': 0.45175405908969923, 
@@ -61,9 +99,19 @@ def get_request_ratio(benchmark, request="mix"):
     else:
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
-def get_baseline_service_processing_time(benchmark, request="mix"):
-    if benchmark == "boutique":
-        return {
+def get_request_ratio_syncthetic(request):
+    topology = "-".join(request.split("-")[:2])
+    ratio_arr = service_reuse[topology]
+    ratio = {}
+    for i in range(len(ratio_arr)):
+        ratio[f"service{i}"] = ratio_arr[i]
+    return ratio
+
+def get_baseline_service_processing_time(benchmark, request, target, random_seed):
+    if benchmark == "syncthetic":
+        return get_baseline_service_processing_time_syncthetic(target, request, random_seed)
+    elif benchmark == "boutique":
+        p_t = {
             "cart":0,
             "checkout":0,
             "currency":0,
@@ -74,16 +122,20 @@ def get_baseline_service_processing_time(benchmark, request="mix"):
             "recommendations":0,
             "shipping":0
         }
+        p_t[target] = 1000
+        return p_t
     elif benchmark == "social":
-        return {
+        p_t = {
             "composepost": 0,
             "hometimeline": 0,
             "poststorage": 0,
             "socialgraph": 0,
             "usertimeline": 0
         }
+        p_t[target] = 1000
+        return p_t
     elif benchmark == "movie":
-        return {
+        p_t = {
             "castinfo": 0,
             "composereview": 0,
             "frontend": 0,
@@ -97,8 +149,10 @@ def get_baseline_service_processing_time(benchmark, request="mix"):
             "user": 0,
             "userreviews": 0
         }
+        p_t[target] = 1000
+        return p_t
     elif benchmark == "hotel":
-        return {
+        p_t = {
             "frontend": 0,
             "profile": 0,
             "rate": 0,
@@ -106,11 +160,34 @@ def get_baseline_service_processing_time(benchmark, request="mix"):
             "search": 0,
             "user": 0
         }
+        p_t[target] = 1000
+        return p_t
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
-def get_cpu_quota(benchmark):
-    if benchmark == "boutique":
+def get_baseline_service_processing_time_syncthetic(target, request, random_seed):
+    topology = "-".join(request.split("-")[:2])
+    num = len(service_reuse[topology])
+    random.seed(random_seed)
+    random_numbers = [random.gauss(500, 300) for i in range(num)]
+    print(f"[config.py] Random numbers for execution time: {random_numbers}")
+    random_numbers = [abs(r) for r in random_numbers]   # just in case
+    random_numbers.sort()
+
+    processing_time = {}
+    for i in range(num):
+        if i in leaf_nodes[topology] and f"service{i}" == target:
+            processing_time[f"service{i}"] = round(2 * random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
+        elif f"service{i}" == target:
+            processing_time[f"service{i}"] = round(random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
+        else:
+            processing_time[f"service{i}"] = round(random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
+    return processing_time
+
+def get_cpu_quota(benchmark, request):
+    if benchmark == "syncthetic":
+        return get_cpu_quota_syncthetic(request)
+    elif benchmark == "boutique":
         return {
             "cart":1,
             "checkout":1,
@@ -156,3 +233,11 @@ def get_cpu_quota(benchmark):
         }
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
+
+def get_cpu_quota_syncthetic(request):
+    topology = "-".join(request.split("-")[:2])
+    num = len(service_reuse[topology])
+    cpu_quota = {}
+    for i in range(num):
+        cpu_quota[f"service{i}"] = 1
+    return cpu_quota
