@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: config-service11
+    labels:
+        name: config-service11
+    namespace: default
+data:
+    conf.json: '{"processes":10,"logging":false,"protocol":"http","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE11},"threads":1}}]}'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: service11
+    namespace: default
+    labels: {}
+spec:
+    selector:
+        matchLabels:
+            app: service11
+            version: ""
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: service11
+                version: ""
+            annotations: {}
+        spec:
+            nodeName: worker2
+            containers:
+                - name: app
+                  image: yizhengx/hydragen:dag-http-async
+                  imagePullPolicy: Always
+                  env:
+                    - name: SERVICE_NAME
+                      value: service11
+                    - name: GOMEMLIMIT
+                      value: "1024000000"
+                    - name: SLOWPOKE_DELAY_MICROS
+                      value: "${SLOWPOKE_DELAY_MICROS_SERVICE11}"
+                    - name: SLOWPOKE_PRERUN
+                      value: "${SLOWPOKE_PRERUN}"
+                  ports:
+                    - containerPort: 5000
+                  volumeMounts:
+                    - mountPath: /usr/src/emulator/config
+                      name: config-data-volume
+                  readinessProbe:
+                    httpGet:
+                        path: /
+                        port: 5000
+                    initialDelaySeconds: 2
+                    periodSeconds: 1
+                  resources:
+                    limits:
+                        cpu: 1000m
+                        memory: 1024M
+                    requests:
+                        cpu: 1000m
+                        memory: 512M
+            volumes:
+                - name: config-data-volume
+                  configMap:
+                    name: config-service11
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: service11
+    namespace: default
+    labels: {}
+    annotations:
+        http: /
+spec:
+    selector:
+        app: service11
+    ports:
+        - name: http
+          port: 80
+          targetPort: 5000
