@@ -2,7 +2,7 @@
 
 cd $(dirname $0)/../..
 
-exp=chain-d2-http-sync
+exp=chain-d2-grpc-async
 
 mkdir -p syncthetic/$exp/results
 

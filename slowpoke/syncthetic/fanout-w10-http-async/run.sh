@@ -2,11 +2,11 @@
 
 cd $(dirname $0)/../..
 
-exp=chain-d2-http-sync
+exp=fanout-w10-http-async
 
 mkdir -p syncthetic/$exp/results
 
-target_services="0 1 2"
+target_services="0 5"
 for target_service in $target_services
 do 
     if [[ -e syncthetic/$exp/results/$exp-service$target_service.log ]]; then
