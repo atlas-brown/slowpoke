@@ -35,8 +35,8 @@ leaf_nodes = {
 }
 
 def get_request_ratio(benchmark, request):
-    if benchmark == "syncthetic":
-        return get_request_ratio_syncthetic(request)
+    if benchmark == "synthetic":
+        return get_request_ratio_synthetic(request)
     elif benchmark == "boutique":
         if request == "mix":
             return {
@@ -99,7 +99,7 @@ def get_request_ratio(benchmark, request):
     else:
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
-def get_request_ratio_syncthetic(request):
+def get_request_ratio_synthetic(request):
     topology = "-".join(request.split("-")[:2])
     ratio_arr = service_reuse[topology]
     ratio = {}
@@ -108,8 +108,8 @@ def get_request_ratio_syncthetic(request):
     return ratio
 
 def get_baseline_service_processing_time(benchmark, request, target, random_seed):
-    if benchmark == "syncthetic":
-        return get_baseline_service_processing_time_syncthetic(target, request, random_seed)
+    if benchmark == "synthetic":
+        return get_baseline_service_processing_time_synthetic(target, request, random_seed)
     elif benchmark == "boutique":
         p_t = {
             "cart":0,
@@ -165,7 +165,7 @@ def get_baseline_service_processing_time(benchmark, request, target, random_seed
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
-def get_baseline_service_processing_time_syncthetic(target, request, random_seed):
+def get_baseline_service_processing_time_synthetic(target, request, random_seed):
     topology = "-".join(request.split("-")[:2])
     num = len(service_reuse[topology])
     random.seed(random_seed)
@@ -185,8 +185,8 @@ def get_baseline_service_processing_time_syncthetic(target, request, random_seed
     return processing_time
 
 def get_cpu_quota(benchmark, request):
-    if benchmark == "syncthetic":
-        return get_cpu_quota_syncthetic(request)
+    if benchmark == "synthetic":
+        return get_cpu_quota_synthetic(request)
     elif benchmark == "boutique":
         return {
             "cart":1,
@@ -234,7 +234,7 @@ def get_cpu_quota(benchmark, request):
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
-def get_cpu_quota_syncthetic(request):
+def get_cpu_quota_synthetic(request):
     topology = "-".join(request.split("-")[:2])
     num = len(service_reuse[topology])
     cpu_quota = {}

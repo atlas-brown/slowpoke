@@ -11,11 +11,11 @@ TOTAL_REQ=${5:-50000}
 duration=60
 
 YAML_PATH=$benchmark/yamls
-if [[ $benchmark == "syncthetic" ]]; then
+if [[ $benchmark == "synthetic" ]]; then
     YAML_PATH=$benchmark/$request/yamls
 fi
 
-supported_benchmarks=("boutique" "social" "movie" "hotel" "syncthetic")
+supported_benchmarks=("boutique" "social" "movie" "hotel" "synthetic")
 
 check_benchmark_supported() {
     local benchmark=$1
@@ -107,7 +107,7 @@ run_test() {
     echo "[run.sh] Fix the request number."
     fix_req_num $benchmark $ubuntu_client
 
-    if [[ $benchmark != "boutique" && $benchmark != "syncthetic" ]]; then
+    if [[ $benchmark != "boutique" && $benchmark != "synthetic" ]]; then
         echo "[run.sh] Starting the rust proxy first for $benchmark"
         kubectl exec $ubuntu_client -- bash -c "/mucache/proxy/target/release/proxy ${benchmark} &"
         sleep 3
@@ -118,7 +118,7 @@ run_test() {
        # run the load generator
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         output=$(kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80)
-    elif [[ $benchmark == "syncthetic" ]]; then
+    elif [[ $benchmark == "synthetic" ]]; then
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d3s -L http://service0:80/endpoint1"
         output=$(kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d3s -L http://service0:80/endpoint1)
     else 
@@ -137,7 +137,7 @@ run_test() {
     if [[ $benchmark == "boutique" ]]; then
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
-    elif [[ $benchmark == "syncthetic" ]]; then
+    elif [[ $benchmark == "synthetic" ]]; then
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1"
         kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
     else
@@ -208,7 +208,7 @@ while [[ $(kubectl get pods | grep -v -E '1/1|STATUS' | wc -l) -ne 0 ]]; do
 done
 echo "[run.sh] All pods are running"
 
-if [[ $benchmark != "syncthetic" ]]; then
+if [[ $benchmark != "synthetic" ]]; then
     check_connection_all
     populate $benchmark
 fi

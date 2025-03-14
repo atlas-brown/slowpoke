@@ -25,12 +25,13 @@ class Runner:
         if args.clien_cpu_quota != -1:
             self.client_cpu_quota = args.clien_cpu_quota
         else:
-            self.client_cpu_quota = 2 if self.benchmark == "syncthetic" else 4
+            self.client_cpu_quota = 2 if self.benchmark == "synthetic" else 4
         self.random_seed = args.random_seed
         self.request_ratio = config.get_request_ratio(self.benchmark, self.request_type)
         self.baseline_service_processing_time = config.get_baseline_service_processing_time(self.benchmark, self.request_type, self.target_service, self.random_seed)
         self.cpu_quota = config.get_cpu_quota(self.benchmark, self.request_type)
         self.target_processing_time_range = [0, self.baseline_service_processing_time[self.target_service]]
+        self.baseline_throughput = []
     
     def get_env_for_print(self, env):
         env_p = {}
@@ -44,8 +45,8 @@ class Runner:
     def exp(self, service_delay, processing_time):
         env = os.environ.copy()
         env["CLIENT_CPU_QUOTA"] = str(self.client_cpu_quota)
-        if self.benchmark == "syncthetic":
-            # This is used to set the processing time for syncthetic benchmarks
+        if self.benchmark == "synthetic":
+            # This is used to set the processing time for synthetic benchmarks
             for service, processing_time in processing_time.items():
                 env[f"PROCESSING_TIME_{service.upper()}"] = str(round(processing_time/1e6, 8))
             for service, delay in service_delay.items():
@@ -88,6 +89,12 @@ class Runner:
         processing_time_diff = self.target_processing_time_range[1]-self.target_processing_time_range[0]
         processing_time_range = list(range(self.target_processing_time_range[0], int(self.target_processing_time_range[1]), int(processing_time_diff//self.target_num_exp)))[:self.target_num_exp]
         print(f"[test.py] Actual processing time range: {processing_time_range}")
+
+        # baseline
+        while baseline_throughput := self.exp(service_delay, processing_time) == 0:
+            print("[test.py] Found 0 throughput, rerun experiment")
+        print(f"[test.py] Baseline throughput: {baseline_throughput}", flush=True)
+        self.baseline_throughput.append(baseline_throughput)
 
         # groundtruth
         groundtruth = []
@@ -148,6 +155,7 @@ class Runner:
         print("[test.py] ++++++++++++++++++++++++++++++++ Summary: ")
         for i in range(len(self.groundtruths)):
             print(f"[test.py] Result for the experiment {i}: ")
+            print(f"    Baseline throughput: {self.baseline_throughput[i]}")
             print(f"    Groundtruth: {self.groundtruths[i]}")
             print(f"    Slowdown:    {self.slowdowns[i]}")
             print(f"    Predicted:   {self.predicteds[i]}")

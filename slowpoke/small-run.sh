@@ -53,7 +53,7 @@ export SLOWPOKE_DELAY_MICROS_SERVICE2=0
 env | grep PROCESSING_TIME
 env | grep SLOWPOKE_DELAY_MICROS
 
-benchmark=syncthetic
+benchmark=synthetic
 request=${2:-fanout-w10-grpc-async}
 thread=${3:-4}
 conn=${4:-128}
@@ -63,4 +63,4 @@ conn=${4:-128}
 # bash run-wrk2.sh $request $thread $conn $duration $rate
 # bash run.sh $benchmark $request $thread $conn
 # bash test.sh $benchmark $request $thread $conn
-bash run.sh syncthetic chain-d2-grpc-sync 2 128 18000
+bash run.sh synthetic chain-d2-grpc-sync 2 128 18000
