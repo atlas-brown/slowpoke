@@ -31,7 +31,7 @@ class Runner:
         self.baseline_service_processing_time = config.get_baseline_service_processing_time(self.benchmark, self.request_type, self.target_service, self.random_seed)
         self.cpu_quota = config.get_cpu_quota(self.benchmark, self.request_type)
         self.target_processing_time_range = [0, self.baseline_service_processing_time[self.target_service]]
-        self.baseline_throughput = []
+        self.baseline_throughputs = []
     
     def get_env_for_print(self, env):
         env_p = {}
@@ -57,23 +57,23 @@ class Runner:
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
         cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
-        print(f"[test.py] Running (pre_run: {self.pre_run}) workload {self.benchmark}/{self.request_type} request with the following configuration: {self.get_env_for_print(env)}", flush=True)
+        print(f"    [exp] Running (pre_run: {self.pre_run}) workload {self.benchmark}/{self.request_type} request with the following configuration: {self.get_env_for_print(env)}", flush=True)
         process = subprocess.Popen(cmd, shell=True, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print(f"[test.py] Executing cmd `{cmd}`:")
+        print(f"    [exp] Executing cmd `{cmd}`:")
         throughput = -1
         times = []
         for line in process.stdout:
             line_output = line.decode().strip()
-            print(f"    {line_output}", flush=True)
+            print(f"        {line_output}", flush=True)
             time_prefix = 'stop time: '
             if line_output.startswith(time_prefix):
                 times.append(float(line_output[len(time_prefix):]))
         if process.stderr:
-            print(f"    > STDERR", flush=True)
+            print(f"        > STDERR", flush=True)
             for line in process.stderr:
-                print(f"    > {line.decode().strip()}", flush=True)
+                print(f"        > {line.decode().strip()}", flush=True)
         if process.wait() != 0:
-            print(f"[test.py] Error running {cmd}")
+            print(f"    [exp] Error running {cmd}")
             for line in process.stderr:
                 print(f"    {line.decode().strip()}", flush=True)
             # raise Exception(f"Error running {cmd}")
@@ -91,12 +91,16 @@ class Runner:
         print(f"[test.py] Actual processing time range: {processing_time_range}")
 
         # baseline
-        while baseline_throughput := self.exp(service_delay, processing_time) == 0:
+        print(f"[test.py] Running baseline experiment", flush=True)
+        baseline_throughput = self.exp(service_delay, processing_time)
+        while baseline_throughput == 0:
             print("[test.py] Found 0 throughput, rerun experiment")
+            baseline_throughput = self.exp(service_delay, processing_time)
         print(f"[test.py] Baseline throughput: {baseline_throughput}", flush=True)
-        self.baseline_throughput.append(baseline_throughput)
+        self.baseline_throughputs.append(baseline_throughput)
 
         # groundtruth
+        print(f"[test.py] Running groundtruth experiment", flush=True)
         groundtruth = []
         for p_t in processing_time_range:
             processing_time[self.target_service] = p_t
@@ -107,6 +111,7 @@ class Runner:
             groundtruth.append(res)
         
         # slowdown
+        print(f"[test.py] Running slowdown experiment", flush=True)
         slowdown = []
         predicted = []
         processing_time[self.target_service] = self.baseline_service_processing_time[self.target_service]
@@ -135,6 +140,7 @@ class Runner:
             predicted.append(predicted_throughput)
         
         err = [(predicted[i]-groundtruth[i])*100/groundtruth[i] for i in range(len(predicted))]
+        print("[test.py] Baseline throughput: ", baseline_throughput, flush=True)
         print("[test.py] Groundtruth: ", groundtruth, flush=True)
         print("[test.py] Slowdown: ", slowdown, flush=True)
         print("[test.py] Predicted: ", predicted, flush=True)
@@ -155,7 +161,7 @@ class Runner:
         print("[test.py] ++++++++++++++++++++++++++++++++ Summary: ")
         for i in range(len(self.groundtruths)):
             print(f"[test.py] Result for the experiment {i}: ")
-            print(f"    Baseline throughput: {self.baseline_throughput[i]}")
+            print(f"    Baseline throughput: {self.baseline_throughputs[i]}")
             print(f"    Groundtruth: {self.groundtruths[i]}")
             print(f"    Slowdown:    {self.slowdowns[i]}")
             print(f"    Predicted:   {self.predicteds[i]}")
