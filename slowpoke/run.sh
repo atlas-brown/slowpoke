@@ -104,9 +104,6 @@ run_test() {
     local benchmark=$1
     local ubuntu_client=$(kubectl get pod | grep ubuntu-client- | cut -f 1 -d " ") 
 
-    echo "[run.sh] Fix the request number."
-    fix_req_num $benchmark $ubuntu_client
-
     if [[ $benchmark != "boutique" && $benchmark != "synthetic" ]]; then
         echo "[run.sh] Starting the rust proxy first for $benchmark"
         kubectl exec $ubuntu_client -- bash -c "/mucache/proxy/target/release/proxy ${benchmark} &"
@@ -131,6 +128,9 @@ run_test() {
     speed=$(echo "$output" | grep "Requests/sec:" | awk '{print $2}')
     duration=$(echo "1.5 * $TOTAL_REQ / $speed" | bc)
     echo "[run.sh] Speed is $speed, duration is $duration"
+
+    echo "[run.sh] Fix the request number."
+    fix_req_num $benchmark $ubuntu_client
 
     echo "[run.sh] Running the actual test"
     sleep 10
@@ -209,7 +209,7 @@ done
 echo "[run.sh] All pods are running"
 
 if [[ $benchmark != "synthetic" ]]; then
-    check_connection_all
+    check_connectivity_all
     populate $benchmark
 fi
 

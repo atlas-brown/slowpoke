@@ -53,7 +53,7 @@ class Runner:
                 env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay)
         else:
             for service, delay in service_delay.items():
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay) + processing_time[service]
+                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay + processing_time[service])
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
         cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
@@ -71,12 +71,12 @@ class Runner:
         if process.stderr:
             print(f"        > STDERR", flush=True)
             for line in process.stderr:
-                print(f"        > {line.decode().strip()}", flush=True)
+                line = line.decode().strip()
+                if "Dload" in line or "% Total" in line or "--:--:--" in line:
+                    continue
+                print(f"        > {line}", flush=True)
         if process.wait() != 0:
             print(f"    [exp] Error running {cmd}")
-            for line in process.stderr:
-                print(f"    {line.decode().strip()}", flush=True)
-            # raise Exception(f"Error running {cmd}")
             return 0
         throughput = self.num_req / (sum(times)/len(times))
         return throughput
