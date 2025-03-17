@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"syscall"
 	"strconv"
+	"sync"
 	"sync/atomic"
 )
 
@@ -76,9 +77,24 @@ func SimpleSpin() {
      }
 }
 
+func SetupWorkers(n int, kind string, wg *sync.WaitGroup) {
+	if kind == "spinx" {
+		for w := 0; w < n; w++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				for i := 0; i < 200; i++ {
+					ComplicatedSlowpoke()
+				}
+			}()
+		}
+	}
+}
+
 func main() {
 	args := os.Args
 	var kind string
+	var wg sync.WaitGroup
 	if len(args) > 2 {
 		num, err := strconv.Atoi(args[2])
 		if err != nil {
@@ -93,22 +109,8 @@ func main() {
 	}
 	now := time.Now()
         nano := now.UnixNano()
-	if kind == "getpid" {
-		for i := 0; i < 2000; i++ {
-			SimpleSpin()
-        	}
-	} else if kind == "spinx" {
-		for i := 0; i < 2000; i++ {
-			ComplicatedSlowpoke();
-        	}
-	} else if kind == "spin" {
-		for i := 0; i < 2000; i++ {
-			SlowpokeCheck();
-        	}
-	} else {
-		fmt.Println("wrong args")
-		return
-	}
+	SetupWorkers(20, kind, &wg)
+	wg.Wait()
 	now = time.Now()
 	done_nano := now.UnixNano()
         fmt.Printf("%d\n", (done_nano - nano)/1000);

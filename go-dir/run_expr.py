@@ -79,17 +79,17 @@ def sanitize_env():
     
 if __name__ == '__main__':
     os.chdir(basedir)
-    # r = build_image()
-    # if not r:
-    #     print('docker image build problem')
-    #     exit(1)
+    r = build_image()
+    if not r:
+        print('docker image build problem')
+        exit(1)
     sanitize_env()
-    for kind in ['getpid', 'spin', 'spinx']:
+    for kind in ['spinx']:
         for num in range(11):
-            for lim in [True, False]:
+            for lim in [True]:
                 results = []
-                expr = Expr(kind, num*1000, lim)
-                for repeat in range(10):
+                expr = Expr(kind, num*200, lim)
+                for repeat in range(5):
                     res = run_expr(expr)
                     results.append(str(res))
                 with open(datadir / expr.name(), 'w') as f:
