@@ -34,7 +34,7 @@ def create_yaml(expr):
     with open(yamldir / f"{expr.yaml_file()}", 'w') as f:
         f.write(template.replace('{{kind}}', expr.kind)
                         .replace('{{num}}', str(expr.num))
-                        .replace('{{cpu}}', 'cpu: 1000m' if expr.lim else ''))
+                        .replace('{{cpu}}', 'cpu: 1000m' if expr.lim else 'cpu: 1010m'))
 
 def runcmd_capture(cmd):
     print(f'[?] {cmd}')
@@ -84,12 +84,12 @@ if __name__ == '__main__':
         print('docker image build problem')
         exit(1)
     sanitize_env()
-    for kind in ['getpid', 'spin', 'spinx']:
-        for num in range(11):
+    for kind in ['spin', 'spinx', 'spinxx']:
+        for num in range(10):
             for lim in [True, False]:
                 results = []
-                expr = Expr(kind, num*1000, lim)
-                for repeat in range(10):
+                expr = Expr(kind, num*200, lim)
+                for repeat in range(5):
                     res = run_expr(expr)
                     results.append(str(res))
                 with open(datadir / expr.name(), 'w') as f:
