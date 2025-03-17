@@ -30,7 +30,7 @@ func getThreadCPUTime() int64 {
 	return time.Nano()
 }
 
-func ComplicatedSlowpoke() {
+func MoreComplicatedSlowpoke() {
 	takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
 	sleepTime := int64(delayMicros*1000.0);
 	common := min(takenSurplus, sleepTime);
@@ -52,23 +52,46 @@ func ComplicatedSlowpoke() {
 	runtime.UnlockOSThread()
 }
 
-func SlowpokeCheck() {
-	lockThread := true
-	if delayMicros >= 0 {
-		if lockThread {
-			runtime.LockOSThread()
-		}
+func ComplicatedSlowpoke() {
+	takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
+	sleepTime := int64(delayMicros*1000.0);
+	common := min(takenSurplus, sleepTime);
+	takenSurplus -= common;
+	sleepTime -= common;
+	runtime.LockOSThread()
+	current := getThreadCPUTime()
+	target := current + sleepTime
 
-		start := getThreadCPUTime()
-		target := start + int64(delayMicros*1000.0)
-
-		for getThreadCPUTime() < target {
+	for current < target {
+		for i := int64(0) ; i < 2000000; i++ {
 		}
-
-		if lockThread {
-			runtime.UnlockOSThread()
-		}
+		current = getThreadCPUTime();
 	}
+
+	takenSurplus += current - target;
+	atomic.AddInt64(&sleepSurplus, takenSurplus);
+
+	runtime.UnlockOSThread()
+}
+
+func SlowpokeCheck() {
+	takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
+	sleepTime := int64(delayMicros*1000.0);
+	common := min(takenSurplus, sleepTime);
+	takenSurplus -= common;
+	sleepTime -= common;
+	runtime.LockOSThread()
+	current := getThreadCPUTime()
+	target := current + sleepTime
+
+	for current < target {
+		current = getThreadCPUTime();
+	}
+
+	takenSurplus += current - target;
+	atomic.AddInt64(&sleepSurplus, takenSurplus);
+
+	runtime.UnlockOSThread()
 }
 
 func SimpleSpin() {
@@ -107,6 +130,7 @@ func main() {
 		fmt.Println("wrong args")
 		return
 	}
+	var wg sync.WaitGroup
 	now := time.Now()
         nano := now.UnixNano()
 	SetupWorkers(20, kind, &wg)

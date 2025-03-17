@@ -34,7 +34,7 @@ def create_yaml(expr):
     with open(yamldir / f"{expr.yaml_file()}", 'w') as f:
         f.write(template.replace('{{kind}}', expr.kind)
                         .replace('{{num}}', str(expr.num))
-                        .replace('{{cpu}}', 'cpu: 1000m' if expr.lim else ''))
+                        .replace('{{cpu}}', 'cpu: 1000m' if expr.lim else 'cpu: 1010m'))
 
 def runcmd_capture(cmd):
     print(f'[?] {cmd}')
