@@ -3,13 +3,13 @@ package slowpoke
 import (
 	"golang.org/x/sys/unix"
 	"encoding/json"
+	"encoding/binary"
 	"fmt"
 	"net/http"
 	"bytes"
 	"os"
 	"time"
 	"context"
-	"runtime"
 	"github.com/eniac/mucache/pkg/common"
 	"github.com/eniac/mucache/pkg/utility"
 	"sync"
@@ -24,6 +24,8 @@ var (
 	prerun bool
 	requestCounters sync.Map
 	sleepSurplus int64 = 0
+
+	req_events int64
 )
 
 func min(a, b int64) int64 {
@@ -126,6 +128,41 @@ func SlowpokeInit() {
 		fmt.Printf("SLOWPOKE_PRERUN=%t\n", prerun)
 	}
 
+	var fifo_path string;
+	var ok bool;
+	if fifo_path, ok = os.LookupEnv("SLOWPOKE_FIFO_PATH"); ok {
+		fmt.Printf("SLOWPOKE_FIFO=%s\n", fifo_path)
+	}
+
+	fmt.Println("wtf:")
+	go func () {
+		file, err := os.OpenFile(fifo_path, os.O_WRONLY, os.ModeNamedPipe)
+		if err != nil {
+			fmt.Println("Error opening file:", err)
+			return
+		}
+		defer file.Close()
+		prev_i := int64(0)
+		i := req_events
+		buf := make([]byte, 8)
+		for {
+			<-time.After(10 * time.Millisecond)
+			i = req_events
+			if i - prev_i > 5000 {
+				value := (i - prev_i) * int64(delayMicros) * int64(1000)
+				binary.LittleEndian.PutUint64(buf, uint64(value))
+				_, err = file.Write(buf);
+				if err != nil {
+					fmt.Println("Error writing to pipe:", err)
+					os.Stdout.Sync()
+					return
+				}
+			    	/* fmt.Println("get more than 10000 requests"); */
+				prev_i = i
+			}
+		}
+	}()
+
 	if !prerun {
 		return
 	}
@@ -175,34 +212,7 @@ func SlowpokeCheck(serviceFuncName string) {
 	}
 
 	// Delay
-	lockThread := true
-	if delayMicros >= 0 {
-		// Threads need to be locked because otherwise util.ThreadCPUTime() can change in the middle of execution
-		takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
-		sleepTime := int64(delayMicros*1000.0);
-		common := min(takenSurplus, sleepTime);
-		takenSurplus -= common;
-		sleepTime -= common;
-		if lockThread {
-			runtime.LockOSThread()
-		}
-
-		current := getThreadCPUTime()
-		target := current + sleepTime
-
-		for current < target {
-			for i := int64(0) ; i < 200000; i++ {
-			}
-			current = getThreadCPUTime();
-		}
-
-		takenSurplus += current - target;
-		atomic.AddInt64(&sleepSurplus, takenSurplus);
-
-		if lockThread {
-			runtime.UnlockOSThread()
-		}
-	}
+	atomic.AddInt64(&req_events, 1);
 }
 
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
