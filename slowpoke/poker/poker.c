@@ -99,14 +99,11 @@ void *monitor_fifo(void *arg) {
 		}
 	    }
 	    long long nanosleep = *(long long *)(&buffer[0]);
-	    system("ps -eT -o pid,ppid,pgid,comm,stat");
 	    if (kill(-child_pgid, SIGSTOP) == -1) {
 		printf("error in stopping");
 		fflush(stdout);
 	    }
-	    system("ps -eT -o pid,ppid,pgid,comm,stat");
             precise_sleep(nanosleep);
-	    system("ps -eT -o pid,ppid,pgid,comm,stat");
 	    if (kill(-child_pgid, SIGCONT) == -1) {
 		printf("error in conting");
 		fflush(stdout);

@@ -146,7 +146,7 @@ func SlowpokeInit() {
 		i := req_events
 		buf := make([]byte, 8)
 		for {
-			<-time.After(10 * time.Millisecond)
+			<-time.After(100 * time.Millisecond)
 			i = req_events
 			if i - prev_i > 5000 {
 				value := (i - prev_i) * int64(delayMicros) * int64(1000)
