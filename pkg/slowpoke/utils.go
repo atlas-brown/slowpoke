@@ -13,7 +13,6 @@ import (
 	"github.com/eniac/mucache/pkg/common"
 	"github.com/eniac/mucache/pkg/utility"
 	"sync"
-	"sync/atomic"
 )
 
 const printIntervalMillis = 30*1000
@@ -25,7 +24,7 @@ var (
 	requestCounters sync.Map
 	sleepSurplus int64 = 0
 
-	req_events int64
+	req_events chan int = make(chan int)
 )
 
 func min(a, b int64) int64 {
@@ -134,7 +133,6 @@ func SlowpokeInit() {
 		fmt.Printf("SLOWPOKE_FIFO=%s\n", fifo_path)
 	}
 
-	fmt.Println("wtf:")
 	go func () {
 		file, err := os.OpenFile(fifo_path, os.O_WRONLY, os.ModeNamedPipe)
 		if err != nil {
@@ -142,14 +140,13 @@ func SlowpokeInit() {
 			return
 		}
 		defer file.Close()
-		prev_i := int64(0)
-		i := req_events
+		i := int64(0)
 		buf := make([]byte, 8)
 		for {
-			<-time.After(10 * time.Millisecond)
-			i = req_events
-			if i - prev_i > 0 {
-				value := (i - prev_i) * int64(delayMicros) * int64(1000)
+			<-req_events
+			i ++;
+			if i > 500 {
+				value := i * int64(delayMicros) * int64(1000)
 				binary.LittleEndian.PutUint64(buf, uint64(value))
 				_, err = file.Write(buf);
 				if err != nil {
@@ -157,8 +154,7 @@ func SlowpokeInit() {
 					os.Stdout.Sync()
 					return
 				}
-			    	/* fmt.Println("get more than 10000 requests"); */
-				prev_i = i
+				i = 0;
 			}
 		}
 	}()
@@ -212,7 +208,7 @@ func SlowpokeCheck(serviceFuncName string) {
 	}
 
 	// Delay
-	atomic.AddInt64(&req_events, 1);
+	req_events <- 1;
 }
 
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
