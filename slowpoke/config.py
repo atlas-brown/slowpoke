@@ -189,15 +189,15 @@ def get_cpu_quota(benchmark, request):
         return get_cpu_quota_synthetic(request)
     elif benchmark == "boutique":
         return {
-            "cart":1,
-            "checkout":1,
-            "currency":1,
-            "email":1,
-            "frontend":1,
-            "payment":1,
-            "product_catalog":1,
-            "recommendations":1,
-            "shipping":1
+            "cart":2,
+            "checkout":2,
+            "currency":2,
+            "email":2,
+            "frontend":2,
+            "payment":2,
+            "product_catalog":2,
+            "recommendations":2,
+            "shipping":2
         }
     elif benchmark == "social":
         return {
