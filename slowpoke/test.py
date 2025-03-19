@@ -79,6 +79,8 @@ class Runner:
             print(f"    [exp] Error running {cmd}")
             return 0
         throughput = self.num_req / (sum(times)/len(times))
+        print(f"    [exp] Times: {times}")
+        print(f"    [exp] Throughput: {throughput}")
         return throughput
 
     def run(self):
@@ -122,7 +124,7 @@ class Runner:
                         delay = 0
                     else:
                         delay = int(
-                            ((self.target_processing_time_range[1] - p_t)*self.request_ratio[self.target_service])*self.cpu_quota[service] / self.request_ratio[service]*self.cpu_quota[self.target_service]
+                            ((self.target_processing_time_range[1] - p_t)*self.request_ratio[self.target_service])*self.cpu_quota[service] / (self.request_ratio[service]*self.cpu_quota[self.target_service])
                         )
                     service_delay[service] = delay
             res = self.exp(service_delay, processing_time)

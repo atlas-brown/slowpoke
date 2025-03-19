@@ -219,7 +219,7 @@ run_test $benchmark &
 pid=$!
 
 # sleep 0.9*duration
-sleep $(echo "$duration*0.7" | bc -l)
+sleep $(echo "$duration*0.8" | bc -l)
 echo "[run.sh] Checking the resource usage"
 kubectl top pods
 
