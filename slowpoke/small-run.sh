@@ -41,7 +41,7 @@ export SLOWPOKE_PRERUN=false
 # export SLOWPOKE_DELAY_MICROS_POSTSTORAGE=0
 
 benchmark=boutique
-request=${2:-home}
+request=${2:-mix}
 thread=${3:-4}
 conn=${4:-128}
 # duration=${5:-10}
