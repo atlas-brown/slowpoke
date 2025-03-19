@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: config-service8
+    labels:
+        name: config-service8
+    namespace: default
+data:
+    conf.json: '{"processes":10,"logging":false,"protocol":"grpc","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE8},"threads":1}}]}'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: service8
+    namespace: default
+    labels: {}
+spec:
+    selector:
+        matchLabels:
+            app: service8
+            version: ""
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: service8
+                version: ""
+            annotations: {}
+        spec:
+            nodeName: worker3
+            containers:
+                - name: app
+                  image: yizhengx/hydragen:fanout-w10-grpc-sync
+                  imagePullPolicy: Always
+                  env:
+                    - name: SERVICE_NAME
+                      value: service8
+                    - name: GOMEMLIMIT
+                      value: "1024000000"
+                    - name: SLOWPOKE_DELAY_MICROS
+                      value: "${SLOWPOKE_DELAY_MICROS_SERVICE8}"
+                    - name: SLOWPOKE_PRERUN
+                      value: "${SLOWPOKE_PRERUN}"
+                  ports:
+                    - containerPort: 5000
+                  volumeMounts:
+                    - mountPath: /usr/src/emulator/config
+                      name: config-data-volume
+                  readinessProbe:
+                    exec:
+                        command: [/usr/bin/grpc_health_probe, '-addr=:5000']
+                    initialDelaySeconds: 5
+                    periodSeconds: 1
+                  resources:
+                    limits:
+                        cpu: 1000m
+                        memory: 1024M
+                    requests:
+                        cpu: 1000m
+                        memory: 512M
+            volumes:
+                - name: config-data-volume
+                  configMap:
+                    name: config-service8
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: service8
+    namespace: default
+    labels: {}
+    annotations:
+        grpc: /
+spec:
+    selector:
+        app: service8
+    ports:
+        - name: grpc
+          port: 80
+          targetPort: 5000

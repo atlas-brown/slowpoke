@@ -3,7 +3,36 @@ package hotel
 import (
 	"context"
 	"github.com/eniac/mucache/pkg/slowpoke"
+	"os"
+	"github.com/goccy/go-json"
+	"fmt"
 )
+
+func InitLocations() {
+	ctx := context.Background()
+	catalogJSON, err := os.ReadFile("/app/internal/hotel/data/hotels.json")
+	if err != nil {
+		panic(err)
+	}
+	var data []map[string]interface{}
+	err = json.Unmarshal(catalogJSON, &data)
+	if err != nil {
+		panic(err)
+	}
+	for _, item := range data {
+		hotelId, _ := item["id"].(string)
+		// name, _ := item["name"].(string)
+		// phone, _ := item["phone"].(string)
+		addr, _ := item["address"].(map[string]interface{})
+		location, _ := addr["city"].(string)
+		// rate := 100
+		// capacity := 11
+		// info := getRandomString(1000)
+
+		StoreHotelLocation(ctx, hotelId, location)
+	}
+	fmt.Printf("Initialized %d locations \n", len(data))
+}
 
 func Nearby(ctx context.Context, inDate string, outDate string, location string) []Rate {
 	// Find the hotel ids in that location

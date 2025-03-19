@@ -35,9 +35,9 @@ func getProfiles(ctx context.Context, req *hotel.GetProfilesRequest) *hotel.GetP
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
+	hotel.InitProfiles()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/store_profile", wrappers.NonROWrapper[hotel.StoreProfileRequest, hotel.StoreProfileResponse](storeProfile))
 	http.HandleFunc("/ro_get_profiles", wrappers.ROWrapper[hotel.GetProfilesRequest, hotel.GetProfilesResponse](getProfiles))

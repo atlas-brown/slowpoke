@@ -35,9 +35,9 @@ func getRates(ctx context.Context, req *hotel.GetRatesRequest) *hotel.GetRatesRe
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
+	hotel.InitRates()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/store_rate", wrappers.NonROWrapper[hotel.StoreRateRequest, hotel.StoreRateResponse](storeRate))
 	http.HandleFunc("/ro_get_rates", wrappers.ROWrapper[hotel.GetRatesRequest, hotel.GetRatesResponse](getRates))
