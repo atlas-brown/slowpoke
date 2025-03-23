@@ -16,7 +16,7 @@ do
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
 
-    output_file=synthetic/$exp/one-service-per-node-results/$exp-service$target_service.log
+    output_file=synthetic/$exp/one-service-per-node-results/$exp-service$target_service-8-512.log
     
     if [[ -e $output_file ]]; then
         echo "File $output_file already exists. Skipping..."
@@ -29,8 +29,8 @@ do
         -r $exp \
         -x service$target_service \
         --num_exp 10 \
-        -c 256 \
-        -t 4 \
+        -c 512 \
+        -t 8 \
         --num_req 20000 \
         --clien_cpu_quota 2 \
         --random_seed $random_seed \
