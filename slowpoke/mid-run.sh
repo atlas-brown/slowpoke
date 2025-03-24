@@ -45,6 +45,13 @@ request=${2:-mix}
 thread=${3:-4}
 conn=${4:-128}
 # duration=${5:-10}
-
-bash run.sh $benchmark $request $thread $conn
+for c in 500m 1000m 2000m 3000m; do
+    find boutique/yamls/ -name '*.yaml' -exec sed -i "s/cpu: [0-9]*m/cpu: ${c}/g" {} +
+    for d in 0 200 400 600; do
+	for repeat in {1..10}; do 
+	    export SLOWPOKE_DELAY_MICROS_FRONTEND=$d
+	    bash run.sh $benchmark $request $thread $conn | tee results/diff-$c-$d-$repeat
+	done
+    done
+done
 # bash run-wrk2.sh $request $thread $conn $duration $rate

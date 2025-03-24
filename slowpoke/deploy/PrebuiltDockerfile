@@ -37,7 +37,10 @@ RUN go mod download
 COPY ./cmd ./cmd
 COPY ./internal ./internal
 COPY ./pkg ./pkg
+RUN mkdir /slowpoke
+COPY ./slowpoke/poker /slowpoke/poker
 
+RUN gcc /slowpoke/poker/poker.c -O2 -o /usr/bin/poker
 # Build all applications inside /app/cmd/boutique/
 RUN mkdir -p /app/bin && \
     for d in /app/cmd/${BENCHMARK}/*; do \
@@ -54,4 +57,4 @@ ENV NODE_IDX=$NODE_IDX
 ENV CM_ENABLED=$CM_ENABLED
 ENV EXPIRATION_TTL=$EXPIRATION_TTL
 
-ENTRYPOINT ["/bin/sh", "-c", "/app/bin/${APP_NAME} -logtostderr=true"]
+ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/poker /app/bin/${APP_NAME} -logtostderr=true"]
