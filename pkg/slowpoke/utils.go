@@ -140,13 +140,21 @@ func SlowpokeInit() {
 			return
 		}
 		defer file.Close()
-		i := int64(0)
+		accumulatedDelays := int64(0)
 		buf := make([]byte, 8)
+		value := accumulatedDelays
+		binary.LittleEndian.PutUint64(buf, uint64(value))
+		_, err = file.Write(buf);
+		if err != nil {
+			fmt.Println("Error writing to pipe:", err)
+			os.Stdout.Sync()
+			return
+		}
 		for {
 			<-req_events
-			i ++;
-			if i > 500 {
-				value := i * int64(delayMicros) * int64(1000)
+			accumulatedDelays += int64(delayMicros) * int64(1000)
+			if accumulatedDelays > 20000000 {
+				value := accumulatedDelays
 				binary.LittleEndian.PutUint64(buf, uint64(value))
 				_, err = file.Write(buf);
 				if err != nil {
@@ -154,7 +162,7 @@ func SlowpokeInit() {
 					os.Stdout.Sync()
 					return
 				}
-				i = 0;
+				accumulatedDelays = 0;
 			}
 		}
 	}()
