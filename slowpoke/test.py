@@ -53,7 +53,7 @@ class Runner:
                 env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay)
         else:
             for service, delay in service_delay.items():
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay + processing_time[service])
+                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str((delay + processing_time[service])/self.cpu_quota[service])
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
         cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
