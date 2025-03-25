@@ -23,6 +23,7 @@ var (
 	prerun bool
 	requestCounters sync.Map
 	sleepSurplus int64 = 0
+	pokerBatchThreshold int64
 
 	req_events chan int = make(chan int)
 )
@@ -126,6 +127,11 @@ func SlowpokeInit() {
 		}
 		fmt.Printf("SLOWPOKE_PRERUN=%t\n", prerun)
 	}
+	pokerBatchThreshold = 20000000
+	if env, ok := os.LookupEnv("SLOWPOKE_POKER_BATCH_THRESHOLD"); ok {
+		fmt.Sscanf(env, "%d", &pokerBatchThreshold)
+		fmt.Printf("SLOWPOKE_POKER_BATCH_THRESHOLD=%d\n", pokerBatchThreshold)
+	}
 
 	var fifo_path string;
 	var ok bool;
@@ -153,7 +159,7 @@ func SlowpokeInit() {
 		for {
 			<-req_events
 			accumulatedDelays += int64(delayMicros) * int64(1000)
-			if accumulatedDelays > 20000000 {
+			if accumulatedDelays > pokerBatchThreshold {
 				value := accumulatedDelays
 				binary.LittleEndian.PutUint64(buf, uint64(value))
 				_, err = file.Write(buf);

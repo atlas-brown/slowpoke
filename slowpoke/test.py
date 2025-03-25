@@ -32,6 +32,7 @@ class Runner:
         self.cpu_quota = config.get_cpu_quota(self.benchmark, self.request_type)
         self.target_processing_time_range = [0, self.baseline_service_processing_time[self.target_service]]
         self.baseline_throughputs = []
+        self.poker_batch = args.poker_batch
     
     def get_env_for_print(self, env):
         env_p = {}
@@ -45,6 +46,7 @@ class Runner:
     def exp(self, service_delay, processing_time):
         env = os.environ.copy()
         env["CLIENT_CPU_QUOTA"] = str(self.client_cpu_quota)
+        env["SLOWPOKE_POKER_BATCH_THRESHOLD"] = str(self.poker_batch)
         if self.benchmark == "synthetic":
             # This is used to set the processing time for synthetic benchmarks
             for service, processing_time in processing_time.items():
@@ -214,6 +216,7 @@ def parse():
     parser.add_argument("--num_req", type=int, default=50000)
     parser.add_argument("--clien_cpu_quota", type=int, default=-1)
     parser.add_argument("--random_seed", type=int, default=1234)
+    parser.add_argument("--poker_batch", type=int, default=20000000)
     args = parser.parse_args()
     return args
 

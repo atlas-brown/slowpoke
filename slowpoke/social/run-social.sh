@@ -2,7 +2,10 @@
 
 cd $(dirname $0)/..
 
-# python3 test.py -b social -r mix -x composepost --num_exp 5
-python3 test.py -b social -r mix -x hometimeline -t 8 -c 512 --num_exp 10 >social/new-results/hometimeline-8-512-100000.log
-# python3 test.py -b social -r mix -x hometimeline --num_exp 10
-
+FILE=social/one-service-per-node-poker/hometimeline-4-128-50000-poker50000000-full.log
+# Check if exists to avoid overwritting
+if [ -e "$FILE" ]; then
+    echo "File $FILE already exists. Exiting..."
+    exit 1  # Exit with status code 1 to indicate an error
+fi
+python3 test.py -b social -r mix -x hometimeline -t 4 -c 128 --num_exp 10 --poker_batch 50000000 --num_req 50000 >$FILE
