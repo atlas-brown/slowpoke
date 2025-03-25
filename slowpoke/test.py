@@ -37,9 +37,7 @@ class Runner:
     def get_env_for_print(self, env):
         env_p = {}
         for key, value in env.items():
-            if key.startswith("SLOWPOKE"):
-                env_p[key] = value
-            if key.startswith("PROCESSING_TIME"):
+            if key.startswith("SLOWPOKE") or key.startswith("PROCESSING_TIME") or key.startswith("CLIENT"):
                 env_p[key] = value
         return env_p
     
@@ -54,8 +52,10 @@ class Runner:
             for service, delay in service_delay.items():
                 env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay)
         else:
+            for service, p_ in processing_time.items():
+                env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)
             for service, delay in service_delay.items():
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str((delay + processing_time[service])/self.cpu_quota[service])
+                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay/self.cpu_quota[service])
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
         cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"

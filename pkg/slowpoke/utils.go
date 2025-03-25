@@ -13,6 +13,8 @@ import (
 	"github.com/eniac/mucache/pkg/common"
 	"github.com/eniac/mucache/pkg/utility"
 	"sync"
+	"runtime"
+	"sync/atomic"
 )
 
 const printIntervalMillis = 30*1000
@@ -20,6 +22,7 @@ const printIntervalMillis = 30*1000
 var (
 	// requestCounters map[int]map[string]int
 	delayMicros int
+	processingMicros int
 	prerun bool
 	requestCounters sync.Map
 	sleepSurplus int64 = 0
@@ -119,6 +122,11 @@ func SlowpokeInit() {
 	if env, ok := os.LookupEnv("SLOWPOKE_DELAY_MICROS"); ok {
 		fmt.Sscanf(env, "%d", &delayMicros)
 		fmt.Printf("SLOWPOKE_DELAY_MICROS=%d\n", delayMicros)
+	}
+	processingMicros = -1
+	if env, ok := os.LookupEnv("SLOWPOKE_PROCESSING_MICROS"); ok {
+		fmt.Sscanf(env, "%d", &processingMicros)
+		fmt.Printf("SLOWPOKE_PROCESSING_MICROS=%d\n", processingMicros)
 	}
 	prerun = false
 	if env, ok := os.LookupEnv("SLOWPOKE_PRERUN"); ok {
@@ -223,6 +231,36 @@ func SlowpokeCheck(serviceFuncName string) {
 
 	// Delay
 	req_events <- 1;
+
+	// Process
+	lockThread := true
+	if processingMicros >= 0 {
+		// Threads need to be locked because otherwise util.ThreadCPUTime() can change in the middle of execution
+		takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
+		sleepTime := int64(processingMicros*1000.0);
+		common := min(takenSurplus, sleepTime);
+		takenSurplus -= common;
+		sleepTime -= common;
+		if lockThread {
+			runtime.LockOSThread()
+		}
+
+		current := getThreadCPUTime()
+		target := current + sleepTime
+
+		for current < target {
+			for i := int64(0) ; i < 200000; i++ {
+			}
+			current = getThreadCPUTime();
+		}
+
+		takenSurplus += current - target;
+		atomic.AddInt64(&sleepSurplus, takenSurplus);
+
+		if lockThread {
+			runtime.UnlockOSThread()
+		}
+	}
 }
 
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
