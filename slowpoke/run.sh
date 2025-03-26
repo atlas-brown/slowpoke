@@ -136,13 +136,13 @@ run_test() {
     sleep 10
     if [[ $benchmark == "boutique" ]]; then
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
-        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
+        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 10s -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
     elif [[ $benchmark == "synthetic" ]]; then
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1"
-        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 10s -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
     else
         echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000"
-        kubectl exec $ubuntu_client -- /wrk/wrk -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 10s -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000
     fi
 }
 
