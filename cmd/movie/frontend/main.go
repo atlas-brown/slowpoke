@@ -26,7 +26,6 @@ func compose(ctx context.Context, req *movie.ComposeRequest) *movie.ComposeRespo
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)

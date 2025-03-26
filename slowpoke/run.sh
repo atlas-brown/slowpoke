@@ -135,14 +135,14 @@ run_test() {
     echo "[run.sh] Running the actual test"
     sleep 10
     if [[ $benchmark == "boutique" ]]; then
-        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
-        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 10s -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
+        echo "[run.sh] /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80"
+        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
     elif [[ $benchmark == "synthetic" ]]; then
-        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1"
-        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 10s -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        echo "[run.sh] /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1"
+        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
     else
-        echo "[run.sh] /wrk/wrk -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000"
-        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 10s -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        echo "[run.sh] /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000"
+        kubectl exec $ubuntu_client -- /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000
     fi
 }
 
@@ -153,7 +153,7 @@ populate() {
         echo "[run.sh] No population needed for $benchmark"
         return
     fi
-    if [[ $benchmark == "hotel" ]]; then
+    if [[ $benchmark == "hotel" || $benchmark == "movie" ]]; then
         echo "[run.sh] Copying $benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
         kubectl cp $benchmark/data/analysis.txt $ubuntu_client:/analysis.txt
         echo "[run.sh] Finished populating $benchmark"

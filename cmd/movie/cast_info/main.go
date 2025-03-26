@@ -8,6 +8,9 @@ import (
 	"github.com/eniac/mucache/pkg/wrappers"
 	"net/http"
 	"runtime"
+	"os"
+	"github.com/goccy/go-json"
+	"strconv"
 )
 
 func heartbeat(w http.ResponseWriter, r *http.Request) {
@@ -33,9 +36,29 @@ func readCastInfos(ctx context.Context, req *movie.ReadCastInfosRequest) *movie.
 	return &resp
 }
 
+func populate() {
+	ctx := context.Background()
+    cast_json, err := os.ReadFile("/app/internal/movie/data/casts_1_500.json")
+	if err != nil {
+		panic(err)
+	}
+	var data []map[string]interface{}
+	err = json.Unmarshal(cast_json, &data)
+	if err != nil {
+		panic(err)
+	}
+	for _, cast := range data {
+		castId := strconv.Itoa(int(cast["id"].(float64)))
+		name := cast["name"].(string)
+		info := cast["biography"].(string)
+		movie.StoreCastInfo(ctx, castId, name, info)
+	}
+	fmt.Println("Populated %d movie ids", len(data))
+}
+
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
+	populate()
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/store_cast_info", wrappers.NonROWrapper[movie.StoreCastInfoRequest, movie.StoreCastInfoResponse](storeCastInfo))

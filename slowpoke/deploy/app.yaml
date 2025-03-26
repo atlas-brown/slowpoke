@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: "${APP_NAME_NO_UNDERSCORES}"
-          image: ${docker_io_username}/mucache:${application_namespace}
+          image: ${docker_io_username}/mucache:${application_namespace}-poker-time-spinning
           env:
             - name: APP_PORT
               value: "3000"
@@ -59,20 +59,17 @@ spec:
               value: "${EXPIRATION_TTL}"
             - name: SLOWPOKE_DELAY_MICROS
               value: "${SLOWPOKE_DELAY_MICROS_${APP_NAME_NO_UNDERSCORES_UPPERCASE}}"
+            - name: SLOWPOKE_PROCESSING_MICROS
+              value: "${SLOWPOKE_PROCESSING_MICROS_${APP_NAME_NO_UNDERSCORES_UPPERCASE}}"
             - name: SLOWPOKE_PRERUN
               value: "${SLOWPOKE_PRERUN}"
+            - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+              value: "${SLOWPOKE_POKER_BATCH_THRESHOLD}"
           ports:
             - containerPort: 3000
             - containerPort: 5550
             - containerPort: 5551
           imagePullPolicy: Always
-          resources:
-            limits:
-              cpu: 1000m
-              memory: 4Gi
-            requests:
-              cpu: 1000m
-              memory: 4Gi
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

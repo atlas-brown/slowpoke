@@ -26,7 +26,6 @@ func readPage(ctx context.Context, req *movie.ReadPageRequest) *movie.ReadPageRe
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
