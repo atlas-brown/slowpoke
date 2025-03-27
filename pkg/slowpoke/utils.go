@@ -3,11 +3,11 @@ package slowpoke
 import (
 	"golang.org/x/sys/unix"
 	"encoding/json"
-	"encoding/binary"
 	"fmt"
 	"net/http"
 	"bytes"
 	"os"
+	"net"
 	"time"
 	"context"
 	"github.com/eniac/mucache/pkg/common"
@@ -19,11 +19,11 @@ const printIntervalMillis = 30*1000
 // {"thread_id" :{"requestName": counter}}
 var (
 	// requestCounters map[int]map[string]int
-	delayMicros int
+	delayNanos int64
 	prerun bool
 	requestCounters sync.Map
-	sleepSurplus int64 = 0
-
+	accumulatedDelay int64 = 0
+	sync_guard sync.RWMutex
 	req_events chan int = make(chan int)
 )
 
@@ -114,10 +114,11 @@ func performRequest[T interface{}](ctx context.Context, req *http.Request, res *
 }
 
 func SlowpokeInit() {
-	delayMicros = -1
+	delayMicros := -1
 	if env, ok := os.LookupEnv("SLOWPOKE_DELAY_MICROS"); ok {
 		fmt.Sscanf(env, "%d", &delayMicros)
 		fmt.Printf("SLOWPOKE_DELAY_MICROS=%d\n", delayMicros)
+		delayNanos = int64(delayMicros) * int64(1000);
 	}
 	prerun = false
 	if env, ok := os.LookupEnv("SLOWPOKE_PRERUN"); ok {
@@ -132,40 +133,6 @@ func SlowpokeInit() {
 	if fifo_path, ok = os.LookupEnv("SLOWPOKE_FIFO_PATH"); ok {
 		fmt.Printf("SLOWPOKE_FIFO=%s\n", fifo_path)
 	}
-
-	go func () {
-		file, err := os.OpenFile(fifo_path, os.O_WRONLY, os.ModeNamedPipe)
-		if err != nil {
-			fmt.Println("Error opening file:", err)
-			return
-		}
-		defer file.Close()
-		accumulatedDelays := int64(0)
-		buf := make([]byte, 8)
-		value := accumulatedDelays
-		binary.LittleEndian.PutUint64(buf, uint64(value))
-		_, err = file.Write(buf);
-		if err != nil {
-			fmt.Println("Error writing to pipe:", err)
-			os.Stdout.Sync()
-			return
-		}
-		for {
-			<-req_events
-			accumulatedDelays += int64(delayMicros) * int64(1000)
-			if accumulatedDelays > 20000000 {
-				value := accumulatedDelays
-				binary.LittleEndian.PutUint64(buf, uint64(value))
-				_, err = file.Write(buf);
-				if err != nil {
-					fmt.Println("Error writing to pipe:", err)
-					os.Stdout.Sync()
-					return
-				}
-				accumulatedDelays = 0;
-			}
-		}
-	}()
 
 	if !prerun {
 		return
@@ -188,7 +155,6 @@ func getThreadCPUTime() int64 {
 	unix.ClockGettime(unix.CLOCK_THREAD_CPUTIME_ID, &time)
 	return time.Nano()
 }
-
 
 func SlowpokeCheck(serviceFuncName string) {
 	// // Record request
@@ -216,10 +182,20 @@ func SlowpokeCheck(serviceFuncName string) {
 	}
 
 	// Delay
-	req_events <- 1;
+	sync_guard.Lock()
+	accumulatedDelay += delayNanos
+	if accumulatedDelay > 80000000 {
+	   start := time.Now()
+	   time.Sleep(time.Duration(accumulatedDelay) * time.Nanosecond)
+	   elapsed := time.Since(start)
+	   accumulatedDelay -= elapsed.Nanoseconds()
+	}
+	sync_guard.Unlock()
 }
 
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
+	sync_guard.RLock()
+	sync_guard.RUnlock()
 	buf, err := json.Marshal(input)
 	if err != nil {
 		panic(err)
@@ -233,4 +209,29 @@ func Invoke[T interface{}](ctx context.Context, app string, method string, input
 	}
 	performRequest[T](ctx, req, &res, app, method, buf)
 	return res
+}
+
+type SlowpokeListener struct {
+	net.Listener
+}
+
+func (l *SlowpokeListener) Accept() (net.Conn, error) {
+        sync_guard.RLock()
+        sync_guard.RUnlock()
+	conn, err := l.Listener.Accept()
+	if err != nil {
+		return nil, err
+	}
+	return &tracedConn{Conn: conn}, nil
+}
+
+type tracedConn struct {
+	net.Conn
+}
+
+func (c *tracedConn) Read(b []byte) (n int, err error) {
+        sync_guard.RLock()
+        sync_guard.RUnlock()
+	n, err = c.Conn.Read(b)
+	return
 }
