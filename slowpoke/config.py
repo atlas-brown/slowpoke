@@ -201,35 +201,35 @@ def get_cpu_quota(benchmark, request):
         }
     elif benchmark == "social":
         return {
-            "composepost": 0.98,
-            "hometimeline": 0.98,
-            "poststorage": 0.98,
-            "socialgraph": 0.98,
-            "usertimeline": 0.98
+            "composepost": 2,
+            "hometimeline": 2,
+            "poststorage": 2,
+            "socialgraph": 2,
+            "usertimeline": 2
         }
     elif benchmark == "movie":
         return {
-            "castinfo": 1,
-            "composereview": 1,
-            "frontend": 1,
-            "movieid": 1,
-            "movieinfo": 1,
-            "moviereviews": 1,
-            "page": 1,
-            "plot": 1,
-            "reviewstorage": 1,
-            "uniqueid": 1,
-            "user": 1,
-            "userreviews": 1
+            "castinfo": 2,
+            "composereview": 2,
+            "frontend": 2,
+            "movieid": 2,
+            "movieinfo": 2,
+            "moviereviews": 2,
+            "page": 2,
+            "plot": 2,
+            "reviewstorage": 2,
+            "uniqueid": 2,
+            "user": 2,
+            "userreviews": 2
         }
     elif benchmark == "hotel":
         return {
-            "frontend": 1,
-            "profile": 1,
-            "rate": 1,
-            "reservation": 1,
-            "search": 1,
-            "user": 1
+            "frontend": 2,
+            "profile": 2,
+            "rate": 2,
+            "reservation": 2,
+            "search": 2,
+            "user": 2
         }
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
@@ -239,5 +239,5 @@ def get_cpu_quota_synthetic(request):
     num = len(service_reuse[topology])
     cpu_quota = {}
     for i in range(num):
-        cpu_quota[f"service{i}"] = 1
+        cpu_quota[f"service{i}"] = 2
     return cpu_quota

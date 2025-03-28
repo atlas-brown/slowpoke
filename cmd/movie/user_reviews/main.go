@@ -34,7 +34,6 @@ func readUserReviews(ctx context.Context, req *movie.ReadUserReviewsRequest) *mo
 }
 
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)

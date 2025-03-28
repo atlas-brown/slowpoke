@@ -8,6 +8,10 @@ import (
 	"github.com/eniac/mucache/pkg/wrappers"
 	"net/http"
 	"runtime"
+	"os"
+	"github.com/goccy/go-json"
+	"strings"
+	"strconv"
 )
 
 func heartbeat(w http.ResponseWriter, r *http.Request) {
@@ -33,9 +37,30 @@ func readPlot(ctx context.Context, req *movie.ReadPlotRequest) *movie.ReadPlotRe
 	return &resp
 }
 
+func populate() {
+	ctx := context.Background()
+    movie_json, err := os.ReadFile("/app/internal/movie/data/movies_1_500.json")
+	if err != nil {
+		panic(err)
+	}
+	var data []map[string]interface{}
+	err = json.Unmarshal(movie_json, &data)
+	if err != nil {
+		panic(err)
+	}
+	movie_id := 0
+	for _, movie_ := range data {
+		plot_id := strconv.Itoa(movie_id)
+		plot := strings.Repeat(movie_["overview"].(string), 20)
+		movie.WritePlot(ctx, plot_id, plot)
+		movie_id++
+	}
+	fmt.Println("Populated %d movie plots", movie_id)
+}
+
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
+	populate()
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/write_plot", wrappers.NonROWrapper[movie.WritePlotRequest, movie.WritePlotResponse](writePlot))

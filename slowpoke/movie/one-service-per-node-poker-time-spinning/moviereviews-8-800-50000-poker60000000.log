@@ -1,0 +1,740 @@
+benchmark                        : movie
+num_threads                      : 8
+num_conns                        : 800
+target_service                   : moviereviews
+request_type                     : mix
+repetitions                      : 3
+target_num_exp                   : 2
+pre_run                          : False
+num_req                          : 50000
+groundtruths                     : []
+slowdowns                        : []
+predicteds                       : []
+errs                             : []
+client_cpu_quota                 : 4
+random_seed                      : 1234
+request_ratio                    : {'castinfo': 0.9050900514, 'composereview': 0.1003336848, 'frontend': 0.1003336848, 'movieid': 0.1003336848, 'movieinfo': 0.9050900514, 'moviereviews': 0.9050900514, 'page': 0.9050900514, 'plot': 0.9050900514, 'reviewstorage': 1.005423736183, 'uniqueid': 0.1003336848, 'user': 0.2006673695, 'userreviews': 0.1003336848}
+baseline_service_processing_time : {'castinfo': 0, 'composereview': 0, 'frontend': 0, 'movieid': 0, 'movieinfo': 0, 'moviereviews': 1000, 'page': 0, 'plot': 0, 'reviewstorage': 0, 'uniqueid': 0, 'user': 0, 'userreviews': 0}
+cpu_quota                        : {'castinfo': 2, 'composereview': 2, 'frontend': 2, 'movieid': 2, 'movieinfo': 2, 'moviereviews': 2, 'page': 2, 'plot': 2, 'reviewstorage': 2, 'uniqueid': 2, 'user': 2, 'userreviews': 2}
+target_processing_time_range     : [0, 1000]
+baseline_throughputs             : []
+poker_batch                      : 60000000
+[test.py] Starting experiment...
+[test.py] >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Running experiment 0...
+[test.py] Actual processing time range: [0, 500]
+[test.py] Running baseline experiment
+    [exp] Running (pre_run: False) workload movie/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '60000000', 'SLOWPOKE_PROCESSING_MICROS_CASTINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEREVIEW': '0', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEID': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEREVIEWS': '1000', 'SLOWPOKE_PROCESSING_MICROS_PAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_PLOT': '0', 'SLOWPOKE_PROCESSING_MICROS_REVIEWSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_UNIQUEID': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_PROCESSING_MICROS_USERREVIEWS': '0', 'SLOWPOKE_DELAY_MICROS_CASTINFO': '0.0', 'SLOWPOKE_DELAY_MICROS_COMPOSEREVIEW': '0.0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEID': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEINFO': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEREVIEWS': '0.0', 'SLOWPOKE_DELAY_MICROS_PAGE': '0.0', 'SLOWPOKE_DELAY_MICROS_PLOT': '0.0', 'SLOWPOKE_DELAY_MICROS_REVIEWSTORAGE': '0.0', 'SLOWPOKE_DELAY_MICROS_UNIQUEID': '0.0', 'SLOWPOKE_DELAY_MICROS_USER': '0.0', 'SLOWPOKE_DELAY_MICROS_USERREVIEWS': '0.0'}
+    [exp] Executing cmd `bash run.sh movie mix 8 800 50000`:
+        [run.sh] Running benchmark movie with request mix, thread 8, conn 800, duration 60
+        [run.sh] Deleting all services
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/castinfo created
+        deployment.apps/castinfo created
+        service/composereview created
+        deployment.apps/composereview created
+        service/frontend created
+        deployment.apps/frontend created
+        service/movieid created
+        deployment.apps/movieid created
+        service/movieinfo created
+        deployment.apps/movieinfo created
+        service/moviereviews created
+        deployment.apps/moviereviews created
+        service/page created
+        deployment.apps/page created
+        service/plot created
+        deployment.apps/plot created
+        service/reviewstorage created
+        deployment.apps/reviewstorage created
+        service/uniqueid created
+        deployment.apps/uniqueid created
+        service/user created
+        deployment.apps/user created
+        service/userreviews created
+        deployment.apps/userreviews created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying movie/analysis.txt to ubuntu-client-76886f6bbd-778b6:/analysis.txt
+        [run.sh] Finished populating movie
+        [run.sh] Starting the rust proxy first for movie
+        [2m2025-03-26T03:55:34.883684Z[0m [32m INFO[0m [2mproxy::movie[0m[2m:[0m Reading movie analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c800 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   428.88ms  212.38ms   1.02s    69.77%
+        Req/Sec   175.88     76.07   400.00     74.14%
+        Latency Distribution
+        50%  476.54ms
+        75%  580.91ms
+        90%  667.36ms
+        99%  848.50ms
+        4088 requests in 3.02s, 311.39KB read
+        Requests/sec:   1353.91
+        Transfer/sec:    103.13KB
+        [run.sh] Speed is 1353.91, duration is 55
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 10s -t8 -c800 -d55s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        castinfo-6dbbbc7798-t6ltf        7m           104Mi
+        composereview-66f87f9c6-9x5sv    1m           2Mi
+        frontend-746fc9dd67-mjmsj        1m           2Mi
+        movieid-74fb965d-xxm74           1m           169Mi
+        movieinfo-6dd448b9c4-x7759       7m           175Mi
+        moviereviews-6f989f6b9f-pq4vk    7m           2Mi
+        page-574bf9bfc-mdkxm             7m           3Mi
+        plot-5db67bf687-rsfgz            8m           253Mi
+        reviewstorage-846567f494-qfdx5   8m           2Mi
+        ubuntu-client-76886f6bbd-778b6   8m           0Mi
+        uniqueid-545b5476f8-nct8n        7m           2Mi
+        user-54c559d799-8k9tx            1m           3Mi
+        userreviews-8685c67996-d4szn     1m           2Mi
+        Running 1m test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   502.79ms  183.21ms   1.48s    81.65%
+        Req/Sec   197.52     55.57   520.00     69.74%
+        Latency Distribution
+        50%  539.13ms
+        75%  606.12ms
+        90%  669.67ms
+        99%  801.52ms
+        50000 requests in 0.92m, 3.72MB read
+        Requests/sec:    909.09
+        Transfer/sec:     69.25KB
+        ------------------------------
+        stop time: 31.388846
+        stop time: 31.660579
+        stop time: 31.878115
+        stop time: 31.503070
+        stop time: 32.131430
+        stop time: 31.978467
+        stop time: 32.083115
+        stop time: 32.081055
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [31.388846, 31.660579, 31.878115, 31.50307, 32.13143, 31.978467, 32.083115, 32.081055]
+    [exp] Throughput: 1570.4462309500507
+[test.py] Baseline throughput: 1570.4462309500507
+[test.py] Running groundtruth experiment
+    [exp] Running (pre_run: False) workload movie/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '60000000', 'SLOWPOKE_PROCESSING_MICROS_CASTINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEREVIEW': '0', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEID': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEREVIEWS': '0', 'SLOWPOKE_PROCESSING_MICROS_PAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_PLOT': '0', 'SLOWPOKE_PROCESSING_MICROS_REVIEWSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_UNIQUEID': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_PROCESSING_MICROS_USERREVIEWS': '0', 'SLOWPOKE_DELAY_MICROS_CASTINFO': '0.0', 'SLOWPOKE_DELAY_MICROS_COMPOSEREVIEW': '0.0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEID': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEINFO': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEREVIEWS': '0.0', 'SLOWPOKE_DELAY_MICROS_PAGE': '0.0', 'SLOWPOKE_DELAY_MICROS_PLOT': '0.0', 'SLOWPOKE_DELAY_MICROS_REVIEWSTORAGE': '0.0', 'SLOWPOKE_DELAY_MICROS_UNIQUEID': '0.0', 'SLOWPOKE_DELAY_MICROS_USER': '0.0', 'SLOWPOKE_DELAY_MICROS_USERREVIEWS': '0.0'}
+    [exp] Executing cmd `bash run.sh movie mix 8 800 50000`:
+        [run.sh] Running benchmark movie with request mix, thread 8, conn 800, duration 60
+        [run.sh] Deleting all services
+        service "castinfo" deleted
+        deployment.apps "castinfo" deleted
+        service "composereview" deleted
+        deployment.apps "composereview" deleted
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "movieid" deleted
+        deployment.apps "movieid" deleted
+        service "movieinfo" deleted
+        deployment.apps "movieinfo" deleted
+        service "moviereviews" deleted
+        deployment.apps "moviereviews" deleted
+        service "page" deleted
+        deployment.apps "page" deleted
+        service "plot" deleted
+        deployment.apps "plot" deleted
+        service "reviewstorage" deleted
+        deployment.apps "reviewstorage" deleted
+        service "uniqueid" deleted
+        deployment.apps "uniqueid" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        service "userreviews" deleted
+        deployment.apps "userreviews" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/castinfo created
+        deployment.apps/castinfo created
+        service/composereview created
+        deployment.apps/composereview created
+        service/frontend created
+        deployment.apps/frontend created
+        service/movieid created
+        deployment.apps/movieid created
+        service/movieinfo created
+        deployment.apps/movieinfo created
+        service/moviereviews created
+        deployment.apps/moviereviews created
+        service/page created
+        deployment.apps/page created
+        service/plot created
+        deployment.apps/plot created
+        service/reviewstorage created
+        deployment.apps/reviewstorage created
+        service/uniqueid created
+        deployment.apps/uniqueid created
+        service/user created
+        deployment.apps/user created
+        service/userreviews created
+        deployment.apps/userreviews created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying movie/analysis.txt to ubuntu-client-76886f6bbd-v8jnm:/analysis.txt
+        [run.sh] Finished populating movie
+        [run.sh] Starting the rust proxy first for movie
+        [2m2025-03-26T03:57:49.292168Z[0m [32m INFO[0m [2mproxy::movie[0m[2m:[0m Reading movie analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c800 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   451.10ms  208.59ms   1.28s    77.09%
+        Req/Sec   188.91     74.93   380.00     67.86%
+        Latency Distribution
+        50%  465.92ms
+        75%  560.41ms
+        90%  668.34ms
+        99%  983.09ms
+        4328 requests in 3.02s, 329.67KB read
+        Requests/sec:   1430.80
+        Transfer/sec:    108.99KB
+        [run.sh] Speed is 1430.80, duration is 52
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 10s -t8 -c800 -d52s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        castinfo-6dbbbc7798-7xrkk        436m         63Mi
+        composereview-66f87f9c6-2sqch    115m         12Mi
+        frontend-746fc9dd67-rppz6        213m         11Mi
+        movieid-74fb965d-xrcpq           30m          181Mi
+        movieinfo-6dd448b9c4-rxn5m       217m         264Mi
+        moviereviews-644c8fdd4-rw4bk     475m         18Mi
+        page-574bf9bfc-bggkn             1864m        78Mi
+        plot-5db67bf687-nq29w            310m         147Mi
+        reviewstorage-846567f494-zhm5j   241m         13Mi
+        ubuntu-client-76886f6bbd-v8jnm   758m         88Mi
+        uniqueid-545b5476f8-ktsn2        33m          7Mi
+        user-54c559d799-sfflw            50m          8Mi
+        userreviews-8685c67996-m6n7d     30m          8Mi
+        Running 1m test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   491.36ms  213.16ms   1.25s    76.43%
+        Req/Sec   201.99     63.59   540.00     69.42%
+        Latency Distribution
+        50%  517.55ms
+        75%  620.09ms
+        90%  719.60ms
+        99%  928.18ms
+        50000 requests in 0.87m, 3.72MB read
+        Requests/sec:    961.54
+        Transfer/sec:     73.24KB
+        ------------------------------
+        stop time: 30.638085
+        stop time: 31.200127
+        stop time: 30.960119
+        stop time: 30.672129
+        stop time: 31.128846
+        stop time: 31.408977
+        stop time: 31.388316
+        stop time: 31.429378
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [30.638085, 31.200127, 30.960119, 30.672129, 31.128846, 31.408977, 31.388316, 31.429378]
+    [exp] Throughput: 1607.5491989327145
+    [exp] Running (pre_run: False) workload movie/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '60000000', 'SLOWPOKE_PROCESSING_MICROS_CASTINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEREVIEW': '0', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEID': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEREVIEWS': '500', 'SLOWPOKE_PROCESSING_MICROS_PAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_PLOT': '0', 'SLOWPOKE_PROCESSING_MICROS_REVIEWSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_UNIQUEID': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_PROCESSING_MICROS_USERREVIEWS': '0', 'SLOWPOKE_DELAY_MICROS_CASTINFO': '0.0', 'SLOWPOKE_DELAY_MICROS_COMPOSEREVIEW': '0.0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEID': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEINFO': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEREVIEWS': '0.0', 'SLOWPOKE_DELAY_MICROS_PAGE': '0.0', 'SLOWPOKE_DELAY_MICROS_PLOT': '0.0', 'SLOWPOKE_DELAY_MICROS_REVIEWSTORAGE': '0.0', 'SLOWPOKE_DELAY_MICROS_UNIQUEID': '0.0', 'SLOWPOKE_DELAY_MICROS_USER': '0.0', 'SLOWPOKE_DELAY_MICROS_USERREVIEWS': '0.0'}
+    [exp] Executing cmd `bash run.sh movie mix 8 800 50000`:
+        [run.sh] Running benchmark movie with request mix, thread 8, conn 800, duration 60
+        [run.sh] Deleting all services
+        service "castinfo" deleted
+        deployment.apps "castinfo" deleted
+        service "composereview" deleted
+        deployment.apps "composereview" deleted
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "movieid" deleted
+        deployment.apps "movieid" deleted
+        service "movieinfo" deleted
+        deployment.apps "movieinfo" deleted
+        service "moviereviews" deleted
+        deployment.apps "moviereviews" deleted
+        service "page" deleted
+        deployment.apps "page" deleted
+        service "plot" deleted
+        deployment.apps "plot" deleted
+        service "reviewstorage" deleted
+        deployment.apps "reviewstorage" deleted
+        service "uniqueid" deleted
+        deployment.apps "uniqueid" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        service "userreviews" deleted
+        deployment.apps "userreviews" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/castinfo created
+        deployment.apps/castinfo created
+        service/composereview created
+        deployment.apps/composereview created
+        service/frontend created
+        deployment.apps/frontend created
+        service/movieid created
+        deployment.apps/movieid created
+        service/movieinfo created
+        deployment.apps/movieinfo created
+        service/moviereviews created
+        deployment.apps/moviereviews created
+        service/page created
+        deployment.apps/page created
+        service/plot created
+        deployment.apps/plot created
+        service/reviewstorage created
+        deployment.apps/reviewstorage created
+        service/uniqueid created
+        deployment.apps/uniqueid created
+        service/user created
+        deployment.apps/user created
+        service/userreviews created
+        deployment.apps/userreviews created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying movie/analysis.txt to ubuntu-client-76886f6bbd-gbgnh:/analysis.txt
+        [run.sh] Finished populating movie
+        [run.sh] Starting the rust proxy first for movie
+        [2m2025-03-26T04:00:01.789736Z[0m [32m INFO[0m [2mproxy::movie[0m[2m:[0m Reading movie analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c800 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   396.37ms  222.11ms   1.24s    69.01%
+        Req/Sec   184.26     83.70   530.00     71.00%
+        Latency Distribution
+        50%  397.85ms
+        75%  540.97ms
+        90%  685.94ms
+        99%  915.75ms
+        4267 requests in 3.02s, 325.03KB read
+        Requests/sec:   1411.97
+        Transfer/sec:    107.55KB
+        [run.sh] Speed is 1411.97, duration is 53
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 10s -t8 -c800 -d53s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        castinfo-6dbbbc7798-vtnft        139m         59Mi
+        composereview-66f87f9c6-ftffq    103m         11Mi
+        frontend-746fc9dd67-c6r8t        190m         11Mi
+        movieid-74fb965d-dsrcc           25m          175Mi
+        movieinfo-6dd448b9c4-jq6p5       192m         243Mi
+        moviereviews-5665c64f7c-vtdsc    416m         20Mi
+        page-574bf9bfc-x7hjg             1869m        76Mi
+        plot-5db67bf687-d9c86            300m         143Mi
+        reviewstorage-846567f494-jtmkr   234m         12Mi
+        ubuntu-client-76886f6bbd-gbgnh   494m         83Mi
+        uniqueid-545b5476f8-ftdlr        28m          7Mi
+        user-54c559d799-hqpgz            32m          8Mi
+        userreviews-8685c67996-mmztm     21m          8Mi
+        Running 1m test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   508.68ms  218.21ms   1.54s    76.69%
+        Req/Sec   196.80     65.81   540.00     70.77%
+        Latency Distribution
+        50%  529.81ms
+        75%  638.74ms
+        90%  747.03ms
+        99%  969.98ms
+        50000 requests in 0.88m, 3.72MB read
+        Requests/sec:    943.39
+        Transfer/sec:     71.86KB
+        ------------------------------
+        stop time: 31.846091
+        stop time: 32.230482
+        stop time: 31.890468
+        stop time: 32.084563
+        stop time: 32.222349
+        stop time: 32.013026
+        stop time: 32.300263
+        stop time: 32.102381
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [31.846091, 32.230482, 31.890468, 32.084563, 32.222349, 32.013026, 32.300263, 32.102381]
+    [exp] Throughput: 1558.3021834895135
+[test.py] Running slowdown experiment
+    [exp] Running (pre_run: False) workload movie/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '60000000', 'SLOWPOKE_PROCESSING_MICROS_CASTINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEREVIEW': '0', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEID': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEREVIEWS': '1000', 'SLOWPOKE_PROCESSING_MICROS_PAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_PLOT': '0', 'SLOWPOKE_PROCESSING_MICROS_REVIEWSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_UNIQUEID': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_PROCESSING_MICROS_USERREVIEWS': '0', 'SLOWPOKE_DELAY_MICROS_CASTINFO': '500.0', 'SLOWPOKE_DELAY_MICROS_COMPOSEREVIEW': '4510.0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '4510.0', 'SLOWPOKE_DELAY_MICROS_MOVIEID': '4510.0', 'SLOWPOKE_DELAY_MICROS_MOVIEINFO': '500.0', 'SLOWPOKE_DELAY_MICROS_MOVIEREVIEWS': '0.0', 'SLOWPOKE_DELAY_MICROS_PAGE': '500.0', 'SLOWPOKE_DELAY_MICROS_PLOT': '500.0', 'SLOWPOKE_DELAY_MICROS_REVIEWSTORAGE': '450.0', 'SLOWPOKE_DELAY_MICROS_UNIQUEID': '4510.0', 'SLOWPOKE_DELAY_MICROS_USER': '2255.0', 'SLOWPOKE_DELAY_MICROS_USERREVIEWS': '4510.0'}
+    [exp] Executing cmd `bash run.sh movie mix 8 800 50000`:
+        [run.sh] Running benchmark movie with request mix, thread 8, conn 800, duration 60
+        [run.sh] Deleting all services
+        service "castinfo" deleted
+        deployment.apps "castinfo" deleted
+        service "composereview" deleted
+        deployment.apps "composereview" deleted
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "movieid" deleted
+        deployment.apps "movieid" deleted
+        service "movieinfo" deleted
+        deployment.apps "movieinfo" deleted
+        service "moviereviews" deleted
+        deployment.apps "moviereviews" deleted
+        service "page" deleted
+        deployment.apps "page" deleted
+        service "plot" deleted
+        deployment.apps "plot" deleted
+        service "reviewstorage" deleted
+        deployment.apps "reviewstorage" deleted
+        service "uniqueid" deleted
+        deployment.apps "uniqueid" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        service "userreviews" deleted
+        deployment.apps "userreviews" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/castinfo created
+        deployment.apps/castinfo created
+        service/composereview created
+        deployment.apps/composereview created
+        service/frontend created
+        deployment.apps/frontend created
+        service/movieid created
+        deployment.apps/movieid created
+        service/movieinfo created
+        deployment.apps/movieinfo created
+        service/moviereviews created
+        deployment.apps/moviereviews created
+        service/page created
+        deployment.apps/page created
+        service/plot created
+        deployment.apps/plot created
+        service/reviewstorage created
+        deployment.apps/reviewstorage created
+        service/uniqueid created
+        deployment.apps/uniqueid created
+        service/user created
+        deployment.apps/user created
+        service/userreviews created
+        deployment.apps/userreviews created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying movie/analysis.txt to ubuntu-client-76886f6bbd-b2n9l:/analysis.txt
+        [run.sh] Finished populating movie
+        [run.sh] Starting the rust proxy first for movie
+        [2m2025-03-26T04:02:15.321921Z[0m [32m INFO[0m [2mproxy::movie[0m[2m:[0m Reading movie analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c800 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   786.92ms  262.83ms   1.64s    71.77%
+        Req/Sec   106.16     64.39   310.00     64.98%
+        Latency Distribution
+        50%  805.67ms
+        75%  946.91ms
+        90%    1.08s
+        99%    1.40s
+        2310 requests in 3.02s, 175.96KB read
+        Requests/sec:    763.81
+        Transfer/sec:     58.18KB
+        [run.sh] Speed is 763.81, duration is 98
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 10s -t8 -c800 -d98s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        castinfo-7f5564df7f-6xnzh        80m          162Mi
+        composereview-5c5cc7bb44-mdcvd   27m          10Mi
+        frontend-59fb5f4859-cdm4r        30m          12Mi
+        movieid-7cbc7d8954-dc2jl         6m           185Mi
+        movieinfo-87bc5797f-fdrfl        35m          190Mi
+        moviereviews-6f989f6b9f-kskzk    386m         20Mi
+        page-779c7d4ddd-lbhnk            276m         51Mi
+        plot-5b769488c8-dr9br            46m          315Mi
+        reviewstorage-7c5974898f-lvnl8   43m          13Mi
+        ubuntu-client-76886f6bbd-b2n9l   167m         61Mi
+        uniqueid-57dc876f7b-tlf7j        7m           6Mi
+        user-7f9bf56c77-g22zs            10m          8Mi
+        userreviews-d5f6cbd4b-6qtqd      7m           6Mi
+        Running 2m test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   825.71ms  254.33ms   1.81s    77.15%
+        Req/Sec   121.02     53.94   434.00     68.61%
+        Latency Distribution
+        50%  857.55ms
+        75%  977.94ms
+        90%    1.09s
+        99%    1.32s
+        50000 requests in 1.63m, 3.72MB read
+        Requests/sec:    510.20
+        Transfer/sec:     38.86KB
+        ------------------------------
+        stop time: 52.059062
+        stop time: 52.068774
+        stop time: 52.061811
+        stop time: 52.234973
+        stop time: 52.240779
+        stop time: 52.183804
+        stop time: 52.473993
+        stop time: 52.023513
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [52.059062, 52.068774, 52.061811, 52.234973, 52.240779, 52.183804, 52.473993, 52.023513]
+    [exp] Throughput: 958.4357355025891
+    [exp] Running (pre_run: False) workload movie/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '60000000', 'SLOWPOKE_PROCESSING_MICROS_CASTINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEREVIEW': '0', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEID': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEREVIEWS': '1000', 'SLOWPOKE_PROCESSING_MICROS_PAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_PLOT': '0', 'SLOWPOKE_PROCESSING_MICROS_REVIEWSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_UNIQUEID': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_PROCESSING_MICROS_USERREVIEWS': '0', 'SLOWPOKE_DELAY_MICROS_CASTINFO': '250.0', 'SLOWPOKE_DELAY_MICROS_COMPOSEREVIEW': '2255.0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '2255.0', 'SLOWPOKE_DELAY_MICROS_MOVIEID': '2255.0', 'SLOWPOKE_DELAY_MICROS_MOVIEINFO': '250.0', 'SLOWPOKE_DELAY_MICROS_MOVIEREVIEWS': '0.0', 'SLOWPOKE_DELAY_MICROS_PAGE': '250.0', 'SLOWPOKE_DELAY_MICROS_PLOT': '250.0', 'SLOWPOKE_DELAY_MICROS_REVIEWSTORAGE': '225.0', 'SLOWPOKE_DELAY_MICROS_UNIQUEID': '2255.0', 'SLOWPOKE_DELAY_MICROS_USER': '1127.5', 'SLOWPOKE_DELAY_MICROS_USERREVIEWS': '2255.0'}
+    [exp] Executing cmd `bash run.sh movie mix 8 800 50000`:
+        [run.sh] Running benchmark movie with request mix, thread 8, conn 800, duration 60
+        [run.sh] Deleting all services
+        service "castinfo" deleted
+        deployment.apps "castinfo" deleted
+        service "composereview" deleted
+        deployment.apps "composereview" deleted
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "movieid" deleted
+        deployment.apps "movieid" deleted
+        service "movieinfo" deleted
+        deployment.apps "movieinfo" deleted
+        service "moviereviews" deleted
+        deployment.apps "moviereviews" deleted
+        service "page" deleted
+        deployment.apps "page" deleted
+        service "plot" deleted
+        deployment.apps "plot" deleted
+        service "reviewstorage" deleted
+        deployment.apps "reviewstorage" deleted
+        service "uniqueid" deleted
+        deployment.apps "uniqueid" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        service "userreviews" deleted
+        deployment.apps "userreviews" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/castinfo created
+        deployment.apps/castinfo created
+        service/composereview created
+        deployment.apps/composereview created
+        service/frontend created
+        deployment.apps/frontend created
+        service/movieid created
+        deployment.apps/movieid created
+        service/movieinfo created
+        deployment.apps/movieinfo created
+        service/moviereviews created
+        deployment.apps/moviereviews created
+        service/page created
+        deployment.apps/page created
+        service/plot created
+        deployment.apps/plot created
+        service/reviewstorage created
+        deployment.apps/reviewstorage created
+        service/uniqueid created
+        deployment.apps/uniqueid created
+        service/user created
+        deployment.apps/user created
+        service/userreviews created
+        deployment.apps/userreviews created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying movie/analysis.txt to ubuntu-client-76886f6bbd-5nphl:/analysis.txt
+        [run.sh] Finished populating movie
+        [run.sh] Starting the rust proxy first for movie
+        [2m2025-03-26T04:05:12.787171Z[0m [32m INFO[0m [2mproxy::movie[0m[2m:[0m Reading movie analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c800 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   648.24ms  228.28ms   1.25s    72.31%
+        Req/Sec   140.02     72.41   320.00     65.05%
+        Latency Distribution
+        50%  694.10ms
+        75%  813.16ms
+        90%  897.03ms
+        99%    1.07s
+        2947 requests in 3.03s, 224.48KB read
+        Requests/sec:    974.08
+        Transfer/sec:     74.20KB
+        [run.sh] Speed is 974.08, duration is 76
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 10s -t8 -c800 -d76s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        castinfo-68ccbdb7c9-8nfp5        101m         69Mi
+        composereview-bb9fc575b-qrxf8    3m           13Mi
+        frontend-764c7696d7-9qvdw        59m          15Mi
+        movieid-f545f9854-l8bg2          1m           173Mi
+        movieinfo-86f6cf7c47-rzqm9       11m          190Mi
+        moviereviews-6f989f6b9f-tb7kt    462m         19Mi
+        page-66464688c6-cxdvb            460m         60Mi
+        plot-59d75d9f6b-5mpxt            76m          153Mi
+        reviewstorage-b95c85d8c-jdgk8    56m          12Mi
+        ubuntu-client-76886f6bbd-5nphl   203m         72Mi
+        uniqueid-6f84559588-h2g7q        2m           8Mi
+        user-6b55c7f445-slxcv            9m           8Mi
+        userreviews-54cc66759d-r96nk     5m           7Mi
+        Running 1m test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   682.38ms  222.08ms   1.64s    77.48%
+        Req/Sec   145.94     59.42   434.00     67.72%
+        Latency Distribution
+        50%  706.02ms
+        75%  814.03ms
+        90%  915.63ms
+        99%    1.12s
+        50001 requests in 1.27m, 3.72MB read
+        Requests/sec:    657.91
+        Transfer/sec:     50.11KB
+        ------------------------------
+        stop time: 43.017798
+        stop time: 43.228402
+        stop time: 43.370427
+        stop time: 43.224403
+        stop time: 42.977192
+        stop time: 43.459253
+        stop time: 42.831618
+        stop time: 43.488802
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [43.017798, 43.228402, 43.370427, 43.224403, 42.977192, 43.459253, 42.831618, 43.488802]
+    [exp] Throughput: 1157.4144570527549
+[test.py] Baseline throughput:  1570.4462309500507
+[test.py] Groundtruth:  [1607.5491989327145, 1558.3021834895135]
+[test.py] Slowdown:  [958.4357355025891, 1157.4144570527549]
+[test.py] Predicted:  [1692.5578745470782, 1568.080837309423]
+[test.py] Error percentage:  [5.288091690805031, 0.627519740620023]
+[test.py] >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Running experiment 1...
+[test.py] Actual processing time range: [0, 500]
+[test.py] Running baseline experiment
+    [exp] Running (pre_run: False) workload movie/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '60000000', 'SLOWPOKE_PROCESSING_MICROS_CASTINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEREVIEW': '0', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEID': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEINFO': '0', 'SLOWPOKE_PROCESSING_MICROS_MOVIEREVIEWS': '1000', 'SLOWPOKE_PROCESSING_MICROS_PAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_PLOT': '0', 'SLOWPOKE_PROCESSING_MICROS_REVIEWSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_UNIQUEID': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_PROCESSING_MICROS_USERREVIEWS': '0', 'SLOWPOKE_DELAY_MICROS_CASTINFO': '0.0', 'SLOWPOKE_DELAY_MICROS_COMPOSEREVIEW': '0.0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEID': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEINFO': '0.0', 'SLOWPOKE_DELAY_MICROS_MOVIEREVIEWS': '0.0', 'SLOWPOKE_DELAY_MICROS_PAGE': '0.0', 'SLOWPOKE_DELAY_MICROS_PLOT': '0.0', 'SLOWPOKE_DELAY_MICROS_REVIEWSTORAGE': '0.0', 'SLOWPOKE_DELAY_MICROS_UNIQUEID': '0.0', 'SLOWPOKE_DELAY_MICROS_USER': '0.0', 'SLOWPOKE_DELAY_MICROS_USERREVIEWS': '0.0'}
+    [exp] Executing cmd `bash run.sh movie mix 8 800 50000`:
+        [run.sh] Running benchmark movie with request mix, thread 8, conn 800, duration 60
+        [run.sh] Deleting all services
+        service "castinfo" deleted
+        deployment.apps "castinfo" deleted
+        service "composereview" deleted
+        deployment.apps "composereview" deleted
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "movieid" deleted
+        deployment.apps "movieid" deleted
+        service "movieinfo" deleted
+        deployment.apps "movieinfo" deleted
+        service "moviereviews" deleted
+        deployment.apps "moviereviews" deleted
+        service "page" deleted
+        deployment.apps "page" deleted
+        service "plot" deleted
+        deployment.apps "plot" deleted
+        service "reviewstorage" deleted
+        deployment.apps "reviewstorage" deleted
+        service "uniqueid" deleted
+        deployment.apps "uniqueid" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        service "userreviews" deleted
+        deployment.apps "userreviews" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/castinfo created
+        deployment.apps/castinfo created
+        service/composereview created
+        deployment.apps/composereview created
+        service/frontend created
+        deployment.apps/frontend created
+        service/movieid created
+        deployment.apps/movieid created
+        service/movieinfo created
+        deployment.apps/movieinfo created
+        service/moviereviews created
+        deployment.apps/moviereviews created
+        service/page created
+        deployment.apps/page created
+        service/plot created
+        deployment.apps/plot created
+        service/reviewstorage created
+        deployment.apps/reviewstorage created
+        service/uniqueid created
+        deployment.apps/uniqueid created
+        service/user created
+        deployment.apps/user created
+        service/userreviews created
+        deployment.apps/userreviews created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying movie/analysis.txt to ubuntu-client-76886f6bbd-q88tw:/analysis.txt
+        [run.sh] Finished populating movie
+        [run.sh] Starting the rust proxy first for movie
+        [2m2025-03-26T04:07:49.408262Z[0m [32m INFO[0m [2mproxy::movie[0m[2m:[0m Reading movie analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c800 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   414.62ms  183.98ms 955.17ms   74.29%
+        Req/Sec   181.46     72.95   390.00     70.09%
+        Latency Distribution
+        50%  418.13ms
+        75%  527.15ms
+        90%  628.10ms
+        99%  842.27ms
+        4147 requests in 3.03s, 315.88KB read
+        Requests/sec:   1367.66
+        Transfer/sec:    104.18KB
+        [run.sh] Speed is 1367.66, duration is 54
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 10s -t8 -c800 -d54s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        castinfo-6dbbbc7798-hqvgl        440m         59Mi
+        composereview-66f87f9c6-ccdb6    108m         11Mi
+        frontend-746fc9dd67-bpcp8        201m         11Mi
+        movieid-74fb965d-m622j           44m          187Mi
+        movieinfo-6dd448b9c4-4dwvk       237m         25Mi
+        moviereviews-6f989f6b9f-h9htb    1857m        24Mi
+        page-574bf9bfc-tq2hw             1868m        85Mi
+        plot-5db67bf687-6m8bn            314m         147Mi
+        reviewstorage-846567f494-q47cg   237m         16Mi
+        ubuntu-client-76886f6bbd-q88tw   741m         85Mi
+        uniqueid-545b5476f8-vg7xf        30m          7Mi
+        user-54c559d799-6nngf            45m          8Mi
+        userreviews-8685c67996-j8k82     31m          7Mi

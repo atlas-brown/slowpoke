@@ -32,19 +32,19 @@ class Runner:
         self.cpu_quota = config.get_cpu_quota(self.benchmark, self.request_type)
         self.target_processing_time_range = [0, self.baseline_service_processing_time[self.target_service]]
         self.baseline_throughputs = []
+        self.poker_batch = args.poker_batch
     
     def get_env_for_print(self, env):
         env_p = {}
         for key, value in env.items():
-            if key.startswith("SLOWPOKE"):
-                env_p[key] = value
-            if key.startswith("PROCESSING_TIME"):
+            if key.startswith("SLOWPOKE") or key.startswith("PROCESSING_TIME") or key.startswith("CLIENT"):
                 env_p[key] = value
         return env_p
     
     def exp(self, service_delay, processing_time):
         env = os.environ.copy()
         env["CLIENT_CPU_QUOTA"] = str(self.client_cpu_quota)
+        env["SLOWPOKE_POKER_BATCH_THRESHOLD"] = str(self.poker_batch)
         if self.benchmark == "synthetic":
             # This is used to set the processing time for synthetic benchmarks
             for service, processing_time in processing_time.items():
@@ -52,8 +52,10 @@ class Runner:
             for service, delay in service_delay.items():
                 env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay)
         else:
+            for service, p_ in processing_time.items():
+                env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)
             for service, delay in service_delay.items():
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str((delay + processing_time[service])/self.cpu_quota[service])
+                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay/self.cpu_quota[service])
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
         cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
@@ -214,6 +216,7 @@ def parse():
     parser.add_argument("--num_req", type=int, default=50000)
     parser.add_argument("--clien_cpu_quota", type=int, default=-1)
     parser.add_argument("--random_seed", type=int, default=1234)
+    parser.add_argument("--poker_batch", type=int, default=20000000)
     args = parser.parse_args()
     return args
 

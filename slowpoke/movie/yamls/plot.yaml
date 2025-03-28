@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: "plot"
-          image: yizhengx/mucache:movie
+          image: yizhengx/mucache:movie-poker-time-spinning
           env:
             - name: APP_PORT
               value: "3000"
@@ -52,27 +52,24 @@ spec:
             - name: APP_NAMESPACE
               value: "movie"
             - name: NODE_IDX
-              value: "2"
+              value: "8"
             - name: CM_ENABLED
               value: "false"
             - name: EXPIRATION_TTL
               value: "0"
             - name: SLOWPOKE_DELAY_MICROS
               value: "${SLOWPOKE_DELAY_MICROS_PLOT}"
+            - name: SLOWPOKE_PROCESSING_MICROS
+              value: "${SLOWPOKE_PROCESSING_MICROS_PLOT}"
             - name: SLOWPOKE_PRERUN
               value: "${SLOWPOKE_PRERUN}"
+            - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+              value: "${SLOWPOKE_POKER_BATCH_THRESHOLD}"
           ports:
             - containerPort: 3000
             - containerPort: 5550
             - containerPort: 5551
           imagePullPolicy: Always
-          resources:
-            limits:
-              cpu: 1000m
-              memory: 4Gi
-            requests:
-              cpu: 1000m
-              memory: 4Gi
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -81,4 +78,4 @@ spec:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - worker2
+                      - worker8

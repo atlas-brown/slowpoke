@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: "socialgraph"
-          image: yizhengx/mucache:social
+          image: yizhengx/mucache:social-poker-time-spining
           env:
             - name: APP_PORT
               value: "3000"
@@ -59,20 +59,17 @@ spec:
               value: "0"
             - name: SLOWPOKE_DELAY_MICROS
               value: "${SLOWPOKE_DELAY_MICROS_SOCIALGRAPH}"
+            - name: SLOWPOKE_PROCESSING_MICROS
+              value: "${SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH}"
             - name: SLOWPOKE_PRERUN
-              value: "true"
+              value: "${SLOWPOKE_PRERUN}"
+            - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+              value: "${SLOWPOKE_POKER_BATCH_THRESHOLD}"
           ports:
             - containerPort: 3000
             - containerPort: 5550
             - containerPort: 5551
           imagePullPolicy: Always
-          resources:
-            requests:
-              cpu: 1000m
-              memory: 8Gi
-            limits:
-              cpu: 1000m
-              memory: 8Gi
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -81,4 +78,4 @@ spec:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - worker1
+                      - worker4

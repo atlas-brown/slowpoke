@@ -7,7 +7,7 @@ export MUCACHE_TOP=${MUCACHE_TOP:-$(git rev-parse --show-toplevel --show-superpr
 ## Make sure that the containers exist and have been built first
 export docker_io_username=yizhengx
 export application_namespace=${1?application name not given, e.g., social}
-export single_node_flag=${2:-3}
+export single_node_flag=${2:-12}
 
 # Keep this for now as it might be used for condition checks
 export cm_enabled=false
@@ -53,5 +53,6 @@ for idx in "${!services[@]}"; do
     APP_NAME_NO_UNDERSCORES="$app_name_no_underscores" \
     APP_NAME_NO_UNDERSCORES_UPPERCASE="${app_name_no_underscores^^}" \
     SLOWPOKE_PRERUN="\${SLOWPOKE_PRERUN}" \
+    SLOWPOKE_POKER_BATCH_THRESHOLD="\${SLOWPOKE_POKER_BATCH_THRESHOLD}" \
     envsubst <"./app.yaml" > "../${application_namespace}/yamls/$app_name.yaml"
 done

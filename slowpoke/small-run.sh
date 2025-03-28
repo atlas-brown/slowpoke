@@ -11,6 +11,7 @@ export SLOWPOKE_DELAY_MICROS_PAYMENT=0
 export SLOWPOKE_DELAY_MICROS_PRODUCT_CATALOG=0
 export SLOWPOKE_DELAY_MICROS_RECOMMENDATIONS=0
 export SLOWPOKE_DELAY_MICROS_SHIPPING=0
+export SLOWPOKE_PROCESSING_MICROS_FRONTEND=500
 export SLOWPOKE_PRERUN=false
 # export SLOWPOKE_DELAY_MICROS_CART=287
 # export SLOWPOKE_DELAY_MICROS_CHECKOUT=2543
@@ -42,9 +43,9 @@ export SLOWPOKE_PRERUN=false
 
 benchmark=boutique
 request=${2:-mix}
-thread=${3:-4}
-conn=${4:-128}
+thread=${3:-8}
+conn=${4:-512}
 # duration=${5:-10}
 
-bash run.sh $benchmark $request $thread $conn
+bash run.sh $benchmark $request $thread $conn 100000
 # bash run-wrk2.sh $request $thread $conn $duration $rate

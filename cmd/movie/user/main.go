@@ -40,9 +40,16 @@ func getUserId(ctx context.Context, req *movie.GetUserIdRequest) *movie.GetUserI
 	return &resp
 }
 
+func populate() {
+	for i := 0; i < 100; i++ {
+		movie.RegisterUser(context.Background(), fmt.Sprintf("username%d", i), fmt.Sprintf("password%d", i))
+	}
+	fmt.Println("Populated %d users", 100)
+}
+
 func main() {
-    slowpoke.SlowpokeCheck("main");
 	fmt.Println(runtime.GOMAXPROCS(8))
+	populate()
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
 	http.HandleFunc("/register_user", wrappers.NonROWrapper[movie.RegisterUserRequest, movie.RegisterUserResponse](registerUser))

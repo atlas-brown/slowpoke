@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: "reservation"
-          image: yizhengx/mucache:hotel
+          image: yizhengx/mucache:hotel-poker-time-spinning
           env:
             - name: APP_PORT
               value: "3000"
@@ -59,20 +59,17 @@ spec:
               value: "0"
             - name: SLOWPOKE_DELAY_MICROS
               value: "${SLOWPOKE_DELAY_MICROS_RESERVATION}"
+            - name: SLOWPOKE_PROCESSING_MICROS
+              value: "${SLOWPOKE_PROCESSING_MICROS_RESERVATION}"
             - name: SLOWPOKE_PRERUN
               value: "${SLOWPOKE_PRERUN}"
+            - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+              value: "${SLOWPOKE_POKER_BATCH_THRESHOLD}"
           ports:
             - containerPort: 3000
             - containerPort: 5550
             - containerPort: 5551
           imagePullPolicy: Always
-          resources:
-            limits:
-              cpu: 1000m
-              memory: 8Gi
-            requests:
-              cpu: 1000m
-              memory: 8Gi
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -81,4 +78,4 @@ spec:
                   - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - worker1
+                      - worker4

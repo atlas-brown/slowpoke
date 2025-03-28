@@ -14,6 +14,8 @@ import (
 	"github.com/eniac/mucache/pkg/common"
 	"github.com/eniac/mucache/pkg/utility"
 	"sync"
+	"runtime"
+	"sync/atomic"
 )
 
 const printIntervalMillis = 30*1000
@@ -25,7 +27,10 @@ var (
 	requestCounters sync.Map
 	accumulatedDelay int64 = 0
 	sync_guard sync.RWMutex
-	req_events chan int = make(chan int)
+	processingMicros int
+	sleepSurplus int64 = 0
+	pokerBatchThreshold int64
+
 	pipebuf = make([]byte, 8)
 	pipefile *os.File
 )
@@ -123,12 +128,22 @@ func SlowpokeInit() {
 		fmt.Printf("SLOWPOKE_DELAY_MICROS=%d\n", delayMicros)
 		delayNanos = int64(delayMicros) * int64(1000);
 	}
+	processingMicros = -1
+	if env, ok := os.LookupEnv("SLOWPOKE_PROCESSING_MICROS"); ok {
+		fmt.Sscanf(env, "%d", &processingMicros)
+		fmt.Printf("SLOWPOKE_PROCESSING_MICROS=%d\n", processingMicros)
+	}
 	prerun = false
 	if env, ok := os.LookupEnv("SLOWPOKE_PRERUN"); ok {
 		if env == "true" {
 			prerun = true
 		}
 		fmt.Printf("SLOWPOKE_PRERUN=%t\n", prerun)
+	}
+	pokerBatchThreshold = 20000000
+	if env, ok := os.LookupEnv("SLOWPOKE_POKER_BATCH_THRESHOLD"); ok {
+		fmt.Sscanf(env, "%d", &pokerBatchThreshold)
+		fmt.Printf("SLOWPOKE_POKER_BATCH_THRESHOLD=%d\n", pokerBatchThreshold)
 	}
 
 	var fifo_path string;
@@ -221,6 +236,36 @@ func SlowpokeCheck(serviceFuncName string) {
 		}
 	}
 	sync_guard.Unlock()
+
+	// Process
+	lockThread := true
+	if processingMicros >= 0 {
+		// Threads need to be locked because otherwise util.ThreadCPUTime() can change in the middle of execution
+		takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
+		sleepTime := int64(processingMicros*1000.0);
+		common := min(takenSurplus, sleepTime);
+		takenSurplus -= common;
+		sleepTime -= common;
+		if lockThread {
+			runtime.LockOSThread()
+		}
+
+		current := getThreadCPUTime()
+		target := current + sleepTime
+
+		for current < target {
+			for i := int64(0) ; i < 200000; i++ {
+			}
+			current = getThreadCPUTime();
+		}
+
+		takenSurplus += current - target;
+		atomic.AddInt64(&sleepSurplus, takenSurplus);
+
+		if lockThread {
+			runtime.UnlockOSThread()
+		}
+	}
 }
 
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
