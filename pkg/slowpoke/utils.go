@@ -3,6 +3,7 @@ package slowpoke
 import (
 	"golang.org/x/sys/unix"
 	"encoding/json"
+	"encoding/binary"
 	"fmt"
 	"net/http"
 	"bytes"
@@ -25,6 +26,8 @@ var (
 	accumulatedDelay int64 = 0
 	sync_guard sync.RWMutex
 	req_events chan int = make(chan int)
+	pipebuf = make([]byte, 8)
+	pipefile *os.File
 )
 
 func min(a, b int64) int64 {
@@ -134,6 +137,20 @@ func SlowpokeInit() {
 		fmt.Printf("SLOWPOKE_FIFO=%s\n", fifo_path)
 	}
 
+	var err error
+	pipefile, err = os.OpenFile(fifo_path, os.O_WRONLY, os.ModeNamedPipe)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	binary.LittleEndian.PutUint64(pipebuf, uint64(0))
+	_, err = pipefile.Write(pipebuf);
+	if err != nil {
+		fmt.Println("Error writing to pipe:", err)
+		os.Stdout.Sync()
+		return
+	}
+
 	if !prerun {
 		return
 	}
@@ -184,11 +201,24 @@ func SlowpokeCheck(serviceFuncName string) {
 	// Delay
 	sync_guard.Lock()
 	accumulatedDelay += delayNanos
-	if accumulatedDelay > 80000000 {
-	   start := time.Now()
-	   time.Sleep(time.Duration(accumulatedDelay) * time.Nanosecond)
-	   elapsed := time.Since(start)
-	   accumulatedDelay -= elapsed.Nanoseconds()
+	if accumulatedDelay > 50000000 {
+		start := time.Now()
+		binary.LittleEndian.PutUint64(pipebuf, uint64(accumulatedDelay))
+		_, err := pipefile.Write(pipebuf);
+		if err != nil {
+			fmt.Println("Error writing to pipe:", err)
+			os.Stdout.Sync()
+			return
+		}
+		elapsed := time.Since(start)
+		start = start.Add(elapsed)
+		accumulatedDelay -= elapsed.Nanoseconds()
+		for accumulatedDelay > 0 {
+		      time.Sleep(time.Duration(accumulatedDelay) * time.Nanosecond)
+		      elapsed = time.Since(start)
+		      start = start.Add(elapsed)
+		      accumulatedDelay -= elapsed.Nanoseconds()
+		}
 	}
 	sync_guard.Unlock()
 }
@@ -207,7 +237,11 @@ func Invoke[T interface{}](ctx context.Context, app string, method string, input
 	if err != nil {
 		panic(err)
 	}
+	sync_guard.RLock()
+	sync_guard.RUnlock()
 	performRequest[T](ctx, req, &res, app, method, buf)
+	sync_guard.RLock()
+	sync_guard.RUnlock()
 	return res
 }
 
@@ -222,6 +256,8 @@ func (l *SlowpokeListener) Accept() (net.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+        sync_guard.RLock()
+        sync_guard.RUnlock()
 	return &tracedConn{Conn: conn}, nil
 }
 
@@ -233,5 +269,16 @@ func (c *tracedConn) Read(b []byte) (n int, err error) {
         sync_guard.RLock()
         sync_guard.RUnlock()
 	n, err = c.Conn.Read(b)
+        sync_guard.RLock()
+        sync_guard.RUnlock()
+	return
+}
+
+func (c *tracedConn) Write(b []byte) (n int, err error) {
+        sync_guard.RLock()
+        sync_guard.RUnlock()
+	n, err = c.Conn.Write(b)
+        sync_guard.RLock()
+        sync_guard.RUnlock()
 	return
 }
