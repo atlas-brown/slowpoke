@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: "checkout"
-          image: yizhengx/mucache:boutique
+          image: yizhengx/mucache:boutique-poker-time-spinning
           env:
             - name: APP_PORT
               value: "3000"
@@ -57,15 +57,26 @@ spec:
               value: "false"
             - name: EXPIRATION_TTL
               value: "0"
+            - name: SLOWPOKE_PROCESSING_MICROS
+              value: "${SLOWPOKE_PROCESSING_MICROS_CHECKOUT}"
             - name: SLOWPOKE_DELAY_MICROS
               value: "${SLOWPOKE_DELAY_MICROS_CHECKOUT}"
             - name: SLOWPOKE_PRERUN
               value: "${SLOWPOKE_PRERUN}"
+            - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+              value: "${SLOWPOKE_POKER_BATCH_THRESHOLD}"
           ports:
             - containerPort: 3000
             - containerPort: 5550
             - containerPort: 5551
           imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 4Gi
+            limits:
+              cpu: 1000m
+              memory: 4Gi
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
