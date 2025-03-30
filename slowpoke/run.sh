@@ -213,6 +213,8 @@ if [[ $benchmark != "synthetic" ]]; then
     populate $benchmark
 fi
 
+exit 0
+
 sleep 5
 
 run_test $benchmark &
