@@ -2,20 +2,26 @@
 
 cd $(dirname $0)/../..
 
-exp=chain-d2-http-sync
-DIR=synthetic/$exp/one-service-per-node-poker
+EXP=chain-d2-http-sync
+DIR=synthetic/$EXP/one-service-per-node-poker-mucache-version
 mkdir -p $DIR
 
+# config
+THREAD=8
+CONN=512
+NUM_REQ=40000
+POKER_BATCH=20000000
+
 # Make it reproducible
-target_service_random_pairs="0:4446 1:7748 2:22717"
-# target_service_random_pairs="0:4446"
+# target_service_random_pairs="0:4446 1:7748 2:22717"
+target_service_random_pairs="2:22717"
 
 for pair in $target_service_random_pairs
 do 
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
 
-    output_file=$DIR/$exp-service$target_service.log
+    output_file=$DIR/$EXP-service$target_service-$THREAD-$CONN-$NUM_REQ-poker$POKER_BATCH.log
     
     if [[ -e $output_file ]]; then
         echo "File $output_file already exists. Skipping..."
@@ -25,15 +31,14 @@ do
     touch $output_file
     
     python3 test.py -b synthetic \
-        -r $exp \
+        -r $EXP \
         -x service$target_service \
-        --num_exp 10 \
-        -c 256 \
-        -t 4 \
-        --num_req 20000 \
-        --clien_cpu_quota 2 \
+        --num_exp 1 \
+        -c $CONN \
+        -t $THREAD \
+        --num_req $NUM_REQ \
         --random_seed $random_seed \
-        --repetition 3 \
-        --poker_batch 40000000 \
+        --repetition 1 \
+        --poker_batch $POKER_BATCH \
         >$output_file
 done

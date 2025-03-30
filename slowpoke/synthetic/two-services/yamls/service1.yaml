@@ -1,48 +1,44 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: config-service0
+    name: config-service1
     labels:
-        name: config-service0
+        name: config-service1
     namespace: default
 data:
-    conf.json: '{"processes":5,"logging":false,"protocol":"http","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE0},"threads":1},"network_complexity":{"forward_requests":"synchronous","response_payload_size":256,"called_services":[{"service":"service1","port":80,"endpoint":"endpoint1","protocol":"http","traffic_forward_ratio":1,"request_payload_size":8,"probability":0}]}}]}'
+    conf.json: '{"processes":10,"logging":false,"protocol":"http","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE1},"threads":1}}]}'
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: service0
+    name: service1
     namespace: default
     labels: {}
 spec:
     selector:
         matchLabels:
-            app: service0
+            app: service1
             version: ""
     replicas: 1
     template:
         metadata:
             labels:
-                app: service0
+                app: service1
                 version: ""
             annotations: {}
         spec:
-            nodeName: worker1
+            nodeName: worker2
             containers:
                 - name: app
-                  image: yizhengx/mucache:synthetic-poker
+                  image: yizhengx/hydragen:two-services
                   imagePullPolicy: Always
                   env:
-                    - name: APP_NAME
-                      value: service
-                    - name: CONF
-                      value: /usr/src/emulator/config/conf.json
                     - name: SERVICE_NAME
-                      value: service0
+                      value: service1
                     - name: GOMEMLIMIT
                       value: "1024000000"
                     - name: SLOWPOKE_DELAY_MICROS
-                      value: "${SLOWPOKE_DELAY_MICROS_SERVICE0}"
+                      value: "${SLOWPOKE_DELAY_MICROS_SERVICE1}"
                     - name: SLOWPOKE_PRERUN
                       value: "${SLOWPOKE_PRERUN}"
                   ports:
@@ -59,19 +55,19 @@ spec:
             volumes:
                 - name: config-data-volume
                   configMap:
-                    name: config-service0
+                    name: config-service1
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: service0
+    name: service1
     namespace: default
     labels: {}
     annotations:
         http: /
 spec:
     selector:
-        app: service0
+        app: service1
     ports:
         - name: http
           port: 80

@@ -15,6 +15,7 @@ import (
 	"sync"
 	"runtime"
 	"sync/atomic"
+	"io"
 )
 
 const printIntervalMillis = 30*1000
@@ -263,7 +264,7 @@ func SlowpokeCheck(serviceFuncName string) {
 	}
 }
 
-func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
+func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{},) T {
 	buf, err := json.Marshal(input)
 	if err != nil {
 		panic(err)
@@ -276,5 +277,36 @@ func Invoke[T interface{}](ctx context.Context, app string, method string, input
 		panic(err)
 	}
 	performRequest[T](ctx, req, &res, app, method, buf)
+	return res
+}
+
+func performRequestSynth(ctx context.Context, req *http.Request, res *string, app string, method string, argBytes []byte) {
+	resp, err := common.HTTPClient.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	utility.Assert(resp.StatusCode == http.StatusOK)
+	defer resp.Body.Close()
+	bodyBytes, err := io.ReadAll(resp.Body)
+    if err != nil {
+        panic(err)
+    }
+	*res = string(bodyBytes)
+}
+
+func InvokeSynthtic(ctx context.Context, app string, method string, input interface{}) string {
+	buf, err := json.Marshal(input)
+	if err != nil {
+		panic(err)
+	}
+	var res string
+	// Use kubernete native DNS addr
+	url := fmt.Sprintf("http://%s.%s.svc.cluster.local:%s/%s", app, "default", "80", method)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(buf))
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		panic(err)
+	}
+	performRequestSynth(ctx, req, &res, app, method, buf)
 	return res
 }

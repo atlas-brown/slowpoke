@@ -50,7 +50,7 @@ class Runner:
             for service, processing_time in processing_time.items():
                 env[f"PROCESSING_TIME_{service.upper()}"] = str(round(processing_time/1e6, 8))
             for service, delay in service_delay.items():
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay)
+                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay/self.cpu_quota[service])
         else:
             for service, p_ in processing_time.items():
                 env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)

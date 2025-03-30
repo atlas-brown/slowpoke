@@ -1,0 +1,86 @@
+SLOWPOKE_DELAY_MICROS_SERVICE1=0.0
+SLOWPOKE_DELAY_MICROS_SERVICE0=0.0
+SLOWPOKE_DELAY_MICROS_SERVICE2=0.0
+SLOWPOKE_POKER_BATCH_THRESHOLD=40000000
+PROCESSING_TIME_SERVICE0=0.0
+PROCESSING_TIME_SERVICE1=0.0
+PROCESSING_TIME_SERVICE2=0.000500
+bash run.sh synthetic chain-d2-http-sync 8 128 40000
+[run.sh] Running benchmark synthetic with request chain-d2-http-sync, thread 8, conn 128, duration 60
+[run.sh] Deleting all services
+configmap "config-service0" deleted
+deployment.apps "service0" deleted
+service "service0" deleted
+configmap "config-service1" deleted
+deployment.apps "service1" deleted
+service "service1" deleted
+configmap "config-service2" deleted
+deployment.apps "service2" deleted
+service "service2" deleted
+deployment.apps "ubuntu-client" deleted
+[run.sh] Waiting for all pods to be deleted
+[run.sh] Deploying all services
+configmap/config-service0 created
+deployment.apps/service0 created
+service/service0 created
+configmap/config-service1 created
+deployment.apps/service1 created
+service/service1 created
+configmap/config-service2 created
+deployment.apps/service2 created
+service/service2 created
+[run.sh] Client pod not found, deploying client
+deployment.apps/ubuntu-client created
+[run.sh] Waiting for all pods to be running
+[run.sh] All pods are running
+[run.sh] Running warmup test
+[run.sh] /wrk/wrk -t8 -c128 -d3s -L http://service0:80/endpoint1
+Running 3s test @ http://service0:80/endpoint1
+  8 threads and 128 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    51.84ms   28.93ms 279.32ms   73.60%
+    Req/Sec   315.73     61.41   650.00     81.89%
+  Latency Distribution
+     50%   48.08ms
+     75%   66.13ms
+     90%   86.69ms
+     99%  147.33ms
+  7645 requests in 3.09s, 5.23MB read
+Requests/sec:   2472.78
+Transfer/sec:      1.69MB
+[run.sh] Speed is 2472.78, duration is 64
+[run.sh] Fix the request number.
+[run.sh] Running the actual test
+[run.sh] /wrk/wrk --timeout 20s -t8 -c128 -d64s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+[run.sh] Checking the resource usage
+NAME                             CPU(cores)   MEMORY(bytes)   
+service0-74c66db75c-xmjbh        732m         37Mi            
+service1-6bcd7fbfb7-t9fbz        1366m        112Mi           
+service2-6dc44f9545-r7hw7        792m         37Mi            
+ubuntu-client-76886f6bbd-lkwf5   35m          9Mi             
+Running 1m test @ http://service0:80/endpoint1
+  8 threads and 128 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.01s     1.94s   10.27s    87.07%
+    Req/Sec   134.00    117.14   740.00     64.24%
+  Latency Distribution
+     50%  114.34ms
+     75%  781.81ms
+     90%    3.87s 
+     99%    8.86s 
+  40000 requests in 1.07m, 27.39MB read
+Requests/sec:    625.00
+Transfer/sec:    438.30KB
+------------------------------
+stop time: 62.454046
+stop time: 62.313911
+stop time: 62.294899
+stop time: 62.407851
+stop time: 62.254222
+stop time: 62.471205
+stop time: 62.499952
+stop time: 62.167764
+[run.sh] Test finished with status 0
+
+640.9449990515 rps
+3,120.3925499999 us

@@ -6,7 +6,7 @@ metadata:
         name: config-service1
     namespace: default
 data:
-    conf.json: '{"processes":10,"logging":false,"protocol":"http","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE1},"threads":1},"network_complexity":{"forward_requests":"synchronous","response_payload_size":256,"called_services":[{"service":"service2","port":80,"endpoint":"endpoint1","protocol":"http","traffic_forward_ratio":1,"request_payload_size":512,"probability":0}]}}]}'
+    conf.json: '{"processes":5,"logging":false,"protocol":"http","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE1},"threads":1},"network_complexity":{"forward_requests":"synchronous","response_payload_size":256,"called_services":[{"service":"service2","port":80,"endpoint":"endpoint1","protocol":"http","traffic_forward_ratio":1,"request_payload_size":8,"probability":0}]}}]}'
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -30,9 +30,13 @@ spec:
             nodeName: worker2
             containers:
                 - name: app
-                  image: yizhengx/hydragen:chain-d2-http-sync
+                  image: yizhengx/mucache:synthetic-poker
                   imagePullPolicy: Always
                   env:
+                    - name: APP_NAME
+                      value: service
+                    - name: CONF
+                      value: /usr/src/emulator/config/conf.json
                     - name: SERVICE_NAME
                       value: service1
                     - name: GOMEMLIMIT
