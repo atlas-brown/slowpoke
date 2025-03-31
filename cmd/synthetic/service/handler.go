@@ -1,9 +1,10 @@
 package main
 
 import (
-	"errors"
+	// "errors"
 	"fmt"
 	"net/http"
+	"net"
 	// "github.com/goccy/go-json"
 	"github.com/eniac/mucache/pkg/utility"
 	"github.com/eniac/mucache/pkg/synthetic"
@@ -53,8 +54,12 @@ func serverHTTP(endpoints []synthetic.Endpoint) {
 		fmt.Printf("Endpoint %s registered\n", endpoints[i].Name)
 	}
 
-	err := http.ListenAndServe(":5000", mux)
-	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+	listener, err := net.Listen("tcp", ":5000")
+	if err != nil {
 		panic(err)
 	}
+
+	slowpokeListener := &slowpoke.SlowpokeListener{listener}
+
+	panic(http.Serve(slowpokeListener, mux))
 }

@@ -217,7 +217,7 @@ func SlowpokeCheck(serviceFuncName string) {
 	// Delay
 	sync_guard.Lock()
 	accumulatedDelay += delayNanos
-	if accumulatedDelay > 50000000 {
+	if accumulatedDelay > pokerBatchThreshold {
 		start := time.Now()
 		binary.LittleEndian.PutUint64(pipebuf, uint64(accumulatedDelay))
 		_, err := pipefile.Write(pipebuf);
@@ -307,7 +307,7 @@ func performRequestSynth(ctx context.Context, req *http.Request, res *string, ap
 
 func InvokeSynthtic(ctx context.Context, app string, method string, input interface{}) string {
 	sync_guard.RLock()
-        sync_guard.RUnlock()
+    sync_guard.RUnlock()
 	buf, err := json.Marshal(input)
 	if err != nil {
 		panic(err)
@@ -321,10 +321,10 @@ func InvokeSynthtic(ctx context.Context, app string, method string, input interf
 		panic(err)
 	}
 	sync_guard.RLock()
-        sync_guard.RUnlock()
+    sync_guard.RUnlock()
 	performRequestSynth(ctx, req, &res, app, method, buf)
 	sync_guard.RLock()
-        sync_guard.RUnlock()
+    sync_guard.RUnlock()
 	return res
 }
 
