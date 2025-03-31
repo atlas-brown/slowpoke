@@ -2,7 +2,6 @@
 
 cd $(dirname $0)
 
-<<<<<<< HEAD
 # export SLOWPOKE_DELAY_MICROS_CART=0
 # export SLOWPOKE_DELAY_MICROS_CHECKOUT=0
 # export SLOWPOKE_DELAY_MICROS_CURRENCY=0
@@ -32,20 +31,8 @@ cd $(dirname $0)
 # export SLOWPOKE_DELAY_MICROS_PRODUCT_CATALOG=0
 # export SLOWPOKE_DELAY_MICROS_RECOMMENDATIONS=0
 # export SLOWPOKE_DELAY_MICROS_SHIPPING=0
+# export SLOWPOKE_PROCESSING_MICROS_FRONTEND=500
 # export SLOWPOKE_PRERUN=false
-=======
-export SLOWPOKE_DELAY_MICROS_CART=0
-export SLOWPOKE_DELAY_MICROS_CHECKOUT=0
-export SLOWPOKE_DELAY_MICROS_CURRENCY=0
-export SLOWPOKE_DELAY_MICROS_EMAIL=0
-export SLOWPOKE_DELAY_MICROS_FRONTEND=0
-export SLOWPOKE_DELAY_MICROS_PAYMENT=0
-export SLOWPOKE_DELAY_MICROS_PRODUCT_CATALOG=0
-export SLOWPOKE_DELAY_MICROS_RECOMMENDATIONS=0
-export SLOWPOKE_DELAY_MICROS_SHIPPING=0
-export SLOWPOKE_PROCESSING_MICROS_FRONTEND=500
-export SLOWPOKE_PRERUN=false
->>>>>>> origin/locker
 # export SLOWPOKE_DELAY_MICROS_CART=287
 # export SLOWPOKE_DELAY_MICROS_CHECKOUT=2543
 # export SLOWPOKE_DELAY_MICROS_CURRENCY=1000
@@ -74,35 +61,37 @@ export SLOWPOKE_PRERUN=false
 # export SLOWPOKE_DELAY_MICROS_USERTIMELINE=0
 # export SLOWPOKE_DELAY_MICROS_POSTSTORAGE=0
 
-<<<<<<< HEAD
-export SLOWPOKE_POKER_BATCH_THRESHOLD=40000000
+
+# Setting
+# One is service0-100 processing time, 300 delay?
+# Another is service1-500 processing time, 100 delay?
+export SLOWPOKE_POKER_BATCH_THRESHOLD=10000000
+
+# export PROCESSING_TIME_SERVICE0=0.0002 # base
 export PROCESSING_TIME_SERVICE0=0.0
-export PROCESSING_TIME_SERVICE1=0.0005
-export PROCESSING_TIME_SERVICE2=0.0
-export SLOWPOKE_DELAY_MICROS_SERVICE0=0.0
-export SLOWPOKE_DELAY_MICROS_SERVICE1=0.0
-export SLOWPOKE_DELAY_MICROS_SERVICE2=0.0
-# export SLOWPOKE_PRERUN=true
+export PROCESSING_TIME_SERVICE1=0.0005 # base
+# export PROCESSING_TIME_SERVICE1=0.0
+# export SLOWPOKE_DELAY_MICROS_SERVICE0=200
+export SLOWPOKE_DELAY_MICROS_SERVICE0=0
+# export SLOWPOKE_DELAY_MICROS_SERVICE1=0
+export SLOWPOKE_DELAY_MICROS_SERVICE1=300
 
-env | grep "SLOWPOKE"
-env | grep "PROCESSING"
 
-benchmark=synthetic
-request=chain-d2-http-sync
-thread=8
-conn=512
-num_req=20000
-# duration=${5:-10}
+DIR=/home/ubuntu/mucache/slowpoke/synthetic/two-services/interference-microbenchmark
 
-echo "bash run.sh $benchmark $request $thread $conn $num_req"
-bash run.sh $benchmark $request $thread $conn $num_req
-=======
-benchmark=boutique
-request=${2:-mix}
-thread=${3:-8}
-conn=${4:-512}
-# duration=${5:-10}
-
-bash run.sh $benchmark $request $thread $conn 100000
-# bash run-wrk2.sh $request $thread $conn $duration $rate
->>>>>>> origin/locker
+for threadshold in 10000000 20000000 30000000 40000000 50000000 60000000
+# for threadshold in 20000000
+do
+    export SLOWPOKE_POKER_BATCH_THRESHOLD=$threadshold
+    benchmark=synthetic
+    request=two-services
+    thread=8
+    conn=512
+    num_req=40000
+    # FILE=service1-base.log
+    FILE=service1-d300-poker$threadshold.log
+    env | grep "SLOWPOKE" >$DIR/$FILE
+    env | grep "PROCESSING" >>$DIR/$FILE
+    echo "bash run.sh $benchmark $request $thread $conn $num_req" >>$DIR/$FILE
+    bash run.sh $benchmark $request $thread $conn $num_req >>$DIR/$FILE
+done

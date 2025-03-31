@@ -75,39 +75,45 @@ void *monitor_fifo(void *arg) {
         perror("open");
         pthread_exit(NULL);
     }
+    // long long accumulated_nano_sleep = 0;
 
     while (1) {
         // Attempt to read from the FIFO
         ssize_t bytes_read = read(fifo_fd, buffer, sizeof(buffer) - 1);
         if (bytes_read == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
-	    usleep(100000);
+            usleep(100000);
         } else if (bytes_read == 0) {
             // EOF (other end closed)
-	    usleep(100000);
+            usleep(100000);
         } else {
             // Null-terminate the message and print it
-	    if (!is_blocking) {
-	        is_blocking = 1;
-		int flags = fcntl(fifo_fd, F_GETFL, 0);
-		if (flags == -1) {
-		    perror("fcntl(F_GETFL)");
-		    pthread_exit(NULL);
-		}
-		if (fcntl(fifo_fd, F_SETFL, flags & ~O_NONBLOCK) == -1) {
-		    perror("fcntl(F_SETFL)");
-		    pthread_exit(NULL);
-		}
-	    }
-	    long long nanosleep = *(long long *)(&buffer[0]);
-	    if (kill(-child_pgid, SIGSTOP) == -1) {
-		printf("error in stopping");
-		fflush(stdout);
-	    }
+            if (!is_blocking) {
+                is_blocking = 1;
+                int flags = fcntl(fifo_fd, F_GETFL, 0);
+                if (flags == -1) {
+                    perror("fcntl(F_GETFL)");
+                    pthread_exit(NULL);
+                }
+                if (fcntl(fifo_fd, F_SETFL, flags & ~O_NONBLOCK) == -1) {
+                    perror("fcntl(F_SETFL)");
+                    pthread_exit(NULL);
+                }
+            }
+            long long nanosleep = *(long long *)(&buffer[0]);
+            // accumulated_nano_sleep += nanosleep;
+            // long long start_time = get_current_time_ns();
+            if (kill(-child_pgid, SIGSTOP) == -1) {
+                printf("error in stopping");
+                fflush(stdout);
+            }
             precise_sleep(nanosleep);
-	    if (kill(-child_pgid, SIGCONT) == -1) {
-		printf("error in conting");
-		fflush(stdout);
-	    }
+            // precise_sleep(accumulated_nano_sleep);
+            // long long end_time = get_current_time_ns();
+            // accumulated_nano_sleep -= (end_time - start_time);
+            if (kill(-child_pgid, SIGCONT) == -1) {
+                printf("error in conting");
+                fflush(stdout);
+            }
         }
 
         // Check if the child has exited
@@ -163,14 +169,14 @@ int main(int argc, char *argv[]) {
 
     if (pid == 0) { // Child process
         // Set the FIFO path as an environment variable
-	int fd;
+        int fd;
         if (setenv("SLOWPOKE_FIFO_PATH", FIFO_PATH, 1) == -1) {
             perror("setenv");
             exit(EXIT_FAILURE);
         }
 
         // Execute the child program with the remaining arguments
-	if (setsid() == -1) {
+        if (setsid() == -1) {
             perror("setsid");
             exit(EXIT_FAILURE);
         }
@@ -181,7 +187,7 @@ int main(int argc, char *argv[]) {
     } else { // Parent process
         // Create threads
         pthread_t fifo_thread, child_thread;
-	pid_t pgid = getpgid(pid);
+        pid_t pgid = getpgid(pid);
         if (pthread_create(&fifo_thread, NULL, monitor_fifo, &pgid) != 0) {
             perror("pthread_create (fifo_thread)");
             exit(EXIT_FAILURE);

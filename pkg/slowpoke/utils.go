@@ -17,6 +17,7 @@ import (
 	"runtime"
 	"sync/atomic"
 	"io"
+	// "syscall"
 )
 
 const printIntervalMillis = 30*1000
@@ -226,6 +227,9 @@ func SlowpokeCheck(serviceFuncName string) {
 			os.Stdout.Sync()
 			return
 		}
+
+		// syscall.Syscall(syscall.SYS_SCHED_YIELD, 0, 0, 0) // Yield the CPU
+
 		elapsed := time.Since(start)
 		start = start.Add(elapsed)
 		accumulatedDelay -= elapsed.Nanoseconds()
@@ -235,6 +239,9 @@ func SlowpokeCheck(serviceFuncName string) {
 		      start = start.Add(elapsed)
 		      accumulatedDelay -= elapsed.Nanoseconds()
 		}
+
+		// time.Sleep(time.Duration(accumulatedDelay) * time.Nanosecond)
+		// accumulatedDelay = 0
 	}
 	sync_guard.Unlock()
 
@@ -303,6 +310,11 @@ func performRequestSynth(ctx context.Context, req *http.Request, res *string, ap
         panic(err)
     }
 	*res = string(bodyBytes)
+}
+
+func RequestRlock() {
+	sync_guard.RLock()
+	sync_guard.RUnlock()
 }
 
 func InvokeSynthtic(ctx context.Context, app string, method string, input interface{}) string {

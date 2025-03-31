@@ -1,0 +1,74 @@
+SLOWPOKE_DELAY_MICROS_SERVICE1=0
+SLOWPOKE_DELAY_MICROS_SERVICE0=200
+SLOWPOKE_POKER_BATCH_THRESHOLD=60000000
+PROCESSING_TIME_SERVICE0=0.0002
+PROCESSING_TIME_SERVICE1=0.0
+bash run.sh synthetic two-services 8 512 40000
+[run.sh] Running benchmark synthetic with request two-services, thread 8, conn 512, duration 60
+[run.sh] Deleting all services
+configmap "config-service0" deleted
+deployment.apps "service0" deleted
+service "service0" deleted
+configmap "config-service1" deleted
+deployment.apps "service1" deleted
+service "service1" deleted
+deployment.apps "ubuntu-client" deleted
+[run.sh] Waiting for all pods to be deleted
+[run.sh] Deploying all services
+configmap/config-service0 created
+deployment.apps/service0 created
+service/service0 created
+configmap/config-service1 created
+deployment.apps/service1 created
+service/service1 created
+[run.sh] Client pod not found, deploying client
+deployment.apps/ubuntu-client created
+[run.sh] Waiting for all pods to be running
+[run.sh] All pods are running
+[run.sh] Running warmup test
+[run.sh] /wrk/wrk -t8 -c512 -d3s -L http://service0:80/endpoint1
+Running 3s test @ http://service0:80/endpoint1
+  8 threads and 512 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   206.01ms  119.47ms 593.09ms   69.44%
+    Req/Sec   297.29    197.61     0.96k    70.21%
+  Latency Distribution
+     50%  199.97ms
+     75%  284.86ms
+     90%  356.21ms
+     99%  536.11ms
+  7115 requests in 3.03s, 2.84MB read
+Requests/sec:   2348.57
+Transfer/sec:      0.94MB
+[run.sh] Speed is 2348.57, duration is 25
+[run.sh] Fix the request number.
+[run.sh] Running the actual test
+[run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d25s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+Running 25s test @ http://service0:80/endpoint1
+  8 threads and 512 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   198.14ms  116.55ms 751.77ms   63.72%
+    Req/Sec   329.16    210.06     1.06k    65.59%
+  Latency Distribution
+     50%  176.95ms
+     75%  284.76ms
+     90%  359.69ms
+     99%  494.33ms
+  40000 requests in 25.00s, 15.98MB read
+Requests/sec:   1599.99
+Transfer/sec:    654.68KB
+------------------------------
+stop time: 15.359592
+stop time: 15.349827
+stop time: 15.434465
+stop time: 15.608254
+stop time: 15.602670
+stop time: 15.700576
+stop time: 15.698284
+stop time: 15.697104
+[run.sh] Checking the resource usage
+NAME                             CPU(cores)   MEMORY(bytes)   
+service0-646cc45cc9-vbmgr        143m         44Mi            
+service1-f85d79bcc-ncmnj         1m           11Mi            
+ubuntu-client-76886f6bbd-p6lwn   2m           0Mi             
+[run.sh] Test finished with status 0

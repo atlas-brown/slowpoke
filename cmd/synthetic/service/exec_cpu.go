@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 	"golang.org/x/sys/unix"
 	"github.com/eniac/mucache/pkg/synthetic"
+	// "github.com/eniac/mucache/pkg/slowpoke"
 )
 
 var (
@@ -46,6 +47,7 @@ func stressCPU(execTime float32) {
 		for current < target {
 			for i := int64(0) ; i < 200000; i++ {
 			}
+			// slowpoke.RequestRlock()
 			current = getThreadCPUTime();
 		}
 

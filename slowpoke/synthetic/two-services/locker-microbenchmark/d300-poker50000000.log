@@ -1,0 +1,70 @@
+SLOWPOKE_DELAY_MICROS_SERVICE1=300
+SLOWPOKE_DELAY_MICROS_SERVICE0=0.0
+SLOWPOKE_POKER_BATCH_THRESHOLD=50000000
+PROCESSING_TIME_SERVICE0=0.0
+PROCESSING_TIME_SERVICE1=0.0005
+bash run.sh synthetic two-services 8 512 40000
+[run.sh] Running benchmark synthetic with request two-services, thread 8, conn 512, duration 60
+[run.sh] Deleting all services
+configmap "config-service0" deleted
+deployment.apps "service0" deleted
+service "service0" deleted
+configmap "config-service1" deleted
+deployment.apps "service1" deleted
+service "service1" deleted
+deployment.apps "ubuntu-client" deleted
+[run.sh] Waiting for all pods to be deleted
+[run.sh] Deploying all services
+configmap/config-service0 created
+deployment.apps/service0 created
+service/service0 created
+configmap/config-service1 created
+deployment.apps/service1 created
+service/service1 created
+[run.sh] Client pod not found, deploying client
+deployment.apps/ubuntu-client created
+[run.sh] Waiting for all pods to be running
+[run.sh] All pods are running
+[run.sh] Running warmup test
+[run.sh] /wrk/wrk -t8 -c512 -d3s -L http://service0:80/endpoint1
+Running 3s test @ http://service0:80/endpoint1
+  8 threads and 512 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   286.42ms   67.76ms 512.12ms   75.52%
+    Req/Sec   210.08     48.97   343.00     69.58%
+  Latency Distribution
+     50%  292.60ms
+     75%  315.90ms
+     90%  375.35ms
+     99%  437.12ms
+  5025 requests in 3.03s, 2.01MB read
+Requests/sec:   1660.69
+Transfer/sec:    679.52KB
+[run.sh] Speed is 1660.69, duration is 36
+[run.sh] Fix the request number.
+[run.sh] Running the actual test
+[run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d36s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+[run.sh] Checking the resource usage
+Running 36s test @ http://service0:80/endpoint1
+  8 threads and 512 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   295.60ms   58.64ms 608.79ms   68.12%
+    Req/Sec   216.27     56.72   810.00     74.73%
+  Latency Distribution
+     50%  296.30ms
+     75%  317.89ms
+     90%  378.79ms
+     99%  477.20ms
+  40000 requests in 36.00s, 15.98MB read
+Requests/sec:   1111.11
+Transfer/sec:    454.64KB
+------------------------------
+stop time: 22.999824
+stop time: 23.135180
+stop time: 23.129571
+stop time: 23.383106
+stop time: 23.374660
+stop time: 23.375239
+stop time: 23.280819
+stop time: 23.391082
+[run.sh] Test finished with status 0
