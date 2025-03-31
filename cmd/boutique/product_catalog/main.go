@@ -7,6 +7,7 @@ import (
 	// "github.com/eniac/mucache/pkg/cm"
 	"github.com/eniac/mucache/pkg/wrappers"
 	"github.com/eniac/mucache/pkg/slowpoke"
+	"net"
 	"net/http"
 	"runtime"
 	"os"
@@ -89,8 +90,10 @@ func main() {
 	slowpoke.SlowpokeInit()
 	// boutique.GetAllProducts(context.Background())
 	fmt.Println("Server started on port 3000")
-	err := http.ListenAndServe(":3000", nil)
+	listener, err := net.Listen("tcp", ":3000")
 	if err != nil {
 		panic(err)
 	}
+	slowpokeListener := &slowpoke.SlowpokeListener{listener}
+	panic(http.Serve(slowpokeListener, nil))
 }

@@ -2,6 +2,7 @@
 
 cd $(dirname $0)
 
+<<<<<<< HEAD
 # export SLOWPOKE_DELAY_MICROS_CART=0
 # export SLOWPOKE_DELAY_MICROS_CHECKOUT=0
 # export SLOWPOKE_DELAY_MICROS_CURRENCY=0
@@ -32,6 +33,19 @@ cd $(dirname $0)
 # export SLOWPOKE_DELAY_MICROS_RECOMMENDATIONS=0
 # export SLOWPOKE_DELAY_MICROS_SHIPPING=0
 # export SLOWPOKE_PRERUN=false
+=======
+export SLOWPOKE_DELAY_MICROS_CART=0
+export SLOWPOKE_DELAY_MICROS_CHECKOUT=0
+export SLOWPOKE_DELAY_MICROS_CURRENCY=0
+export SLOWPOKE_DELAY_MICROS_EMAIL=0
+export SLOWPOKE_DELAY_MICROS_FRONTEND=0
+export SLOWPOKE_DELAY_MICROS_PAYMENT=0
+export SLOWPOKE_DELAY_MICROS_PRODUCT_CATALOG=0
+export SLOWPOKE_DELAY_MICROS_RECOMMENDATIONS=0
+export SLOWPOKE_DELAY_MICROS_SHIPPING=0
+export SLOWPOKE_PROCESSING_MICROS_FRONTEND=500
+export SLOWPOKE_PRERUN=false
+>>>>>>> origin/locker
 # export SLOWPOKE_DELAY_MICROS_CART=287
 # export SLOWPOKE_DELAY_MICROS_CHECKOUT=2543
 # export SLOWPOKE_DELAY_MICROS_CURRENCY=1000
@@ -60,6 +74,7 @@ cd $(dirname $0)
 # export SLOWPOKE_DELAY_MICROS_USERTIMELINE=0
 # export SLOWPOKE_DELAY_MICROS_POSTSTORAGE=0
 
+<<<<<<< HEAD
 export SLOWPOKE_POKER_BATCH_THRESHOLD=40000000
 export PROCESSING_TIME_SERVICE0=0.0
 export PROCESSING_TIME_SERVICE1=0.0005
@@ -81,3 +96,13 @@ num_req=20000
 
 echo "bash run.sh $benchmark $request $thread $conn $num_req"
 bash run.sh $benchmark $request $thread $conn $num_req
+=======
+benchmark=boutique
+request=${2:-mix}
+thread=${3:-8}
+conn=${4:-512}
+# duration=${5:-10}
+
+bash run.sh $benchmark $request $thread $conn 100000
+# bash run-wrk2.sh $request $thread $conn $duration $rate
+>>>>>>> origin/locker

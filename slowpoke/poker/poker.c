@@ -34,9 +34,9 @@ void precise_sleep(long long sleep_ns) {
     long long start_time = get_current_time_ns();
     long long elapsed_time = 0;
 
-    long long common = sleep_ns < sleep_surplus ? sleep_ns : sleep_surplus;
-    sleep_surplus -= common;
-    sleep_ns -= common;
+    /* long long common = sleep_ns < sleep_surplus ? sleep_ns : sleep_surplus; */
+    /* sleep_surplus -= common; */
+    /* sleep_ns -= common; */
     while (elapsed_time < sleep_ns) {
         long long remaining_time = sleep_ns - elapsed_time;
 
@@ -61,7 +61,7 @@ void precise_sleep(long long sleep_ns) {
         // Calculate elapsed time after sleep
         elapsed_time = get_current_time_ns() - start_time;
     }
-    sleep_surplus += elapsed_time - sleep_ns;
+    /* sleep_surplus += elapsed_time - sleep_ns; */
     /* printf("done sleeping, surplus %lld\n", sleep_surplus); */
 }
 
