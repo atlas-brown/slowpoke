@@ -3,15 +3,15 @@
 cd $(dirname $0)/../..
 
 EXP=chain-d2-http-sync
-DIR=synthetic/$EXP/one-service-per-node-own-impl-new-assumption
+DIR=synthetic/$EXP/one-service-per-node-own-impl-locker-large-proct
 mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=1024
+CONN=512
 NUM_REQ=40000
-POKER_BATCH=20000000
-NUM_EXP=10
+POKER_BATCH=0
+NUM_EXP=2
 REPETITION=1
 
 # Make it reproducible
@@ -23,7 +23,7 @@ do
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
 
-    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker$POKER_BATCH-n$NUM_EXP-rep$REPETITION-revert.log
+    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker$POKER_BATCH-n$NUM_EXP-rep$REPETITION-move-time-read-pipe.log
     
     if [[ -e $output_file ]]; then
         echo "File $output_file already exists. Skipping..."

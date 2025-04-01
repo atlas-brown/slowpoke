@@ -67,20 +67,19 @@ cd $(dirname $0)
 # Another is service1-500 processing time, 100 delay?
 export SLOWPOKE_POKER_BATCH_THRESHOLD=10000000
 
-export PROCESSING_TIME_SERVICE0=0.0002 # base
-# export PROCESSING_TIME_SERVICE0=0.0
+# export PROCESSING_TIME_SERVICE0=0.0002 # base
+export PROCESSING_TIME_SERVICE0=0.0
 export PROCESSING_TIME_SERVICE1=0.0005 # base
 # export PROCESSING_TIME_SERVICE1=0.0
 # export SLOWPOKE_DELAY_MICROS_SERVICE0=200
 export SLOWPOKE_DELAY_MICROS_SERVICE0=0
-export SLOWPOKE_DELAY_MICROS_SERVICE1=0
-export SLOWPOKE_DELAY_MICROS_SERVICE1=100
+# export SLOWPOKE_DELAY_MICROS_SERVICE1=0
+export SLOWPOKE_DELAY_MICROS_SERVICE1=300
 
 
-DIR=/home/ubuntu/mucache/slowpoke/synthetic/two-services/move-timer-read-microbenchmark
-mkdir -p $DIR
+DIR=/home/ubuntu/mucache/slowpoke/synthetic/two-services/interference-microbenchmark
 
-for threadshold in 10000000 20000000 30000000 40000000 50000000 60000000
+for threadshold in 40000000
 # for threadshold in 20000000
 do
     export SLOWPOKE_POKER_BATCH_THRESHOLD=$threadshold
@@ -90,15 +89,9 @@ do
     conn=512
     num_req=40000
     # FILE=service1-base.log
-    # FILE=combined_no_rlock-poker$threadshold.log
-    # FILE=s1_no_rlock-base.log
-    FILE=s1_no_rlock-poker$threadshold.log
-    if [[ -e $DIR/$FILE ]]; then
-        echo "File $DIR/$FILE already exists. Skipping..."
-        continue
-    fi
-    env | grep "SLOWPOKE" >$DIR/$FILE
-    env | grep "PROCESSING" >>$DIR/$FILE
-    echo "bash run.sh $benchmark $request $thread $conn $num_req" >>$DIR/$FILE
-    bash run.sh $benchmark $request $thread $conn $num_req >>$DIR/$FILE
+    FILE=service1-d300-poker$threadshold.log
+    env | grep "SLOWPOKE" 
+    env | grep "PROCESSING" 
+    echo "bash run.sh $benchmark $request $thread $conn $num_req"
+    bash run.sh $benchmark $request $thread $conn $num_req
 done
