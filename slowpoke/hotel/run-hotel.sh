@@ -10,7 +10,7 @@ num_req=40000
 poker_batch=48000000
 num_exp=10
 DIR=hotel/one-service-per-node-locker-correction-norlock
-FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch.log
+FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch-again.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then
     echo "File $DIR/$FILE already exists. Skipping test."
