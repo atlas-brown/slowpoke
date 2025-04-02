@@ -68,6 +68,14 @@ void precise_sleep(long long sleep_ns) {
 
 // Function for the FIFO monitoring thread
 void *monitor_fifo(void *arg) {
+    // int ret = nice(-15);
+    // if (ret == -1 && errno != 0) {
+    //     perror("nice");
+    //     pthread_exit(NULL);
+    // }
+    // printf("nice set to %d\n", ret);
+    // fflush(stdout);
+
     int fifo_fd = open(FIFO_PATH, O_RDONLY | O_NONBLOCK);
     int fifo_recover_fd = open(FIFO_RECOVER_PATH, O_WRONLY);
     int is_blocking = 0;

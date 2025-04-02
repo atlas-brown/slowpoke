@@ -1,0 +1,513 @@
+benchmark                        : hotel
+num_threads                      : 8
+num_conns                        : 512
+target_service                   : profile
+request_type                     : mix
+repetitions                      : 1
+target_num_exp                   : 2
+pre_run                          : False
+num_req                          : 40000
+groundtruths                     : []
+slowdowns                        : []
+predicteds                       : []
+errs                             : []
+client_cpu_quota                 : 4
+random_seed                      : 1234
+request_ratio                    : {'frontend': 1, 'profile': 0.8, 'rate': 0.8, 'reservation': 1, 'search': 0.8, 'user': 0.198478617}
+baseline_service_processing_time : {'frontend': 0, 'profile': 1000, 'rate': 0, 'reservation': 0, 'search': 0, 'user': 0}
+cpu_quota                        : {'frontend': 2, 'profile': 2, 'rate': 2, 'reservation': 2, 'search': 2, 'user': 2}
+target_processing_time_range     : [0, 1000]
+baseline_throughputs             : []
+poker_batch                      : 40000000
+[test.py] Starting experiment...
+[test.py] >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Running experiment 0...
+[test.py] Actual processing time range: [0, 500]
+[test.py] Running baseline experiment
+    [exp] Running (pre_run: False) workload hotel/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '40000000', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_PROFILE': '1000', 'SLOWPOKE_PROCESSING_MICROS_RATE': '0', 'SLOWPOKE_PROCESSING_MICROS_RESERVATION': '0', 'SLOWPOKE_PROCESSING_MICROS_SEARCH': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '0.0', 'SLOWPOKE_DELAY_MICROS_PROFILE': '0.0', 'SLOWPOKE_DELAY_MICROS_RATE': '0.0', 'SLOWPOKE_DELAY_MICROS_RESERVATION': '0.0', 'SLOWPOKE_DELAY_MICROS_SEARCH': '0.0', 'SLOWPOKE_DELAY_MICROS_USER': '0.0'}
+    [exp] Executing cmd `bash run.sh hotel mix 8 512 40000`:
+        [run.sh] Running benchmark hotel with request mix, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "profile" deleted
+        deployment.apps "profile" deleted
+        service "rate" deleted
+        deployment.apps "rate" deleted
+        service "reservation" deleted
+        deployment.apps "reservation" deleted
+        service "search" deleted
+        deployment.apps "search" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/frontend created
+        deployment.apps/frontend created
+        service/profile created
+        deployment.apps/profile created
+        service/rate created
+        deployment.apps/rate created
+        service/reservation created
+        deployment.apps/reservation created
+        service/search created
+        deployment.apps/search created
+        service/user created
+        deployment.apps/user created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying hotel/analysis.txt to ubuntu-client-76886f6bbd-fxxd8:/analysis.txt
+        [run.sh] Finished populating hotel
+        [run.sh] Starting the rust proxy first for hotel
+        [2m2025-04-02T01:46:32.235889Z[0m [32m INFO[0m [2mproxy::hotel[0m[2m:[0m Reading analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   252.79ms  111.34ms 740.27ms   69.11%
+        Req/Sec   221.48     68.66   404.00     71.98%
+        Latency Distribution
+        50%  269.06ms
+        75%  327.77ms
+        90%  378.81ms
+        99%  489.55ms
+        5159 requests in 3.02s, 392.97KB read
+        Requests/sec:   1708.93
+        Transfer/sec:    130.17KB
+        [run.sh] Speed is 1708.93, duration is 35
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d35s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        frontend-6489c46f9-xgczb         594m         40Mi
+        profile-5656c4bb8-v7frj          510m         359Mi
+        rate-5ffb8b5799-wgx5p            60m          137Mi
+        reservation-5b85f55c56-kv62b     7m           144Mi
+        search-557dc5cd78-plp7l          85m          70Mi
+        ubuntu-client-76886f6bbd-fxxd8   38m          45Mi
+        user-597b4d6cf6-cnwv8            0m           8Mi
+        Running 35s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   273.18ms  109.76ms 784.37ms   69.62%
+        Req/Sec   231.06     56.17   620.00     72.43%
+        Latency Distribution
+        50%  277.97ms
+        75%  342.07ms
+        90%  405.86ms
+        99%  540.45ms
+        40000 requests in 35.00s, 2.98MB read
+        Requests/sec:   1142.85
+        Transfer/sec:     87.05KB
+        ------------------------------
+        stop time: 21.574088
+        stop time: 21.582982
+        stop time: 21.524013
+        stop time: 21.452466
+        stop time: 21.672365
+        stop time: 21.986401
+        stop time: 21.979485
+        stop time: 22.065347
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [21.574088, 21.582982, 21.524013, 21.452466, 21.672365, 21.986401, 21.979485, 22.065347]
+    [exp] Throughput: 1840.8033353193491
+[test.py] Baseline throughput: 1840.8033353193491
+[test.py] Running groundtruth experiment
+    [exp] Running (pre_run: False) workload hotel/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '40000000', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_PROFILE': '0', 'SLOWPOKE_PROCESSING_MICROS_RATE': '0', 'SLOWPOKE_PROCESSING_MICROS_RESERVATION': '0', 'SLOWPOKE_PROCESSING_MICROS_SEARCH': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '0.0', 'SLOWPOKE_DELAY_MICROS_PROFILE': '0.0', 'SLOWPOKE_DELAY_MICROS_RATE': '0.0', 'SLOWPOKE_DELAY_MICROS_RESERVATION': '0.0', 'SLOWPOKE_DELAY_MICROS_SEARCH': '0.0', 'SLOWPOKE_DELAY_MICROS_USER': '0.0'}
+    [exp] Executing cmd `bash run.sh hotel mix 8 512 40000`:
+        [run.sh] Running benchmark hotel with request mix, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "profile" deleted
+        deployment.apps "profile" deleted
+        service "rate" deleted
+        deployment.apps "rate" deleted
+        service "reservation" deleted
+        deployment.apps "reservation" deleted
+        service "search" deleted
+        deployment.apps "search" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/frontend created
+        deployment.apps/frontend created
+        service/profile created
+        deployment.apps/profile created
+        service/rate created
+        deployment.apps/rate created
+        service/reservation created
+        deployment.apps/reservation created
+        service/search created
+        deployment.apps/search created
+        service/user created
+        deployment.apps/user created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying hotel/analysis.txt to ubuntu-client-76886f6bbd-hjq57:/analysis.txt
+        [run.sh] Finished populating hotel
+        [run.sh] Starting the rust proxy first for hotel
+        [2m2025-04-02T01:48:11.692043Z[0m [32m INFO[0m [2mproxy::hotel[0m[2m:[0m Reading analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   253.19ms  107.43ms 798.51ms   68.58%
+        Req/Sec   223.81     73.80   450.00     70.69%
+        Latency Distribution
+        50%  244.51ms
+        75%  318.26ms
+        90%  393.98ms
+        99%  540.40ms
+        5217 requests in 3.02s, 397.39KB read
+        Requests/sec:   1724.71
+        Transfer/sec:    131.37KB
+        [run.sh] Speed is 1724.71, duration is 34
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d34s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        frontend-6489c46f9-m8rzc         633m         50Mi
+        profile-54c4bbc74f-6xr5v         449m         317Mi
+        rate-5ffb8b5799-hvzhc            234m         175Mi
+        reservation-5b85f55c56-j5g8t     224m         199Mi
+        search-557dc5cd78-xfh4p          413m         80Mi
+        ubuntu-client-76886f6bbd-hjq57   748m         59Mi
+        user-597b4d6cf6-hv282            54m          9Mi
+        Running 34s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   271.14ms  102.66ms   1.44s    71.37%
+        Req/Sec   235.80     52.72   424.00     67.95%
+        Latency Distribution
+        50%  263.37ms
+        75%  331.80ms
+        90%  397.69ms
+        99%  540.08ms
+        40000 requests in 34.00s, 2.98MB read
+        Requests/sec:   1176.46
+        Transfer/sec:     89.61KB
+        ------------------------------
+        stop time: 21.215953
+        stop time: 21.121010
+        stop time: 21.433850
+        stop time: 21.435625
+        stop time: 21.482285
+        stop time: 21.297211
+        stop time: 21.309576
+        stop time: 21.348752
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [21.215953, 21.12101, 21.43385, 21.435625, 21.482285, 21.297211, 21.309576, 21.348752]
+    [exp] Throughput: 1875.2461773370383
+    [exp] Running (pre_run: False) workload hotel/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '40000000', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_PROFILE': '500', 'SLOWPOKE_PROCESSING_MICROS_RATE': '0', 'SLOWPOKE_PROCESSING_MICROS_RESERVATION': '0', 'SLOWPOKE_PROCESSING_MICROS_SEARCH': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '0.0', 'SLOWPOKE_DELAY_MICROS_PROFILE': '0.0', 'SLOWPOKE_DELAY_MICROS_RATE': '0.0', 'SLOWPOKE_DELAY_MICROS_RESERVATION': '0.0', 'SLOWPOKE_DELAY_MICROS_SEARCH': '0.0', 'SLOWPOKE_DELAY_MICROS_USER': '0.0'}
+    [exp] Executing cmd `bash run.sh hotel mix 8 512 40000`:
+        [run.sh] Running benchmark hotel with request mix, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "profile" deleted
+        deployment.apps "profile" deleted
+        service "rate" deleted
+        deployment.apps "rate" deleted
+        service "reservation" deleted
+        deployment.apps "reservation" deleted
+        service "search" deleted
+        deployment.apps "search" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/frontend created
+        deployment.apps/frontend created
+        service/profile created
+        deployment.apps/profile created
+        service/rate created
+        deployment.apps/rate created
+        service/reservation created
+        deployment.apps/reservation created
+        service/search created
+        deployment.apps/search created
+        service/user created
+        deployment.apps/user created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying hotel/analysis.txt to ubuntu-client-76886f6bbd-qsgnh:/analysis.txt
+        [run.sh] Finished populating hotel
+        [run.sh] Starting the rust proxy first for hotel
+        [2m2025-04-02T01:49:49.141958Z[0m [32m INFO[0m [2mproxy::hotel[0m[2m:[0m Reading analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   255.15ms   99.78ms 691.02ms   69.16%
+        Req/Sec   222.14     64.77   380.00     72.03%
+        Latency Distribution
+        50%  247.55ms
+        75%  317.18ms
+        90%  384.80ms
+        99%  524.58ms
+        5233 requests in 3.03s, 398.61KB read
+        Requests/sec:   1729.75
+        Transfer/sec:    131.76KB
+        [run.sh] Speed is 1729.75, duration is 34
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d34s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        Running 34s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   271.95ms  107.67ms   1.47s    70.34%
+        Req/Sec   235.08     52.40   420.00     67.74%
+        Latency Distribution
+        50%  262.66ms
+        75%  335.97ms
+        90%  411.39ms
+        99%  570.35ms
+        40000 requests in 34.00s, 2.98MB read
+        Requests/sec:   1176.47
+        Transfer/sec:     89.61KB
+        ------------------------------
+        stop time: 21.350458
+        stop time: 21.400298
+        stop time: 21.378449
+        stop time: 21.386697
+        stop time: 21.463168
+        stop time: 21.327984
+        stop time: 21.458206
+        stop time: 21.457580
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: metrics not available yet
+    [exp] Times: [21.350458, 21.400298, 21.378449, 21.386697, 21.463168, 21.327984, 21.458206, 21.45758]
+    [exp] Throughput: 1868.9095450116351
+[test.py] Running slowdown experiment
+    [exp] Running (pre_run: False) workload hotel/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '40000000', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_PROFILE': '1000', 'SLOWPOKE_PROCESSING_MICROS_RATE': '0', 'SLOWPOKE_PROCESSING_MICROS_RESERVATION': '0', 'SLOWPOKE_PROCESSING_MICROS_SEARCH': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '400.0', 'SLOWPOKE_DELAY_MICROS_PROFILE': '0.0', 'SLOWPOKE_DELAY_MICROS_RATE': '500.0', 'SLOWPOKE_DELAY_MICROS_RESERVATION': '400.0', 'SLOWPOKE_DELAY_MICROS_SEARCH': '500.0', 'SLOWPOKE_DELAY_MICROS_USER': '2015.0'}
+    [exp] Executing cmd `bash run.sh hotel mix 8 512 40000`:
+        [run.sh] Running benchmark hotel with request mix, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "profile" deleted
+        deployment.apps "profile" deleted
+        service "rate" deleted
+        deployment.apps "rate" deleted
+        service "reservation" deleted
+        deployment.apps "reservation" deleted
+        service "search" deleted
+        deployment.apps "search" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/frontend created
+        deployment.apps/frontend created
+        service/profile created
+        deployment.apps/profile created
+        service/rate created
+        deployment.apps/rate created
+        service/reservation created
+        deployment.apps/reservation created
+        service/search created
+        deployment.apps/search created
+        service/user created
+        deployment.apps/user created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying hotel/analysis.txt to ubuntu-client-76886f6bbd-jq42d:/analysis.txt
+        [run.sh] Finished populating hotel
+        [run.sh] Starting the rust proxy first for hotel
+        [2m2025-04-02T01:51:26.566671Z[0m [32m INFO[0m [2mproxy::hotel[0m[2m:[0m Reading analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   432.94ms  167.15ms 912.66ms   66.43%
+        Req/Sec   130.21     55.33   340.00     69.06%
+        Latency Distribution
+        50%  450.61ms
+        75%  555.31ms
+        90%  632.99ms
+        99%  777.93ms
+        2946 requests in 3.03s, 224.40KB read
+        Requests/sec:    973.73
+        Transfer/sec:     74.17KB
+        [run.sh] Speed is 973.73, duration is 61
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d61s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        frontend-566764bd95-frs97        327m         40Mi
+        profile-5656c4bb8-bx42h          348m         358Mi
+        rate-58544df98b-6l5k5            37m          131Mi
+        reservation-84d866d896-r6q5q     45m          137Mi
+        search-6f64c466d7-d8k8t          69m          166Mi
+        ubuntu-client-76886f6bbd-jq42d   183m         46Mi
+        user-b6f44964b-fzmvd             13m          8Mi
+        Running 1m test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   462.93ms  162.68ms   1.09s    68.89%
+        Req/Sec   138.45     53.26   350.00     70.17%
+        Latency Distribution
+        50%  472.59ms
+        75%  569.49ms
+        90%  658.99ms
+        99%  833.91ms
+        40000 requests in 1.02m, 2.98MB read
+        Requests/sec:    655.74
+        Transfer/sec:     49.95KB
+        ------------------------------
+        stop time: 36.358200
+        stop time: 36.260299
+        stop time: 36.237917
+        stop time: 36.636640
+        stop time: 36.470572
+        stop time: 36.597661
+        stop time: 36.477561
+        stop time: 36.424123
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [36.3582, 36.260299, 36.237917, 36.63664, 36.470572, 36.597661, 36.477561, 36.424123]
+    [exp] Throughput: 1097.9096133765163
+    [exp] Running (pre_run: False) workload hotel/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '40000000', 'SLOWPOKE_PROCESSING_MICROS_FRONTEND': '0', 'SLOWPOKE_PROCESSING_MICROS_PROFILE': '1000', 'SLOWPOKE_PROCESSING_MICROS_RATE': '0', 'SLOWPOKE_PROCESSING_MICROS_RESERVATION': '0', 'SLOWPOKE_PROCESSING_MICROS_SEARCH': '0', 'SLOWPOKE_PROCESSING_MICROS_USER': '0', 'SLOWPOKE_DELAY_MICROS_FRONTEND': '200.0', 'SLOWPOKE_DELAY_MICROS_PROFILE': '0.0', 'SLOWPOKE_DELAY_MICROS_RATE': '250.0', 'SLOWPOKE_DELAY_MICROS_RESERVATION': '200.0', 'SLOWPOKE_DELAY_MICROS_SEARCH': '250.0', 'SLOWPOKE_DELAY_MICROS_USER': '1007.5'}
+    [exp] Executing cmd `bash run.sh hotel mix 8 512 40000`:
+        [run.sh] Running benchmark hotel with request mix, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        service "frontend" deleted
+        deployment.apps "frontend" deleted
+        service "profile" deleted
+        deployment.apps "profile" deleted
+        service "rate" deleted
+        deployment.apps "rate" deleted
+        service "reservation" deleted
+        deployment.apps "reservation" deleted
+        service "search" deleted
+        deployment.apps "search" deleted
+        service "user" deleted
+        deployment.apps "user" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/frontend created
+        deployment.apps/frontend created
+        service/profile created
+        deployment.apps/profile created
+        service/rate created
+        deployment.apps/rate created
+        service/reservation created
+        deployment.apps/reservation created
+        service/search created
+        deployment.apps/search created
+        service/user created
+        deployment.apps/user created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Copying hotel/analysis.txt to ubuntu-client-76886f6bbd-89chn:/analysis.txt
+        [run.sh] Finished populating hotel
+        [run.sh] Starting the rust proxy first for hotel
+        [2m2025-04-02T01:53:32.053800Z[0m [32m INFO[0m [2mproxy::hotel[0m[2m:[0m Reading analysis data from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   326.70ms  132.00ms 842.96ms   66.56%
+        Req/Sec   168.53     68.23   410.00     63.79%
+        Latency Distribution
+        50%  327.18ms
+        75%  415.00ms
+        90%  495.23ms
+        99%  650.72ms
+        3929 requests in 3.02s, 299.28KB read
+        Requests/sec:   1301.51
+        Transfer/sec:     99.14KB
+        [run.sh] Speed is 1301.51, duration is 46
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d46s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        frontend-5bf447d46f-gxwf2        1m           39Mi
+        profile-5656c4bb8-zt7rx          454m         387Mi
+        rate-698c77574-pd4pw             50m          135Mi
+        reservation-7f6c9f7886-p5k68     46m          141Mi
+        search-6569b9df4c-4j89n          93m          163Mi
+        ubuntu-client-76886f6bbd-89chn   145m         42Mi
+        user-85df799c47-rmqhb            10m          8Mi
+        Running 46s test @ http://localhost:3000
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   368.30ms  142.19ms   1.02s    68.84%
+        Req/Sec   172.59     57.46   410.00     69.00%
+        Latency Distribution
+        50%  376.16ms
+        75%  459.31ms
+        90%  543.77ms
+        99%  704.34ms
+        40000 requests in 46.00s, 2.98MB read
+        Requests/sec:    869.56
+        Transfer/sec:     66.24KB
+        ------------------------------
+        stop time: 28.958900
+        stop time: 28.897721
+        stop time: 28.960579
+        stop time: 29.380657
+        stop time: 29.149224
+        stop time: 29.250520
+        stop time: 29.338052
+        stop time: 29.179005
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [28.9589, 28.897721, 28.960579, 29.380657, 29.149224, 29.25052, 29.338052, 29.179005]
+    [exp] Throughput: 1372.7150525214936
+[test.py] Baseline throughput:  1840.8033353193491
+[test.py] Groundtruth:  [1875.2461773370383, 1868.9095450116351]
+[test.py] Slowdown:  [1097.9096133765163, 1372.7150525214936]
+[test.py] Predicted:  [1957.6298786637144, 1892.2073567390003]
+[test.py] Error percentage:  [4.393220598037209, 1.2465992155452377]
+[test.py] ++++++++++++++++++++++++++++++++ Summary: 
+[test.py] Result for the experiment 0: 
+    Baseline throughput: 1840.8033353193491
+    Groundtruth: [1875.2461773370383, 1868.9095450116351]
+    Slowdown:    [1097.9096133765163, 1372.7150525214936]
+    Predicted:   [1957.6298786637144, 1892.2073567390003]
+    Error Perc:  [4.393220598037209, 1.2465992155452377]

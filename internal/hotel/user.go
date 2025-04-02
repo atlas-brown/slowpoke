@@ -45,7 +45,6 @@ func hash(str string) []byte {
 }
 
 func Login(ctx context.Context, username string, password string) string {
-	fmt.Println("Logging in user: ", username)
 	user, err := slowpoke.GetState[User](ctx, username)
 	if err != nil {
 		panic(err)
