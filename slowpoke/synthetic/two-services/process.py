@@ -44,6 +44,9 @@ for file in sorted(os.listdir(DIR)):
             time_prefix = 'stop time: '
             if line.startswith(time_prefix):
                 times.append(float(line[len(time_prefix):]))
+        if len(times) == 0:
+            del map_[delay][poker]
+            continue
         throughput = 40000 / (sum(times) / len(times))
         processing_time = 2000000 / throughput
         map_[delay][poker]["times"] = times
