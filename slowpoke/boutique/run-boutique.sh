@@ -4,4 +4,18 @@ cd $(dirname "$0")/..
 
 # python3 test.py -b boutique -x cart -r mix -d 100
 
-python3 test.py -b boutique -x cart -r mix -t 8 -c 512 --clien_cpu_quota 8 --num_exp 10 --repetitions 3 --num_req 200000 >boutique/results-one-service-per-node/mix-cart.log
+target=cart
+thread=8
+conn=512
+repetitions=3
+num_req=200000
+poker_batch=30000000
+num_exp=10
+DIR=boutique/results-locker-move-correction-nrlock
+FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch.log
+mkdir -p $DIR
+if [ -f $DIR/$FILE ]; then
+    echo "File $DIR/$FILE already exists. Skipping test."
+    exit 0
+fi
+python3 test.py -b boutique -x cart -r mix -t $thread -c $conn --num_exp $num_exp --repetitions $repetitions --num_req $num_req --poker_batch $poker_batch >$DIR/$FILE
