@@ -55,7 +55,9 @@ class Runner:
             for service, p_ in processing_time.items():
                 env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)
             for service, delay in service_delay.items():
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay/self.cpu_quota[service])
+                d = delay/self.cpu_quota[service]
+                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
+                # env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(int(0 * 1000 * self.request_ratio[service] * d))
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
         cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
@@ -113,6 +115,9 @@ class Runner:
                 print("[test.py] Found 0 throughtput, rerun experiment")
                 res = self.exp(service_delay, processing_time)
             groundtruth.append(res)
+
+        # baseline_throughput = 1575.0880421056315
+        # groundtruth = [1640.3420272239941, 1649.3207874339041]
         
         # slowdown
         print(f"[test.py] Running slowdown experiment", flush=True)
