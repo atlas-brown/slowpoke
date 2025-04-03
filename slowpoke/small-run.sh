@@ -74,13 +74,13 @@ export PROCESSING_TIME_SERVICE1=0.0005 # base
 # export SLOWPOKE_DELAY_MICROS_SERVICE0=200
 export SLOWPOKE_DELAY_MICROS_SERVICE0=0
 export SLOWPOKE_DELAY_MICROS_SERVICE1=0
-export SLOWPOKE_DELAY_MICROS_SERVICE1=700
+export SLOWPOKE_DELAY_MICROS_SERVICE1=100
 
 
 DIR=/home/ubuntu/mucache/slowpoke/synthetic/two-services/move-timer-read-microbenchmark
 mkdir -p $DIR
 
-for threadshold in 10000000 20000000 30000000 40000000 50000000 60000000
+for threadshold in 100000 500000
 # for threadshold in 20000000
 do
     export SLOWPOKE_POKER_BATCH_THRESHOLD=$threadshold
@@ -92,7 +92,7 @@ do
     # FILE=service1-base.log
     # FILE=combined_no_rlock-poker$threadshold.log
     # FILE=s1_no_rlock-base.log
-    FILE=s1_no_rlockd_700-poker$threadshold.log
+    FILE=s1_no_rlock_d100-poker$threadshold.log
     if [[ -e $DIR/$FILE ]]; then
         echo "File $DIR/$FILE already exists. Skipping..."
         continue
