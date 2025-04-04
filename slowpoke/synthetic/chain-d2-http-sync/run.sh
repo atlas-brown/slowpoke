@@ -3,20 +3,20 @@
 cd $(dirname $0)/../..
 
 EXP=chain-d2-http-sync
-DIR=synthetic/$EXP/one-service-per-node-own-impl-locker-large-proct
+DIR=synthetic/$EXP/locker-correction-norlock
 mkdir -p $DIR
 
 # config
 THREAD=8
 CONN=512
 NUM_REQ=40000
-POKER_BATCH=0
-NUM_EXP=2
-REPETITION=1
+POKER_BATCH=20000000
+NUM_EXP=10
+REPETITION=2
 
 # Make it reproducible
-# target_service_random_pairs="0:4446 1:7748 2:22717"
-target_service_random_pairs="2:22717"
+target_service_random_pairs="0:4446 1:7748 2:22717"
+# target_service_random_pairs="2:22717"
 
 for pair in $target_service_random_pairs
 do 

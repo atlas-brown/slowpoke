@@ -30,17 +30,21 @@ spec:
             nodeName: worker3
             containers:
                 - name: app
-                  image: yizhengx/hydragen:chain-d4-http-sync
+                  image: yizhengx/mucache:synthetic-poker
                   imagePullPolicy: Always
                   env:
-                    - name: SERVICE_NAME
-                      value: service2
+                    - name: APP_NAME
+                      value: service
+                    - name: CONF
+                      value: /usr/src/emulator/config/conf.json
                     - name: GOMEMLIMIT
                       value: "1024000000"
                     - name: SLOWPOKE_DELAY_MICROS
                       value: "${SLOWPOKE_DELAY_MICROS_SERVICE2}"
                     - name: SLOWPOKE_PRERUN
                       value: "${SLOWPOKE_PRERUN}"
+                    - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+                      value: "${SLOWPOKE_POKER_BATCH_THRESHOLD}"
                   ports:
                     - containerPort: 5000
                   volumeMounts:
@@ -52,13 +56,6 @@ spec:
                         port: 5000
                     initialDelaySeconds: 2
                     periodSeconds: 1
-                  resources:
-                    limits:
-                        cpu: 1000m
-                        memory: 1024M
-                    requests:
-                        cpu: 1000m
-                        memory: 512M
             volumes:
                 - name: config-data-volume
                   configMap:
