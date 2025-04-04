@@ -18,7 +18,6 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func registerUser(ctx context.Context, req *hotel.RegisterUserRequest) *hotel.RegisterUserResponse {
-    slowpoke.SlowpokeCheck("registerUser");
 	ok := hotel.RegisterUser(ctx, req.Username, req.Password)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := hotel.RegisterUserResponse{Ok: ok}
@@ -26,7 +25,6 @@ func registerUser(ctx context.Context, req *hotel.RegisterUserRequest) *hotel.Re
 }
 
 func login(ctx context.Context, req *hotel.LoginRequest) *hotel.LoginResponse {
-    slowpoke.SlowpokeCheck("login");
 	token := hotel.Login(ctx, req.Username, req.Password)
 	//fmt.Println("Movie info stored for id: " + movieId)
 	resp := hotel.LoginResponse{Token: token}
@@ -38,8 +36,8 @@ func main() {
 	slowpoke.SlowpokeInit()
 	hotel.InitUsers()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/register_user", wrappers.NonROWrapper[hotel.RegisterUserRequest, hotel.RegisterUserResponse](registerUser))
-	http.HandleFunc("/login", wrappers.NonROWrapper[hotel.LoginRequest, hotel.LoginResponse](login))
+	http.HandleFunc("/register_user", wrappers.SlowpokeWrapper[hotel.RegisterUserRequest, hotel.RegisterUserResponse](registerUser, "register_user"))
+	http.HandleFunc("/login", wrappers.SlowpokeWrapper[hotel.LoginRequest, hotel.LoginResponse](login, "login"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)

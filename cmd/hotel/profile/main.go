@@ -18,7 +18,6 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func storeProfile(ctx context.Context, req *hotel.StoreProfileRequest) *hotel.StoreProfileResponse {
-    slowpoke.SlowpokeCheck("storeProfile");
 	hotelId := hotel.StoreProfile(ctx, req.Profile)
 	//fmt.Println("Movie info stored for id: " + movieId)
 	resp := hotel.StoreProfileResponse{HotelId: hotelId}
@@ -26,7 +25,6 @@ func storeProfile(ctx context.Context, req *hotel.StoreProfileRequest) *hotel.St
 }
 
 func getProfiles(ctx context.Context, req *hotel.GetProfilesRequest) *hotel.GetProfilesResponse {
-    slowpoke.SlowpokeCheck("getProfiles");
 	hotels := hotel.GetProfiles(ctx, req.HotelIds)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := hotel.GetProfilesResponse{Profiles: hotels}
@@ -39,8 +37,8 @@ func main() {
 	slowpoke.SlowpokeInit()
 	hotel.InitProfiles()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/store_profile", wrappers.NonROWrapper[hotel.StoreProfileRequest, hotel.StoreProfileResponse](storeProfile))
-	http.HandleFunc("/ro_get_profiles", wrappers.ROWrapper[hotel.GetProfilesRequest, hotel.GetProfilesResponse](getProfiles))
+	http.HandleFunc("/store_profile", wrappers.SlowpokeWrapper[hotel.StoreProfileRequest, hotel.StoreProfileResponse](storeProfile, "store_profile"))
+	http.HandleFunc("/ro_get_profiles", wrappers.SlowpokeWrapper[hotel.GetProfilesRequest, hotel.GetProfilesResponse](getProfiles, "ro_get_profiles"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)

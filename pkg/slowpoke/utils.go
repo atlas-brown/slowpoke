@@ -45,31 +45,6 @@ func min(a, b int64) int64 {
 	}
 	return b
 }
-// func printCounters() {
-// 	time_now := time.Now()
-// 	func_counters := make(map[string]int)
-// 	string_to_print := ""
-// 	for thread, counters := range requestCounters {
-// 		for requestName, count := range counters {
-// 			if count > 0 {
-// 				if _, ok := func_counters[requestName]; !ok {
-// 					func_counters[requestName] = 0
-// 				}
-// 				func_counters[requestName] += count
-// 				string_to_print += fmt.Sprintf("	[%d] %s: %d\n", thread, requestName, count)
-// 				requestCounters[thread][requestName] = 0
-// 			}
-// 		}
-// 	}
-// 	if string_to_print != "" {
-// 		fmt.Printf("[%s] Slowpoke Counters\n", time_now.String())
-// 		fmt.Printf(string_to_print)
-// 		fmt.Printf("	[Aggregation]\n")
-// 		for func_name, count := range func_counters {
-// 			fmt.Printf("		%s: %d\n", func_name, count)
-// 		}
-// 	}
-// }
 
 func printCountersSyncMap() {
 	timeNow := time.Now()
@@ -238,7 +213,38 @@ func SlowpokeCheck(serviceFuncName string) {
 		}
 	}
 
-	// Delay
+	// Process
+	lockThread := true
+	if processingMicros >= 0 {
+		// Threads need to be locked because otherwise util.ThreadCPUTime() can change in the middle of execution
+		takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
+		sleepTime := int64(processingMicros*1000.0);
+		common := min(takenSurplus, sleepTime);
+		takenSurplus -= common;
+		sleepTime -= common;
+		if lockThread {
+			runtime.LockOSThread()
+		}
+
+		current := getThreadCPUTime()
+		target := current + sleepTime
+
+		for current < target {
+			for i := int64(0) ; i < 200000; i++ {
+			}
+			current = getThreadCPUTime();
+		}
+
+		takenSurplus += current - target;
+		atomic.AddInt64(&sleepSurplus, takenSurplus);
+
+		if lockThread {
+			runtime.UnlockOSThread()
+		}
+	}
+}
+
+func SlowpokeDelay() {
 	sync_guard.Lock()
 	accumulatedDelay += delayNanos
 	if accumulatedDelay > pokerBatchThreshold {
@@ -273,36 +279,6 @@ func SlowpokeCheck(serviceFuncName string) {
 		accumulatedDelay = 0
 	}
 	sync_guard.Unlock()
-
-	// Process
-	lockThread := true
-	if processingMicros >= 0 {
-		// Threads need to be locked because otherwise util.ThreadCPUTime() can change in the middle of execution
-		takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
-		sleepTime := int64(processingMicros*1000.0);
-		common := min(takenSurplus, sleepTime);
-		takenSurplus -= common;
-		sleepTime -= common;
-		if lockThread {
-			runtime.LockOSThread()
-		}
-
-		current := getThreadCPUTime()
-		target := current + sleepTime
-
-		for current < target {
-			for i := int64(0) ; i < 200000; i++ {
-			}
-			current = getThreadCPUTime();
-		}
-
-		takenSurplus += current - target;
-		atomic.AddInt64(&sleepSurplus, takenSurplus);
-
-		if lockThread {
-			runtime.UnlockOSThread()
-		}
-	}
 }
 
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
