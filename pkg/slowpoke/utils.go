@@ -285,6 +285,45 @@ func SlowpokeDelay() {
 	sync_guard.Unlock()
 }
 
+func SlowpokeFlushDelay(flusher http.Flusher) {
+	sync_guard.Lock()
+	accumulatedDelay += delayNanos
+	if accumulatedDelay > pokerBatchThreshold {
+		flusher.Flush()
+		
+		// start := time.Now()
+		binary.LittleEndian.PutUint64(pipebuf, uint64(accumulatedDelay))
+		_, err := pipefile.Write(pipebuf);
+		if err != nil {
+			fmt.Println("Error writing to pipe:", err)
+			os.Stdout.Sync()
+			return
+		}
+
+		// syscall.Syscall(syscall.SYS_SCHED_YIELD, 0, 0, 0) // Yield the CPU
+
+		// elapsed := time.Since(start)
+		// start = start.Add(elapsed)
+		// accumulatedDelay -= elapsed.Nanoseconds()
+		// for accumulatedDelay > 0 {
+		//       time.Sleep(time.Duration(accumulatedDelay) * time.Nanosecond)
+		//       elapsed = time.Since(start)
+		//       start = start.Add(elapsed)
+		//       accumulatedDelay -= elapsed.Nanoseconds()
+		// }
+
+		// time.Sleep(time.Duration(accumulatedDelay) * time.Nanosecond)
+		_, err = recover_pipefile.Read(pipe_recv_buf);
+		if err != nil {
+			fmt.Println("Error reading from pipe:", err)
+			os.Stdout.Sync()
+			return
+		}
+		accumulatedDelay = 0
+	}
+	sync_guard.Unlock()
+}
+
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
 	// sync_guard.RLock()
 	// sync_guard.RUnlock()

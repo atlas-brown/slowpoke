@@ -32,8 +32,15 @@ func execTask(request *http.Request, endpoint *synthetic.Endpoint) Response {
 
 func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	slowpoke.SlowpokeCheck(handler.endpoint.Name)
+	// slowpoke.SlowpokeDelay()
 	response := execTask(request, handler.endpoint)
 	utility.DumpJson(response, writer)
+	f, ok := writer.(http.Flusher)
+	if ok {
+		slowpoke.SlowpokeFlushDelay(f)
+	} else {
+		slowpoke.SlowpokeDelay()
+	}
 }
 
 // Launch a HTTP server to serve one or more endpoints
