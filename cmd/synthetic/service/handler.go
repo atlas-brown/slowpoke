@@ -2,13 +2,17 @@ package main
 
 import (
 	// "errors"
+	"context"
 	"fmt"
-	"net/http"
 	"net"
+	"net/http"
+
 	// "github.com/goccy/go-json"
-	"github.com/eniac/mucache/pkg/utility"
-	"github.com/eniac/mucache/pkg/synthetic"
+	pb "github.com/eniac/mucache/pkg/pb"
 	"github.com/eniac/mucache/pkg/slowpoke"
+	"github.com/eniac/mucache/pkg/synthetic"
+	"github.com/eniac/mucache/pkg/utility"
+	"google.golang.org/grpc"
 )
 
 type endpointHandler struct {
@@ -16,8 +20,8 @@ type endpointHandler struct {
 }
 
 type Response struct {
-	CPUResp  string            `json:"cpu_response"`
-	NetworkResp   map[string]string `json:"network_response"`
+	CPUResp     string            `json:"cpu_response"`
+	NetworkResp map[string]string `json:"network_response"`
 }
 
 func execTask(request *http.Request, endpoint *synthetic.Endpoint) Response {
@@ -27,20 +31,15 @@ func execTask(request *http.Request, endpoint *synthetic.Endpoint) Response {
 }
 
 func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	// fmt.Printf("Request to %s\n", handler.endpoint.Name)
 	slowpoke.SlowpokeCheck(handler.endpoint.Name)
 	response := execTask(request, handler.endpoint)
-	// fmt.Printf("Response: %s\n", response)
-	// respJSON, err := json.Marshal(response)
-	// if err != nil {
-	// 	panic(err)
-	// }
 	utility.DumpJson(response, writer)
 }
 
 // Launch a HTTP server to serve one or more endpoints
 func serverHTTP(endpoints []synthetic.Endpoint) {
 	slowpoke.SlowpokeInit()
+	fmt.Println("Starting HTTP server")
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write([]byte("Connected\n"))
@@ -62,4 +61,42 @@ func serverHTTP(endpoints []synthetic.Endpoint) {
 	slowpokeListener := &slowpoke.SlowpokeListener{listener}
 
 	panic(http.Serve(slowpokeListener, mux))
+}
+
+// GPRC SERVER
+
+type grpcServer struct {
+	pb.UnimplementedSimpleServer
+	endpoints []synthetic.Endpoint
+}
+
+func (s *grpcServer) SimpleRPC(ctx context.Context, in *pb.SimpleRequest) (*pb.SimpleResponse, error) {
+	target_endpoint := in.Endpoint
+	var response Response
+	for i := range s.endpoints {
+		if s.endpoints[i].Name == target_endpoint {
+			slowpoke.SlowpokeCheck(target_endpoint)
+			response = execTask(nil, &s.endpoints[i])
+		}
+	}
+	jsonBytes, err := utility.MarshalJson(response)
+	var respStr string
+	if err != nil {
+		respStr = fmt.Sprintf("{ \"error\": \"%s\" }", err.Error())
+	} else {
+		respStr = string(jsonBytes)
+	}
+	return &pb.SimpleResponse{Resp: respStr}, nil
+}
+
+func serveGRPC(endpoints []synthetic.Endpoint) {
+	slowpoke.SlowpokeInit()
+	fmt.Println("Starting gRPC server")
+	lis, err := net.Listen("tcp", ":5000")
+	s := grpc.NewServer()
+	pb.RegisterSimpleServer(s, &grpcServer{endpoints: endpoints})
+	if err != nil {
+		panic(err)
+	}
+	s.Serve(lis)
 }

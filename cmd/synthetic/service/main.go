@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"runtime"
+
 	"github.com/eniac/mucache/pkg/synthetic"
-	"fmt"
 )
 
 // Load the config map from the CONF environment variable
@@ -39,12 +40,12 @@ func main() {
 
 	fmt.Printf("Starting synthetic service with %d processes\n", runtime.GOMAXPROCS(0))
 
-	serverHTTP(configMap.Endpoints)
-
 	// TODO: Also support gRPC
-	// if synthetic.ConfigMap.Protocol == "http" {
-	// 	server.HTTP(synthetic.ConfigMap.Endpoints)
-	// } else if synthetic.ConfigMap.Protocol == "grpc" {
-	// 	server.GRPC(synthetic.ConfigMap.Endpoints)
-	// }
+	if configMap.Protocol == "http" {
+		serverHTTP(configMap.Endpoints)
+	} else if configMap.Protocol == "grpc" {
+		serveGRPC(configMap.Endpoints)
+	} else {
+		panic("Unsupported protocol")
+	}
 }

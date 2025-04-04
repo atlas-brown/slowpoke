@@ -18,6 +18,8 @@ import (
 	"sync/atomic"
 	"io"
 	// "syscall"
+	"google.golang.org/grpc"
+	pb "github.com/eniac/mucache/pkg/pb"
 )
 
 const printIntervalMillis = 30*1000
@@ -37,6 +39,8 @@ var (
 	pipefile *os.File
 	recover_pipefile *os.File
 	pipe_recv_buf = make([]byte, 8)
+	grpcConn *grpc.ClientConn
+	initOnce sync.Once
 )
 
 func min(a, b int64) int64 {
@@ -362,6 +366,31 @@ func InvokeSynthtic(ctx context.Context, app string, method string, input interf
 	// sync_guard.RLock()
     // sync_guard.RUnlock()
 	return res
+}
+
+func InitGRPCConn(app string) {
+	conn, err := grpc.Dial(fmt.Sprintf("%s.default.svc.cluster.local:%s", app, "80"), grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	grpcConn = conn
+}
+
+func InvokeGRPC(ctx context.Context, app string, method string, input interface{}) string {
+	// sync_guard.RLock()
+	// sync_guard.RUnlock()
+	// ctx, cancel := context.WithTimeout(ctx, time.Second)
+	// defer cancel()
+
+	initOnce.Do(func() {
+        InitGRPCConn(app)
+    })
+	client := pb.NewSimpleClient(grpcConn)
+	resp_, err := client.SimpleRPC(ctx, &pb.SimpleRequest{Endpoint: method})
+	if err != nil {
+		panic(err)
+	}
+	return resp_.Resp
 }
 
 type SlowpokeListener struct {

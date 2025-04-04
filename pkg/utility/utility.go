@@ -22,6 +22,10 @@ func DumpJson(source interface{}, target io.Writer) {
 	}
 }
 
+func MarshalJson(source interface{}) ([]byte, error) {
+	return json.Marshal(source)
+}
+
 // This method checks if a call is read-only
 //
 // TODO: Make this read the read-only configuration from an environment variable or a file
