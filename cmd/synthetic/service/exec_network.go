@@ -8,38 +8,94 @@ import (
 	"github.com/eniac/mucache/pkg/synthetic"
 	// "github.com/goccy/go-json"
 	"sync"
+	"math/rand"
 )
 
-func execParallelHTTP(calledServices []synthetic.CalledService) map[string]string {
+func pickDynamicService(calledServices []synthetic.CalledService) string {
+	
+	type s_p_pair struct {
+		service_name string
+		probability  int
+	}
+
+	sum_prob := 0
+	var service_prob []s_p_pair
+	for _, service := range calledServices {
+		if service.Probability != 0 {
+			sum_prob += service.Probability
+			service_prob = append(service_prob, s_p_pair{service.Service, sum_prob})
+		}
+	}
+
+	// if only one service is available, add a dummy service to make the service prob as p/100
+	// A single dynamic service case
+	if (len(service_prob)==1) {
+		sum_prob = 100
+		service_prob = append(service_prob, s_p_pair{"", sum_prob})
+	}
+
+	// Dynamic pattern: randomly pick one value
+	picked_service := ""
+	if len(service_prob) != 0 {
+		rand_value := rand.Intn(sum_prob-1) + 1
+		for _, p := range service_prob {
+			if rand_value <= p.probability {
+				picked_service = p.service_name
+				break
+			}
+		}
+	}
+	return picked_service
+}
+
+
+func execParallel(calledServices []synthetic.CalledService) map[string]string {
+
+	// pick dynamic service
+	picked_service := pickDynamicService(calledServices)
+
 	// forward requests
 	respMap := make(map[string]string)
 	var wg sync.WaitGroup
 	for _, service := range calledServices {
-		wg.Add(1)
-		go func(service synthetic.CalledService) {
-			defer wg.Done()
-			// fmt.Printf("Calling %s (%s)\n", service.Service, service.Endpoint)
-			resp := slowpoke.InvokeSynthtic(context.Background(), service.Service, service.Endpoint, "")
-			key := fmt.Sprintf("%s (%s)", service.Service, service.Endpoint)
-			respMap[key] = fmt.Sprintf("{ \"response\": %s }", resp)
-		}(service)
+		if service.Probability != 0 && service.Service != picked_service {
+			continue
+		}
+		for i := 0; i < service.TrafficForwardRatio; i++ {
+			wg.Add(1)
+			go func(service synthetic.CalledService) {
+				defer wg.Done()
+				resp := slowpoke.InvokeSynthtic(context.Background(), service.Service, service.Endpoint, "")
+				key := fmt.Sprintf("%s [%s,%s]", service.Service, service.Endpoint, i)
+				respMap[key] = fmt.Sprintf("{ \"response\": %s }", resp)
+			}(service)
+		}
 	}
 	wg.Wait()
 	return respMap
 }
 
-func execSequentialHTTP(calledServices []synthetic.CalledService) map[string]string {
+func execSequential(calledServices []synthetic.CalledService) map[string]string {
+
+	// pick dynamic service
+	picked_service := pickDynamicService(calledServices)
+
 	// forward requests
 	respMap := make(map[string]string)
 	for _, service := range calledServices {
-		var resp string
-		if service.Protocol == "grpc" {
-			resp = slowpoke.InvokeGRPC(context.Background(), service.Service, service.Endpoint, "")
-		} else {
-			resp = slowpoke.InvokeSynthtic(context.Background(), service.Service, service.Endpoint, "")
+		if service.Probability != 0 && service.Service != picked_service {
+			continue
 		}
-		key := fmt.Sprintf("%s (%s)", service.Service, service.Endpoint)
-		respMap[key] = fmt.Sprintf("{ \"response\": %s }", resp)
+		for i := 0; i < service.TrafficForwardRatio; i++ {
+			var resp string
+			if service.Protocol == "grpc" {
+				resp = slowpoke.InvokeGRPC(context.Background(), service.Service, service.Endpoint, "")
+			} else {
+				resp = slowpoke.InvokeSynthtic(context.Background(), service.Service, service.Endpoint, "")
+			}
+			key := fmt.Sprintf("%s [%s,%s]", service.Service, service.Endpoint, i)
+			respMap[key] = fmt.Sprintf("{ \"response\": %s }", resp)
+		}
 	}
 	return respMap
 }
@@ -50,8 +106,8 @@ func execNetwork(request *http.Request, endpoint *synthetic.Endpoint) map[string
 	}
 
 	if endpoint.NetworkComplexity.ForwardRequests == "asynchronous" {
-		return execParallelHTTP(endpoint.NetworkComplexity.CalledServices)
+		return execParallel(endpoint.NetworkComplexity.CalledServices)
 	} else {
-		return execSequentialHTTP(endpoint.NetworkComplexity.CalledServices)
+		return execSequential(endpoint.NetworkComplexity.CalledServices)
 	}
 }
