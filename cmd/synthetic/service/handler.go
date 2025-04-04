@@ -35,12 +35,20 @@ func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *ht
 	// slowpoke.SlowpokeDelay()
 	response := execTask(request, handler.endpoint)
 	utility.DumpJson(response, writer)
+	// f, ok := writer.(http.Flusher)
+	// if ok {
+	// 	slowpoke.SlowpokeFlushDelay(f)
+	// } else {
+	// 	slowpoke.SlowpokeDelay()
+	// }
+
 	f, ok := writer.(http.Flusher)
 	if ok {
-		slowpoke.SlowpokeFlushDelay(f)
+		f.Flush()
 	} else {
-		slowpoke.SlowpokeDelay()
+		panic("Flusher not available")
 	}
+	slowpoke.SlowpokeDelay()
 }
 
 // Launch a HTTP server to serve one or more endpoints

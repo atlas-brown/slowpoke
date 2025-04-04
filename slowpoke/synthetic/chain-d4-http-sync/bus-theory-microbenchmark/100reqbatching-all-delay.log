@@ -1,0 +1,85 @@
+SLOWPOKE_DELAY_MICROS_SERVICE1=100
+SLOWPOKE_DELAY_MICROS_SERVICE0=0
+SLOWPOKE_DELAY_MICROS_SERVICE3=300
+SLOWPOKE_DELAY_MICROS_SERVICE2=200
+SLOWPOKE_DELAY_MICROS_SERVICE5=500
+SLOWPOKE_DELAY_MICROS_SERVICE4=400
+SLOWPOKE_POKER_BATCH_THRESHOLD=10000000
+PROCESSING_TIME_SERVICE4=0.0
+PROCESSING_TIME_SERVICE5=0.0
+PROCESSING_TIME_SERVICE0=0.0
+PROCESSING_TIME_SERVICE1=0.0
+PROCESSING_TIME_SERVICE2=0.0
+PROCESSING_TIME_SERVICE3=0.0
+bash run.sh synthetic chain-d4-http-sync 1 1 2000
+[run.sh] Running benchmark synthetic with request chain-d4-http-sync, thread 1, conn 1, duration 60
+[run.sh] Deleting all services
+deployment.apps "ubuntu-client" deleted
+[run.sh] Waiting for all pods to be deleted
+[run.sh] Deploying all services
+configmap/config-service0 created
+deployment.apps/service0 created
+service/service0 created
+configmap/config-service1 created
+deployment.apps/service1 created
+service/service1 created
+configmap/config-service2 created
+deployment.apps/service2 created
+service/service2 created
+configmap/config-service3 created
+deployment.apps/service3 created
+service/service3 created
+configmap/config-service4 created
+deployment.apps/service4 created
+service/service4 created
+configmap/config-service5 created
+deployment.apps/service5 created
+service/service5 created
+[run.sh] Client pod not found, deploying client
+deployment.apps/ubuntu-client created
+[run.sh] Waiting for all pods to be running
+[run.sh] All pods are running
+[run.sh] Running warmup test
+[run.sh] /wrk/wrk -t1 -c1 -d3s -L http://service0:80/endpoint1
+Running 3s test @ http://service0:80/endpoint1
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    21.31ms   38.80ms 154.21ms   85.62%
+    Req/Sec   232.48    113.12   353.00     77.78%
+  Latency Distribution
+     50%    3.05ms
+     75%    4.85ms
+     90%   90.88ms
+     99%  149.39ms
+  667 requests in 3.00s, 1.14MB read
+Requests/sec:    222.28
+Transfer/sec:    389.64KB
+[run.sh] Speed is 222.28, duration is 13
+[run.sh] Fix the request number.
+[run.sh] Running the actual test
+[run.sh] /wrk/wrk --timeout 20s -t1 -c1 -d13s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+Running 13s test @ http://service0:80/endpoint1
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    18.13ms   36.23ms 156.20ms   86.93%
+    Req/Sec   222.98    111.00   340.00     67.86%
+  Latency Distribution
+     50%    3.20ms
+     75%    3.55ms
+     90%   76.11ms
+     99%  147.61ms
+  2000 requests in 13.00s, 3.42MB read
+Requests/sec:    153.85
+Transfer/sec:    269.68KB
+------------------------------
+stop time: 9.386827
+[run.sh] Checking the resource usage
+NAME                             CPU(cores)   MEMORY(bytes)   
+service0-7ff9f948ff-x829m        1m           7Mi             
+service1-7b5dcbdc75-hlxdq        1m           7Mi             
+service2-8588d8457f-77p4c        1m           7Mi             
+service3-594bf7657f-sldcc        1m           7Mi             
+service4-778b955487-7fgzp        1m           7Mi             
+service5-6c7f49cdbc-jvkd5        1m           7Mi             
+ubuntu-client-76886f6bbd-qxstg   0m           0Mi             
+[run.sh] Test finished with status 0

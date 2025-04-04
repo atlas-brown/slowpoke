@@ -30,6 +30,7 @@ var (
 	prerun bool
 	requestCounters sync.Map
 	accumulatedDelay int64 = 0
+	reqCount int64 = 0
 	sync_guard sync.RWMutex
 	processingMicros int
 	sleepSurplus int64 = 0
@@ -251,7 +252,9 @@ func SlowpokeCheck(serviceFuncName string) {
 func SlowpokeDelay() {
 	sync_guard.Lock()
 	accumulatedDelay += delayNanos
-	if accumulatedDelay > pokerBatchThreshold {
+	reqCount++
+	if reqCount >= 100 {
+	// if accumulatedDelay > pokerBatchThreshold {
 		// start := time.Now()
 		binary.LittleEndian.PutUint64(pipebuf, uint64(accumulatedDelay))
 		_, err := pipefile.Write(pipebuf);
@@ -281,6 +284,7 @@ func SlowpokeDelay() {
 			return
 		}
 		accumulatedDelay = 0
+		reqCount = 0
 	}
 	sync_guard.Unlock()
 }

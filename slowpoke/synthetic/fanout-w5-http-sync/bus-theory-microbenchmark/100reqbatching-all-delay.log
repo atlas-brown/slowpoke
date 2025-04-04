@@ -1,0 +1,112 @@
+SLOWPOKE_DELAY_MICROS_SERVICE1=1500
+SLOWPOKE_DELAY_MICROS_SERVICE0=0
+SLOWPOKE_DELAY_MICROS_SERVICE3=740
+SLOWPOKE_DELAY_MICROS_SERVICE2=502
+SLOWPOKE_DELAY_MICROS_SERVICE5=670
+SLOWPOKE_DELAY_MICROS_SERVICE4=560
+SLOWPOKE_DELAY_MICROS_SERVICE6=680
+SLOWPOKE_POKER_BATCH_THRESHOLD=10000000
+PROCESSING_TIME_SERVICE4=0.000050
+PROCESSING_TIME_SERVICE5=0.000020
+PROCESSING_TIME_SERVICE6=0.000070
+PROCESSING_TIME_SERVICE0=0.000709
+PROCESSING_TIME_SERVICE1=0.000010
+PROCESSING_TIME_SERVICE2=0.000032
+PROCESSING_TIME_SERVICE3=0.000012
+bash run.sh synthetic fanout-w5-http-sync 1 1 2000
+[run.sh] Running benchmark synthetic with request fanout-w5-http-sync, thread 1, conn 1, duration 60
+[run.sh] Deleting all services
+configmap "config-service0" deleted
+deployment.apps "service0" deleted
+service "service0" deleted
+configmap "config-service1" deleted
+deployment.apps "service1" deleted
+service "service1" deleted
+configmap "config-service2" deleted
+deployment.apps "service2" deleted
+service "service2" deleted
+configmap "config-service3" deleted
+deployment.apps "service3" deleted
+service "service3" deleted
+configmap "config-service4" deleted
+deployment.apps "service4" deleted
+service "service4" deleted
+configmap "config-service5" deleted
+deployment.apps "service5" deleted
+service "service5" deleted
+configmap "config-service6" deleted
+deployment.apps "service6" deleted
+service "service6" deleted
+deployment.apps "ubuntu-client" deleted
+[run.sh] Waiting for all pods to be deleted
+[run.sh] Deploying all services
+configmap/config-service0 created
+deployment.apps/service0 created
+service/service0 created
+configmap/config-service1 created
+deployment.apps/service1 created
+service/service1 created
+configmap/config-service2 created
+deployment.apps/service2 created
+service/service2 created
+configmap/config-service3 created
+deployment.apps/service3 created
+service/service3 created
+configmap/config-service4 created
+deployment.apps/service4 created
+service/service4 created
+configmap/config-service5 created
+deployment.apps/service5 created
+service/service5 created
+configmap/config-service6 created
+deployment.apps/service6 created
+service/service6 created
+[run.sh] Client pod not found, deploying client
+deployment.apps/ubuntu-client created
+[run.sh] Waiting for all pods to be running
+[run.sh] All pods are running
+[run.sh] Running warmup test
+[run.sh] /wrk/wrk -t1 -c1 -d3s -L http://service0:80/endpoint1
+Running 3s test @ http://service0:80/endpoint1
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    79.79ms  134.19ms 472.76ms   82.26%
+    Req/Sec   179.79     94.96   250.00     73.68%
+  Latency Distribution
+     50%    4.14ms
+     75%  106.33ms
+     90%  328.82ms
+     99%  463.27ms
+  378 requests in 3.00s, 542.27KB read
+Requests/sec:    125.84
+Transfer/sec:    180.53KB
+[run.sh] Speed is 125.84, duration is 23
+[run.sh] Fix the request number.
+[run.sh] Running the actual test
+[run.sh] /wrk/wrk --timeout 20s -t1 -c1 -d23s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+Running 23s test @ http://service0:80/endpoint1
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    73.90ms  130.93ms 472.87ms   82.81%
+    Req/Sec   178.40     92.65   262.00     74.76%
+  Latency Distribution
+     50%    4.22ms
+     75%   80.36ms
+     90%  321.76ms
+     99%  460.17ms
+  2000 requests in 23.00s, 2.80MB read
+Requests/sec:     86.96
+Transfer/sec:    124.74KB
+------------------------------
+stop time: 17.714726
+[run.sh] Checking the resource usage
+NAME                             CPU(cores)   MEMORY(bytes)   
+service0-766d8db7cd-8pgx8        30m          7Mi             
+service1-54989d484f-wb2tj        21m          6Mi             
+service2-769cfbcf77-tv87k        4m           6Mi             
+service3-76cb75977d-vrcrb        22m          6Mi             
+service4-679675d79-swtbd         28m          6Mi             
+service5-7d597577d8-v5st5        3m           6Mi             
+service6-65985459c4-c4nt4        30m          6Mi             
+ubuntu-client-76886f6bbd-nd9cf   2m           1Mi             
+[run.sh] Test finished with status 0

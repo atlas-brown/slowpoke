@@ -1,0 +1,103 @@
+SLOWPOKE_DELAY_MICROS_SERVICE1=1000
+SLOWPOKE_DELAY_MICROS_SERVICE0=0
+SLOWPOKE_DELAY_MICROS_SERVICE3=300
+SLOWPOKE_DELAY_MICROS_SERVICE2=200
+SLOWPOKE_DELAY_MICROS_SERVICE5=100
+SLOWPOKE_DELAY_MICROS_SERVICE4=400
+SLOWPOKE_POKER_BATCH_THRESHOLD=10000000
+PROCESSING_TIME_SERVICE4=0.0
+PROCESSING_TIME_SERVICE5=0.0
+PROCESSING_TIME_SERVICE0=0.0
+PROCESSING_TIME_SERVICE1=0.0
+PROCESSING_TIME_SERVICE2=0.0
+PROCESSING_TIME_SERVICE3=0.0
+bash run.sh synthetic chain-d4-http-sync 1 1 2000
+[run.sh] Running benchmark synthetic with request chain-d4-http-sync, thread 1, conn 1, duration 60
+[run.sh] Deleting all services
+configmap "config-service0" deleted
+deployment.apps "service0" deleted
+service "service0" deleted
+configmap "config-service1" deleted
+deployment.apps "service1" deleted
+service "service1" deleted
+configmap "config-service2" deleted
+deployment.apps "service2" deleted
+service "service2" deleted
+configmap "config-service3" deleted
+deployment.apps "service3" deleted
+service "service3" deleted
+configmap "config-service4" deleted
+deployment.apps "service4" deleted
+service "service4" deleted
+configmap "config-service5" deleted
+deployment.apps "service5" deleted
+service "service5" deleted
+deployment.apps "ubuntu-client" deleted
+[run.sh] Waiting for all pods to be deleted
+[run.sh] Deploying all services
+configmap/config-service0 created
+deployment.apps/service0 created
+service/service0 created
+configmap/config-service1 created
+deployment.apps/service1 created
+service/service1 created
+configmap/config-service2 created
+deployment.apps/service2 created
+service/service2 created
+configmap/config-service3 created
+deployment.apps/service3 created
+service/service3 created
+configmap/config-service4 created
+deployment.apps/service4 created
+service/service4 created
+configmap/config-service5 created
+deployment.apps/service5 created
+service/service5 created
+[run.sh] Client pod not found, deploying client
+deployment.apps/ubuntu-client created
+[run.sh] Waiting for all pods to be running
+[run.sh] All pods are running
+[run.sh] Running warmup test
+[run.sh] /wrk/wrk -t1 -c1 -d3s -L http://service0:80/endpoint1
+Running 3s test @ http://service0:80/endpoint1
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    29.20ms   53.11ms 204.36ms   84.43%
+    Req/Sec   227.04    113.09   330.00     79.17%
+  Latency Distribution
+     50%    3.20ms
+     75%   13.80ms
+     90%  124.15ms
+     99%  198.81ms
+  599 requests in 3.00s, 1.03MB read
+Requests/sec:    199.46
+Transfer/sec:    349.63KB
+[run.sh] Speed is 199.46, duration is 15
+[run.sh] Fix the request number.
+[run.sh] Running the actual test
+[run.sh] /wrk/wrk --timeout 20s -t1 -c1 -d15s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+Running 15s test @ http://service0:80/endpoint1
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    25.32ms   50.29ms 205.18ms   85.71%
+    Req/Sec   220.80    111.99   350.00     66.27%
+  Latency Distribution
+     50%    3.24ms
+     75%    3.56ms
+     90%  113.88ms
+     99%  196.52ms
+  2000 requests in 15.00s, 3.42MB read
+Requests/sec:    133.33
+Transfer/sec:    233.72KB
+------------------------------
+stop time: 10.383545
+[run.sh] Checking the resource usage
+NAME                             CPU(cores)   MEMORY(bytes)   
+service0-7ff9f948ff-259lk        19m          7Mi             
+service1-97896c699-2c7r7         17m          7Mi             
+service2-8588d8457f-5h9g8        26m          7Mi             
+service3-594bf7657f-sh8qn        24m          7Mi             
+service4-778b955487-7tvgl        14m          7Mi             
+service5-7cbfb5dbf9-ndmds        11m          4Mi             
+ubuntu-client-76886f6bbd-bm5sl   4m           0Mi             
+[run.sh] Test finished with status 0
