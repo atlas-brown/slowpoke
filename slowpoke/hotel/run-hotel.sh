@@ -10,7 +10,7 @@ num_req=20000
 poker_batch=40000000
 num_exp=2
 DIR=hotel/04-04-benchmarking-bus-theory
-FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch-flush-then-delay.log
+FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch-flush-then-delay-new-go-version.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then
     echo "File $DIR/$FILE already exists. Skipping test."
