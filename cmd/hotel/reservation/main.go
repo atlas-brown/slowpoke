@@ -18,7 +18,6 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkAvailability(ctx context.Context, req *hotel.CheckAvailabilityRequest) *hotel.CheckAvailabilityResponse {
-    slowpoke.SlowpokeCheck("checkAvailability");
 	hotelIds := hotel.CheckAvailability(ctx, req.CustomerName, req.HotelIds, req.InDate, req.OutDate, req.RoomNumber)
 	//fmt.Println("Movie info stored for id: " + movieId)
 	resp := hotel.CheckAvailabilityResponse{HotelIds: hotelIds}
@@ -26,7 +25,6 @@ func checkAvailability(ctx context.Context, req *hotel.CheckAvailabilityRequest)
 }
 
 func makeReservation(ctx context.Context, req *hotel.MakeReservationRequest) *hotel.MakeReservationResponse {
-    slowpoke.SlowpokeCheck("makeReservation");
 	success := hotel.MakeReservation(ctx, req.CustomerName, req.HotelId, req.InDate, req.OutDate, req.RoomNumber)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := hotel.MakeReservationResponse{Success: success}
@@ -35,7 +33,6 @@ func makeReservation(ctx context.Context, req *hotel.MakeReservationRequest) *ho
 }
 
 func addHotelAvailability(ctx context.Context, req *hotel.AddHotelAvailabilityRequest) *hotel.AddHotelAvailabilityResponse {
-    slowpoke.SlowpokeCheck("addHotelAvailability");
 	hotelId := hotel.AddHotelAvailability(ctx, req.HotelId, req.Capacity)
 	resp := hotel.AddHotelAvailabilityResponse{Hotelid: hotelId}
 	return &resp
@@ -50,9 +47,9 @@ func main() {
 	//       because that could lead to stale results being seen by users
 	//       (though not really since the invalidation should take <1s and this is less time
 	//        than what a person needs until they look at a list of results anyway).
-	http.HandleFunc("/ro_check_availability", wrappers.ROWrapper[hotel.CheckAvailabilityRequest, hotel.CheckAvailabilityResponse](checkAvailability))
-	http.HandleFunc("/make_reservation", wrappers.NonROWrapper[hotel.MakeReservationRequest, hotel.MakeReservationResponse](makeReservation))
-	http.HandleFunc("/add_hotel_availability", wrappers.NonROWrapper[hotel.AddHotelAvailabilityRequest, hotel.AddHotelAvailabilityResponse](addHotelAvailability))
+	http.HandleFunc("/ro_check_availability", wrappers.SlowpokeWrapper[hotel.CheckAvailabilityRequest, hotel.CheckAvailabilityResponse](checkAvailability, "ro_check_availability"))
+	http.HandleFunc("/make_reservation", wrappers.SlowpokeWrapper[hotel.MakeReservationRequest, hotel.MakeReservationResponse](makeReservation, "make_reservation"))
+	http.HandleFunc("/add_hotel_availability", wrappers.SlowpokeWrapper[hotel.AddHotelAvailabilityRequest, hotel.AddHotelAvailabilityResponse](addHotelAvailability, "add_hotel_availability"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)

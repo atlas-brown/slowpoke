@@ -6,10 +6,12 @@ import (
 	"github.com/eniac/mucache/pkg/cm"
 	"github.com/eniac/mucache/pkg/common"
 	"github.com/eniac/mucache/pkg/utility"
+	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/goccy/go-json"
 	"hash/fnv"
 	"net/http"
 	"strconv"
+	"io"
 )
 
 var DEBUG_CA = false
@@ -122,42 +124,58 @@ func PreCall(ctx context.Context, ca cm.CallArgs) (cm.ReturnVal, bool) {
 
 func ROWrapper[ReqType interface{}, RespType interface{}](handler func(context.Context, *ReqType) *RespType) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//glog.Info("Start SetupCtx")
-		ctx, input := SetupCtxFromHTTPReq(r, true)
-		//glog.Info("End SetupCtx")
+		ctx := r.Context()
+		input, err := io.ReadAll(r.Body)
+		defer r.Body.Close()
 		var req ReqType
-		err := json.Unmarshal(input, &req)
+		err = json.Unmarshal(input, &req)
 		if err != nil {
 			panic(err)
 		}
-		//glog.Info("Start Handler")
 		resp := handler(ctx, &req)
-		//glog.Info("End Handler")
-		respByte, err := json.Marshal(*resp)
-		if err != nil {
-			panic(err)
-		}
-		//glog.Info("Start PreReqEnd")
-		PreReqEnd(ctx, cm.ReturnVal(respByte))
-		//glog.Info("End PreReqEnd")
 		utility.DumpJson(resp, w)
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		slowpoke.SlowpokeDelay()
 	}
 }
 
 func NonROWrapper[ReqType interface{}, RespType interface{}](handler func(context.Context, *ReqType) *RespType) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx, input := SetupCtxFromHTTPReq(r, false)
+		ctx := r.Context()
+		input, err := io.ReadAll(r.Body)
+		defer r.Body.Close()
 		var req ReqType
-		err := json.Unmarshal(input, &req)
+		err = json.Unmarshal(input, &req)
 		if err != nil {
 			panic(err)
 		}
 		resp := handler(ctx, &req)
-		respByte, err := json.Marshal(resp)
+		utility.DumpJson(resp, w)
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		slowpoke.SlowpokeDelay()
+	}
+}
+
+func SlowpokeWrapper[ReqType interface{}, RespType interface{}](handler func(context.Context, *ReqType) *RespType, endpointName string) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		slowpoke.SlowpokeCheck(endpointName)
+		ctx := r.Context()
+		input, err := io.ReadAll(r.Body)
+		defer r.Body.Close()
+		var req ReqType
+		err = json.Unmarshal(input, &req)
 		if err != nil {
 			panic(err)
 		}
-		PreReqEnd(ctx, cm.ReturnVal(respByte))
+		resp := handler(ctx, &req)
 		utility.DumpJson(resp, w)
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		slowpoke.SlowpokeDelay()
 	}
 }

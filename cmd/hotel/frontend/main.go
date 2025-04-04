@@ -18,7 +18,6 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchHotels(ctx context.Context, req *hotel.SearchHotelsRequest) *hotel.SearchHotelsResponse {
-    slowpoke.SlowpokeCheck("searchHotels");
 	hotels := hotel.SearchHotels(ctx, req.InDate, req.OutDate, req.Location)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := hotel.SearchHotelsResponse{Profiles: hotels}
@@ -27,7 +26,6 @@ func searchHotels(ctx context.Context, req *hotel.SearchHotelsRequest) *hotel.Se
 }
 
 func storeHotel(ctx context.Context, req *hotel.StoreHotelRequest) *hotel.StoreHotelResponse {
-    slowpoke.SlowpokeCheck("storeHotel");
 	hotelId := hotel.StoreHotel(ctx, req.HotelId, req.Name, req.Phone, req.Location, req.Rate, req.Capacity, req.Info)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := hotel.StoreHotelResponse{HotelId: hotelId}
@@ -36,7 +34,6 @@ func storeHotel(ctx context.Context, req *hotel.StoreHotelRequest) *hotel.StoreH
 }
 
 func reservation(ctx context.Context, req *hotel.FrontendReservationRequest) *hotel.FrontendReservationResponse {
-    slowpoke.SlowpokeCheck("reservation");
 	success := hotel.FrontendReservation(ctx, req.HotelId, req.InDate, req.OutDate, req.Rooms, req.Username, req.Password)
 	resp := hotel.FrontendReservationResponse{Success: success}
 	return &resp
@@ -46,9 +43,9 @@ func main() {
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/ro_search_hotels", wrappers.ROWrapper[hotel.SearchHotelsRequest, hotel.SearchHotelsResponse](searchHotels))
-	http.HandleFunc("/store_hotel", wrappers.NonROWrapper[hotel.StoreHotelRequest, hotel.StoreHotelResponse](storeHotel))
-	http.HandleFunc("/reservation", wrappers.NonROWrapper[hotel.FrontendReservationRequest, hotel.FrontendReservationResponse](reservation))
+	http.HandleFunc("/ro_search_hotels", wrappers.SlowpokeWrapper[hotel.SearchHotelsRequest, hotel.SearchHotelsResponse](searchHotels, "ro_search_hotels"))
+	http.HandleFunc("/store_hotel", wrappers.SlowpokeWrapper[hotel.StoreHotelRequest, hotel.StoreHotelResponse](storeHotel, "store_hotel"))
+	http.HandleFunc("/reservation", wrappers.SlowpokeWrapper[hotel.FrontendReservationRequest, hotel.FrontendReservationResponse](reservation, "reservation"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)

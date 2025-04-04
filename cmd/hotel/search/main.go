@@ -18,7 +18,6 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func nearby(ctx context.Context, req *hotel.NearbyRequest) *hotel.NearbyResponse {
-    slowpoke.SlowpokeCheck("nearby");
 	rates := hotel.Nearby(ctx, req.InDate, req.OutDate, req.Location)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := hotel.NearbyResponse{Rates: rates}
@@ -27,7 +26,6 @@ func nearby(ctx context.Context, req *hotel.NearbyRequest) *hotel.NearbyResponse
 }
 
 func storeHotelLocation(ctx context.Context, req *hotel.StoreHotelLocationRequest) *hotel.StoreHotelLocationResponse {
-    slowpoke.SlowpokeCheck("storeHotelLocation");
 	hotelId := hotel.StoreHotelLocation(ctx, req.HotelId, req.Location)
 	resp := hotel.StoreHotelLocationResponse{HotelId: hotelId}
 	//fmt.Printf("[ReviewStorage] Response: %v\n", resp)
@@ -39,8 +37,8 @@ func main() {
 	slowpoke.SlowpokeInit()
 	hotel.InitLocations()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/ro_nearby", wrappers.ROWrapper[hotel.NearbyRequest, hotel.NearbyResponse](nearby))
-	http.HandleFunc("/store_hotel_location", wrappers.NonROWrapper[hotel.StoreHotelLocationRequest, hotel.StoreHotelLocationResponse](storeHotelLocation))
+	http.HandleFunc("/ro_nearby", wrappers.SlowpokeWrapper[hotel.NearbyRequest, hotel.NearbyResponse](nearby, "ro_nearby"))
+	http.HandleFunc("/store_hotel_location", wrappers.SlowpokeWrapper[hotel.StoreHotelLocationRequest, hotel.StoreHotelLocationResponse](storeHotelLocation, "store_hotel_location"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)
