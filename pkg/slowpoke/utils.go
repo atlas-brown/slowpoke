@@ -16,7 +16,6 @@ import (
 	"sync"
 	"runtime"
 	"sync/atomic"
-	"io"
 	// "syscall"
 	"google.golang.org/grpc"
 	pb "github.com/eniac/mucache/pkg/pb"
@@ -92,17 +91,6 @@ func printCountersSyncMap() {
 	if totalCounter > 0 {
 		fmt.Println(msg)
 	}
-}
-
-// Saves the response to *res (also might save the result to cache if we are in upperbound baseline
-func performRequest[T interface{}](ctx context.Context, req *http.Request, res *T, app string, method string, argBytes []byte) {
-	resp, err := common.HTTPClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	utility.Assert(resp.StatusCode == http.StatusOK)
-	defer resp.Body.Close()
-	utility.ParseJson(resp.Body, res)
 }
 
 func SlowpokeInit() {
@@ -255,7 +243,8 @@ func SlowpokeDelay() {
 	reqCount++
 	if reqCount >= 100 {
 	// if accumulatedDelay > pokerBatchThreshold {
-		// start := time.Now()
+		// fmt.Printf("[%s] Should sleep %d \n", time.Now().Format(time.RFC3339), accumulatedDelay)
+
 		binary.LittleEndian.PutUint64(pipebuf, uint64(accumulatedDelay))
 		_, err := pipefile.Write(pipebuf);
 		if err != nil {
@@ -292,7 +281,9 @@ func SlowpokeDelay() {
 func SlowpokeFlushDelay(flusher http.Flusher) {
 	sync_guard.Lock()
 	accumulatedDelay += delayNanos
-	if accumulatedDelay > pokerBatchThreshold {
+	reqCount++
+	// if accumulatedDelay > pokerBatchThreshold {
+	if reqCount >= 100 {
 		flusher.Flush()
 		
 		// start := time.Now()
@@ -324,8 +315,20 @@ func SlowpokeFlushDelay(flusher http.Flusher) {
 			return
 		}
 		accumulatedDelay = 0
+		reqCount = 0
 	}
 	sync_guard.Unlock()
+}
+
+// Saves the response to *res (also might save the result to cache if we are in upperbound baseline
+func performRequest[T interface{}](ctx context.Context, req *http.Request, res *T, app string, method string, argBytes []byte) {
+	resp, err := common.HTTPClient.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	utility.Assert(resp.StatusCode == http.StatusOK)
+	defer resp.Body.Close()
+	utility.ParseJson(resp.Body, res)
 }
 
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
@@ -347,43 +350,6 @@ func Invoke[T interface{}](ctx context.Context, app string, method string, input
 	performRequest[T](ctx, req, &res, app, method, buf)
 	// sync_guard.RLock()
 	// sync_guard.RUnlock()
-	return res
-}
-
-func performRequestSynth(ctx context.Context, req *http.Request, res *string, app string, method string, argBytes []byte) {
-	resp, err := common.HTTPClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	utility.Assert(resp.StatusCode == http.StatusOK)
-	defer resp.Body.Close()
-	bodyBytes, err := io.ReadAll(resp.Body)
-    if err != nil {
-        panic(err)
-    }
-	*res = string(bodyBytes)
-}
-
-func InvokeSynthtic(ctx context.Context, app string, method string, input interface{}) string {
-	// sync_guard.RLock()
-    // sync_guard.RUnlock()
-	buf, err := json.Marshal(input)
-	if err != nil {
-		panic(err)
-	}
-	var res string
-	// Use kubernete native DNS addr
-	url := fmt.Sprintf("http://%s.%s.svc.cluster.local:%s/%s", app, "default", "80", method)
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(buf))
-	req.Header.Set("Content-Type", "application/json")
-	if err != nil {
-		panic(err)
-	}
-	// sync_guard.RLock()
-    // sync_guard.RUnlock()
-	performRequestSynth(ctx, req, &res, app, method, buf)
-	// sync_guard.RLock()
-    // sync_guard.RUnlock()
 	return res
 }
 

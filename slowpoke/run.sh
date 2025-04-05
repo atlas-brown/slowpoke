@@ -126,7 +126,7 @@ run_test() {
 
     # get the speed of the warmup test and estimate the duration
     speed=$(echo "$output" | grep "Requests/sec:" | awk '{print $2}')
-    duration=$(echo "1.5 * $TOTAL_REQ / $speed" | bc)
+    duration=$(echo "2 * $TOTAL_REQ / $speed" | bc)
     echo "[run.sh] Speed is $speed, duration is $duration"
 
     echo "[run.sh] Fix the request number."
@@ -139,6 +139,7 @@ run_test() {
         kubectl exec $ubuntu_client -- /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -L -s /wrk/scripts/online-boutique/${request}.lua http://frontend:80
     elif [[ $benchmark == "synthetic" ]]; then
         echo "[run.sh] /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1"
+        # kubectl exec $ubuntu_client -- /wrk/wrk --timeout 20s -t${thread} -c${conn} -d20s -L http://service0:80/endpoint1
         kubectl exec $ubuntu_client -- /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
     else
         echo "[run.sh] /wrk/wrk --timeout 20s -t${thread} -c${conn} -d${duration}s -s /wrk/fix_req_n.lua -L http://localhost:3000"
@@ -208,8 +209,11 @@ while [[ $(kubectl get pods | grep -v -E '1/1|STATUS' | wc -l) -ne 0 ]]; do
 done
 echo "[run.sh] All pods are running"
 
+
+check_connectivity_all
+
+
 if [[ $benchmark != "synthetic" ]]; then
-    check_connectivity_all
     populate $benchmark
 fi
 

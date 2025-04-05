@@ -1,9 +1,10 @@
 #!/bin/bash
 
-cd $(dirname $0)
+cd /home/ubuntu/mucache/slowpoke
 
 
 export SLOWPOKE_POKER_BATCH_THRESHOLD=10000000
+export SLOWPOKE_PRERUN=false
 export PROCESSING_TIME_SERVICE0=0.000709 # base
 export PROCESSING_TIME_SERVICE1=0.000010 # base
 export PROCESSING_TIME_SERVICE2=0.000032 # base
@@ -40,12 +41,12 @@ num_req=2000
 # FILE=service1-base.log
 # FILE=combined_no_rlock-poker$threadshold.log
 # FILE=s1_no_rlock-base.log
-FILE=100reqbatching-all-delay.log
-if [[ -e $DIR/$FILE ]]; then
-    echo "File $DIR/$FILE already exists. Skipping..."
-    exit 0
-fi
-env | grep "SLOWPOKE" >$DIR/$FILE
-env | grep "PROCESSING" >>$DIR/$FILE
-echo "bash run.sh $benchmark $request $thread $conn $num_req" >>$DIR/$FILE
-bash run.sh $benchmark $request $thread $conn $num_req >>$DIR/$FILE
+# FILE=100reqbatching-all-delay-fixed-context-2proc-fixed-time.log
+# if [[ -e $DIR/$FILE ]]; then
+#     echo "File $DIR/$FILE already exists. Skipping..."
+#     exit 0
+# fi
+env | grep "SLOWPOKE" 
+env | grep "PROCESSING"
+echo "bash run.sh $benchmark $request $thread $conn $num_req"
+bash run.sh $benchmark $request $thread $conn $num_req

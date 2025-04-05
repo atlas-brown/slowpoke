@@ -3,13 +3,13 @@
 cd $(dirname $0)/../..
 
 EXP=fanout-w10-http-sync
-DIR=synthetic/$EXP/microbench-bus-theory
+DIR=synthetic/$EXP/microbench-bus-theory-fix-ioread
 mkdir -p $DIR
 
 # config
-THREAD=1
-CONN=1
-NUM_REQ=2000
+THREAD=8
+CONN=512
+NUM_REQ=20000
 POKER_BATCH=30000000
 NUM_EXP=1
 REPETITION=1
@@ -23,7 +23,7 @@ do
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
 
-    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker$POKER_BATCH-n$NUM_EXP-rep$REPETITION-flush-in-delay.log
+    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker$POKER_BATCH-n$NUM_EXP-rep$REPETITION-no-flush-delay.log
     
     if [[ -e $output_file ]]; then
         echo "File $output_file already exists. Skipping..."

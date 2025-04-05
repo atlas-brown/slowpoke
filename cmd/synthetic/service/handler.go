@@ -20,14 +20,18 @@ type endpointHandler struct {
 }
 
 type Response struct {
-	CPUResp     string            `json:"cpu_response"`
-	NetworkResp map[string]string `json:"network_response"`
+	CPUResp     string `json:"cpu_response"`
+	NetworkResp string `json:"network_response"`
 }
 
 func execTask(request *http.Request, endpoint *synthetic.Endpoint) Response {
 	cpuResp := execCPU(endpoint)
 	networkResp := execNetwork(request, endpoint)
-	return Response{CPUResp: cpuResp, NetworkResp: networkResp}
+	netRespBytes, err :=  utility.MarshalJson(networkResp)
+	if err != nil {
+		netRespBytes = []byte(fmt.Sprintf("{ \"error\": \"%s\" }", err.Error()))
+	}
+	return Response{CPUResp: cpuResp, NetworkResp: string(netRespBytes)}
 }
 
 func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
@@ -45,9 +49,11 @@ func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *ht
 	f, ok := writer.(http.Flusher)
 	if ok {
 		f.Flush()
+		// slowpoke.SlowpokeFlushDelay(f)
 	} else {
 		panic("Flusher not available")
 	}
+	
 	slowpoke.SlowpokeDelay()
 }
 
@@ -58,6 +64,12 @@ func serverHTTP(endpoints []synthetic.Endpoint) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write([]byte("Connected\n"))
+		if err != nil {
+			return
+		}
+	})
+	mux.HandleFunc("/heartbeat", func(w http.ResponseWriter, r *http.Request) {
+		_, err := w.Write([]byte("Heartbeat\n"))
 		if err != nil {
 			return
 		}

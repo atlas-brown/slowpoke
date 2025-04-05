@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/eniac/mucache/pkg/synthetic"
+	"github.com/eniac/mucache/pkg/utility"
 	// "github.com/goccy/go-json"
 	"sync"
 	"math/rand"
@@ -49,7 +50,7 @@ func pickDynamicService(calledServices []synthetic.CalledService) string {
 }
 
 
-func execParallel(calledServices []synthetic.CalledService) map[string]string {
+func execParallel(calledServices []synthetic.CalledService, request  *http.Request) map[string]string {
 
 	// pick dynamic service
 	picked_service := pickDynamicService(calledServices)
@@ -65,7 +66,12 @@ func execParallel(calledServices []synthetic.CalledService) map[string]string {
 			wg.Add(1)
 			go func(service synthetic.CalledService) {
 				defer wg.Done()
-				resp := slowpoke.InvokeSynthtic(context.Background(), service.Service, service.Endpoint, "")
+				respRaw := slowpoke.Invoke[Response](request.Context(), service.Service, service.Endpoint, "")
+				respBytes, err := utility.MarshalJson(respRaw)
+				if err != nil {
+					respBytes = []byte(fmt.Sprintf("{ \"error\": \"%s\" }", err.Error()))
+				}
+				resp := string(respBytes)
 				key := fmt.Sprintf("%s [%s,%s]", service.Service, service.Endpoint, i)
 				respMap[key] = fmt.Sprintf("{ \"response\": %s }", resp)
 			}(service)
@@ -75,7 +81,7 @@ func execParallel(calledServices []synthetic.CalledService) map[string]string {
 	return respMap
 }
 
-func execSequential(calledServices []synthetic.CalledService) map[string]string {
+func execSequential(calledServices []synthetic.CalledService, request  *http.Request) map[string]string {
 
 	// pick dynamic service
 	picked_service := pickDynamicService(calledServices)
@@ -91,7 +97,12 @@ func execSequential(calledServices []synthetic.CalledService) map[string]string 
 			if service.Protocol == "grpc" {
 				resp = slowpoke.InvokeGRPC(context.Background(), service.Service, service.Endpoint, "")
 			} else {
-				resp = slowpoke.InvokeSynthtic(context.Background(), service.Service, service.Endpoint, "")
+				respRaw := slowpoke.Invoke[Response](request.Context(), service.Service, service.Endpoint, "")
+				respBytes, err := utility.MarshalJson(respRaw)
+				if err != nil {
+					respBytes = []byte(fmt.Sprintf("{ \"error\": \"%s\" }", err.Error()))
+				}
+				resp = string(respBytes)
 			}
 			key := fmt.Sprintf("%s [%s,%s]", service.Service, service.Endpoint, i)
 			respMap[key] = fmt.Sprintf("{ \"response\": %s }", resp)
@@ -106,8 +117,8 @@ func execNetwork(request *http.Request, endpoint *synthetic.Endpoint) map[string
 	}
 
 	if endpoint.NetworkComplexity.ForwardRequests == "asynchronous" {
-		return execParallel(endpoint.NetworkComplexity.CalledServices)
+		return execParallel(endpoint.NetworkComplexity.CalledServices, request)
 	} else {
-		return execSequential(endpoint.NetworkComplexity.CalledServices)
+		return execSequential(endpoint.NetworkComplexity.CalledServices, request)
 	}
 }

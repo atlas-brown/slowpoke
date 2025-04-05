@@ -3,20 +3,20 @@
 cd $(dirname $0)/../..
 
 EXP=chain-d4-http-sync
-DIR=synthetic/$EXP/bus-theory-microbenchmark
+DIR=synthetic/$EXP/bus-theory-microbenchmark-fixed-ioread
 mkdir -p $DIR
 
 # config
-THREAD=1
-CONN=1
-NUM_REQ=2000
+THREAD=8
+CONN=512
+NUM_REQ=40000
 POKER_BATCH=40000000
-NUM_EXP=1
+NUM_EXP=10
 REPETITION=1
 
 # Make it reproducible
 # target_service_random_pairs="0:31122 2:28561 5:6536"
-target_service_random_pairs="0:31122"
+target_service_random_pairs="0:31122 2:28561 5:6536"
 
 for pair in $target_service_random_pairs
 do 
