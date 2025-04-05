@@ -166,7 +166,7 @@ func SlowpokeWrapper[ReqType interface{}, RespType interface{}](handler func(con
 		slowpoke.SlowpokeCheck(endpointName)
 		ctx := r.Context()
 		input, err := io.ReadAll(r.Body)
-		defer r.Body.Close()
+		r.Body.Close()
 		var req ReqType
 		err = json.Unmarshal(input, &req)
 		if err != nil {

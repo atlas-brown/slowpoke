@@ -57,7 +57,9 @@ class Runner:
             for service, delay in service_delay.items():
                 d = delay/self.cpu_quota[service]
                 env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
-                # env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(int(0 * 1000 * self.request_ratio[service] * d))
+                # batch_size = max(10, int(100 * 1000 * self.request_ratio[service] * d - 10))
+                batch_size = max(10, int(100 * 1000 * d))
+                env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(batch_size)
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
         cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
