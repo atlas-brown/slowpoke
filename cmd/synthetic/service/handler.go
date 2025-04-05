@@ -27,11 +27,12 @@ type Response struct {
 func execTask(request *http.Request, endpoint *synthetic.Endpoint) Response {
 	cpuResp := execCPU(endpoint)
 	networkResp := execNetwork(request, endpoint)
-	netRespBytes, err :=  utility.MarshalJson(networkResp)
-	if err != nil {
-		netRespBytes = []byte(fmt.Sprintf("{ \"error\": \"%s\" }", err.Error()))
+	networkRespStr := "["
+	for key, value := range networkResp {
+		networkRespStr += fmt.Sprintf("{%s: %s} ", key, value)
 	}
-	return Response{CPUResp: cpuResp, NetworkResp: string(netRespBytes)}
+	networkRespStr += "]"
+	return Response{CPUResp: cpuResp, NetworkResp: networkRespStr}
 }
 
 func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {

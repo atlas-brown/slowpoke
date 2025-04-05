@@ -6,7 +6,7 @@ import (
 	"context"
 	"github.com/eniac/mucache/pkg/slowpoke"
 	"github.com/eniac/mucache/pkg/synthetic"
-	"github.com/eniac/mucache/pkg/utility"
+	// "github.com/eniac/mucache/pkg/utility"
 	// "github.com/goccy/go-json"
 	"sync"
 	"math/rand"
@@ -67,13 +67,9 @@ func execParallel(calledServices []synthetic.CalledService, request  *http.Reque
 			go func(service synthetic.CalledService) {
 				defer wg.Done()
 				respRaw := slowpoke.Invoke[Response](request.Context(), service.Service, service.Endpoint, "")
-				respBytes, err := utility.MarshalJson(respRaw)
-				if err != nil {
-					respBytes = []byte(fmt.Sprintf("{ \"error\": \"%s\" }", err.Error()))
-				}
-				resp := string(respBytes)
-				key := fmt.Sprintf("%s [%s,%s]", service.Service, service.Endpoint, i)
-				respMap[key] = fmt.Sprintf("{ \"response\": %s }", resp)
+				resp := fmt.Sprintf("CPUResp: %s | NETResp : %s", respRaw.CPUResp, respRaw.NetworkResp)
+				key := fmt.Sprintf("%s [%s,%d]", service.Service, service.Endpoint, i)
+				respMap[key] = resp
 			}(service)
 		}
 	}
@@ -98,14 +94,10 @@ func execSequential(calledServices []synthetic.CalledService, request  *http.Req
 				resp = slowpoke.InvokeGRPC(context.Background(), service.Service, service.Endpoint, "")
 			} else {
 				respRaw := slowpoke.Invoke[Response](request.Context(), service.Service, service.Endpoint, "")
-				respBytes, err := utility.MarshalJson(respRaw)
-				if err != nil {
-					respBytes = []byte(fmt.Sprintf("{ \"error\": \"%s\" }", err.Error()))
-				}
-				resp = string(respBytes)
+				resp = fmt.Sprintf("CPUResp: %s | NETResp : %s", respRaw.CPUResp, respRaw.NetworkResp)
 			}
-			key := fmt.Sprintf("%s [%s,%s]", service.Service, service.Endpoint, i)
-			respMap[key] = fmt.Sprintf("{ \"response\": %s }", resp)
+			key := fmt.Sprintf("%s [%s,%d]", service.Service, service.Endpoint, i)
+			respMap[key] = resp
 		}
 	}
 	return respMap
