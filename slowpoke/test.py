@@ -50,7 +50,11 @@ class Runner:
             for service, processing_time in processing_time.items():
                 env[f"PROCESSING_TIME_{service.upper()}"] = str(round(processing_time/1e6, 8))
             for service, delay in service_delay.items():
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(delay/self.cpu_quota[service])
+                d = delay/self.cpu_quota[service]
+                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
+                # batch_size = max(10, int(100 * 1000 * self.request_ratio[service] * d - 10))
+                batch_size = max(10, int(100 * 1000 * d))
+                env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(batch_size)
         else:
             for service, p_ in processing_time.items():
                 env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)
