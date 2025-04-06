@@ -21,7 +21,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func storeCastInfo(ctx context.Context, req *movie.StoreCastInfoRequest) *movie.StoreCastInfoResponse {
-    slowpoke.SlowpokeCheck("storeCastInfo");
+    // slowpoke.SlowpokeCheck("storeCastInfo");
 	movieId := movie.StoreCastInfo(ctx, req.CastId, req.Name, req.Info)
 	//fmt.Println("Movie info stored for id: " + movieId)
 	resp := movie.StoreCastInfoResponse{CastId: movieId}
@@ -29,7 +29,7 @@ func storeCastInfo(ctx context.Context, req *movie.StoreCastInfoRequest) *movie.
 }
 
 func readCastInfos(ctx context.Context, req *movie.ReadCastInfosRequest) *movie.ReadCastInfosResponse {
-    slowpoke.SlowpokeCheck("readCastInfos");
+    // slowpoke.SlowpokeCheck("readCastInfos");
 	castInfos := movie.ReadCastInfos(ctx, req.CastIds)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := movie.ReadCastInfosResponse{Infos: castInfos}
@@ -61,8 +61,8 @@ func main() {
 	populate()
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/store_cast_info", wrappers.NonROWrapper[movie.StoreCastInfoRequest, movie.StoreCastInfoResponse](storeCastInfo))
-	http.HandleFunc("/ro_read_cast_infos", wrappers.ROWrapper[movie.ReadCastInfosRequest, movie.ReadCastInfosResponse](readCastInfos))
+	http.HandleFunc("/store_cast_info", wrappers.SlowpokeWrapper[movie.StoreCastInfoRequest, movie.StoreCastInfoResponse](storeCastInfo, "storeCastInfo"))
+	http.HandleFunc("/ro_read_cast_infos", wrappers.SlowpokeWrapper[movie.ReadCastInfosRequest, movie.ReadCastInfosResponse](readCastInfos, "readCastInfos"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)

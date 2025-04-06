@@ -21,7 +21,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func storeMovieInfo(ctx context.Context, req *movie.StoreMovieInfoRequest) *movie.StoreMovieInfoResponse {
-    slowpoke.SlowpokeCheck("storeMovieInfo");
+    // slowpoke.SlowpokeCheck("storeMovieInfo");
 	movieId := movie.StoreMovieInfo(ctx, req.MovieId, req.Info, req.CastIds, req.PlotId)
 	//fmt.Println("Movie info stored for id: " + movieId)
 	resp := movie.StoreMovieInfoResponse{MovieId: movieId}
@@ -29,7 +29,7 @@ func storeMovieInfo(ctx context.Context, req *movie.StoreMovieInfoRequest) *movi
 }
 
 func readMovieInfo(ctx context.Context, req *movie.ReadMovieInfoRequest) *movie.ReadMovieInfoResponse {
-    slowpoke.SlowpokeCheck("readMovieInfo");
+    // slowpoke.SlowpokeCheck("readMovieInfo");
 	movieInfo := movie.ReadMovieInfo(ctx, req.MovieId)
 	//fmt.Printf("Movie info read: %v\n", movieInfo)
 	resp := movie.ReadMovieInfoResponse{Info: movieInfo}
@@ -83,8 +83,10 @@ func main() {
 	populate()
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/store_movie_info", wrappers.NonROWrapper[movie.StoreMovieInfoRequest, movie.StoreMovieInfoResponse](storeMovieInfo))
-	http.HandleFunc("/ro_read_movie_info", wrappers.ROWrapper[movie.ReadMovieInfoRequest, movie.ReadMovieInfoResponse](readMovieInfo))
+	// http.HandleFunc("/store_movie_info", wrappers.NonROWrapper[movie.StoreMovieInfoRequest, movie.StoreMovieInfoResponse](storeMovieInfo))
+	http.HandleFunc("/store_movie_info", wrappers.SlowpokeWrapper[movie.StoreMovieInfoRequest, movie.StoreMovieInfoResponse](storeMovieInfo, "storeMovieInfo"))
+	// http.HandleFunc("/ro_read_movie_info", wrappers.ROWrapper[movie.ReadMovieInfoRequest, movie.ReadMovieInfoResponse](readMovieInfo))
+	http.HandleFunc("/ro_read_movie_info", wrappers.SlowpokeWrapper[movie.ReadMovieInfoRequest, movie.ReadMovieInfoResponse](readMovieInfo, "readMovieInfo"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)

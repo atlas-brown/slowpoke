@@ -18,7 +18,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUniqueId(ctx context.Context, req *movie.GetUniqueIdRequest) *movie.GetUniqueIdResponse {
-    slowpoke.SlowpokeCheck("getUniqueId");
+    // slowpoke.SlowpokeCheck("getUniqueId");
 	reviewId := movie.GetUniqueId(ctx, req.ReqId)
 	//fmt.Printf("Page read: %v\n", page)
 	resp := movie.GetUniqueIdResponse{ReviewId: reviewId}
@@ -29,7 +29,8 @@ func main() {
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/get_unique_id", wrappers.NonROWrapper[movie.GetUniqueIdRequest, movie.GetUniqueIdResponse](getUniqueId))
+	// http.HandleFunc("/get_unique_id", wrappers.NonROWrapper[movie.GetUniqueIdRequest, movie.GetUniqueIdResponse](getUniqueId))
+	http.HandleFunc("/get_unique_id", wrappers.SlowpokeWrapper[movie.GetUniqueIdRequest, movie.GetUniqueIdResponse](getUniqueId, "getUniqueId"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)
