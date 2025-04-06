@@ -58,6 +58,7 @@ func execParallel(calledServices []synthetic.CalledService, request  *http.Reque
 	// forward requests
 	respMap := make(map[string]string)
 	var wg sync.WaitGroup
+	var mu sync.Mutex
 	for _, service := range calledServices {
 		if service.Probability != 0 && service.Service != picked_service {
 			continue
@@ -69,7 +70,9 @@ func execParallel(calledServices []synthetic.CalledService, request  *http.Reque
 				respRaw := slowpoke.Invoke[Response](request.Context(), service.Service, service.Endpoint, "")
 				resp := fmt.Sprintf("CPUResp: %s | NETResp : %s", respRaw.CPUResp, respRaw.NetworkResp)
 				key := fmt.Sprintf("%s [%s,%d]", service.Service, service.Endpoint, i)
+				mu.Lock()
 				respMap[key] = resp
+				mu.Unlock()
 			}(service)
 		}
 	}
