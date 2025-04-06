@@ -10,9 +10,9 @@ conn=512
 repetitions=3
 num_req=200000
 poker_batch=30000000
-num_exp=10
-DIR=boutique/results-locker-move-correction-nrlock
-FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch.log
+num_exp=2
+DIR=boutique/results-all-flush-time-based-sleep
+FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch-no-flush-fixed-batch-delay-before-processing.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then
     echo "File $DIR/$FILE already exists. Skipping test."

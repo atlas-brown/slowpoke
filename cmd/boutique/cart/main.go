@@ -20,21 +20,21 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func addItemToCart(ctx context.Context, req *boutique.AddItemRequest) *boutique.AddItemResponse {
-	slowpoke.SlowpokeCheck("addItemToCart")
+	// slowpoke.SlowpokeCheck("addItemToCart")
 	ok := boutique.AddItem(ctx, req.UserId, req.ProductId, req.Quantity)
 	resp := boutique.AddItemResponse{Ok: ok}
 	return &resp
 }
 
 func getCart(ctx context.Context, req *boutique.GetCartRequest) *boutique.GetCartResponse {
-	slowpoke.SlowpokeCheck("getCart")
+	// slowpoke.SlowpokeCheck("getCart")
 	cart := boutique.GetCart(ctx, req.UserId)
 	resp := boutique.GetCartResponse{Cart: cart}
 	return &resp
 }
 
 func emptyCart(ctx context.Context, req *boutique.EmptyCartRequest) *boutique.EmptyCartResponse {
-	slowpoke.SlowpokeCheck("emptyCart")
+	// slowpoke.SlowpokeCheck("emptyCart")
 	ok := boutique.EmptyCart(ctx, req.UserId)
 	resp := boutique.EmptyCartResponse{Ok: ok}
 	return &resp
@@ -44,9 +44,12 @@ func main() {
 	fmt.Println(runtime.GOMAXPROCS(8))
 	// go cm.ZmqProxy()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/add_item", wrappers.NonROWrapper[boutique.AddItemRequest, boutique.AddItemResponse](addItemToCart))
-	http.HandleFunc("/ro_get_cart", wrappers.ROWrapper[boutique.GetCartRequest, boutique.GetCartResponse](getCart))
-	http.HandleFunc("/empty_cart", wrappers.NonROWrapper[boutique.EmptyCartRequest, boutique.EmptyCartResponse](emptyCart))
+	// http.HandleFunc("/add_item", wrappers.NonROWrapper[boutique.AddItemRequest, boutique.AddItemResponse](addItemToCart))
+	http.HandleFunc("/add_item", wrappers.SlowpokeWrapper[boutique.AddItemRequest, boutique.AddItemResponse](addItemToCart, "addItemToCart"))
+	// http.HandleFunc("/ro_get_cart", wrappers.ROWrapper[boutique.GetCartRequest, boutique.GetCartResponse](getCart))
+	http.HandleFunc("/ro_get_cart", wrappers.SlowpokeWrapper[boutique.GetCartRequest, boutique.GetCartResponse](getCart, "getCart"))
+	// http.HandleFunc("/empty_cart", wrappers.NonROWrapper[boutique.EmptyCartRequest, boutique.EmptyCartResponse](emptyCart))
+	http.HandleFunc("/empty_cart", wrappers.SlowpokeWrapper[boutique.EmptyCartRequest, boutique.EmptyCartResponse](emptyCart, "emptyCart"))
 	boutique.CartInit()
 	slowpoke.SlowpokeInit()
 	fmt.Println("Server started on port 3000")

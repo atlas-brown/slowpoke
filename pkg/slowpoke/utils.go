@@ -242,7 +242,7 @@ func SlowpokeDelay() {
 	accumulatedDelay += delayNanos
 	reqCount++
 	// if reqCount >= 100 {
-	if accumulatedDelay >= pokerBatchThreshold {
+	if accumulatedDelay > pokerBatchThreshold {
 		// fmt.Printf("[%s] Should sleep %d \n", time.Now().Format(time.RFC3339), accumulatedDelay)
 
 		binary.LittleEndian.PutUint64(pipebuf, uint64(accumulatedDelay))

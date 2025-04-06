@@ -20,7 +20,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendEmail(ctx context.Context, req *boutique.SendOrderConfirmationRequest) *boutique.SendOrderConfirmationResponse {
-	slowpoke.SlowpokeCheck("sendEmail")
+	// slowpoke.SlowpokeCheck("sendEmail")
 	ok := boutique.SendConfirmation(ctx, req.Email, req.Order)
 	resp := boutique.SendOrderConfirmationResponse{Ok: ok}
 	return &resp
@@ -30,7 +30,8 @@ func main() {
 	fmt.Println(runtime.GOMAXPROCS(8))
 	// go cm.ZmqProxy()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/ro_send_email", wrappers.ROWrapper[boutique.SendOrderConfirmationRequest, boutique.SendOrderConfirmationResponse](sendEmail))
+	// http.HandleFunc("/ro_send_email", wrappers.ROWrapper[boutique.SendOrderConfirmationRequest, boutique.SendOrderConfirmationResponse](sendEmail))
+	http.HandleFunc("/ro_send_email", wrappers.SlowpokeWrapper[boutique.SendOrderConfirmationRequest, boutique.SendOrderConfirmationResponse](sendEmail, "sendEmail"))
 	slowpoke.SlowpokeInit()
 	fmt.Println("Server started on :3000")
 	listener, err := net.Listen("tcp", ":3000")

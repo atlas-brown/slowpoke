@@ -20,7 +20,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func charge(ctx context.Context, req *boutique.ChargeRequest) *boutique.ChargeResponse {
-	slowpoke.SlowpokeCheck("charge")
+	// slowpoke.SlowpokeCheck("charge")
 	uid, err := boutique.Charge(ctx, req.Amount, req.CreditCard)
 	//fmt.Printf("Products read: %+v\n", products)
 	resp := boutique.ChargeResponse{
@@ -34,7 +34,8 @@ func main() {
 	fmt.Println(runtime.GOMAXPROCS(8))
 	// go cm.ZmqProxy()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/charge", wrappers.NonROWrapper[boutique.ChargeRequest, boutique.ChargeResponse](charge))
+	// http.HandleFunc("/charge", wrappers.NonROWrapper[boutique.ChargeRequest, boutique.ChargeResponse](charge))
+	http.HandleFunc("/charge", wrappers.SlowpokeWrapper[boutique.ChargeRequest, boutique.ChargeResponse](charge, "charge"))
 	slowpoke.SlowpokeInit()
 	fmt.Println("Server started on port 3000")
 	listener, err := net.Listen("tcp", ":3000")

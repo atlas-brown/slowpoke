@@ -20,7 +20,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func getRecommendations(ctx context.Context, req *boutique.GetRecommendationsRequest) *boutique.GetRecommendationsResponse {
-	slowpoke.SlowpokeCheck("getRecommendations")
+	// slowpoke.SlowpokeCheck("getRecommendations")
 	products := boutique.GetRecommendations(ctx, req.ProductIds)
 	resp := boutique.GetRecommendationsResponse{ProductIds: products}
 	return &resp
@@ -30,7 +30,8 @@ func main() {
 	fmt.Println(runtime.GOMAXPROCS(8))
 	// go cm.ZmqProxy()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/ro_get_recommendations", wrappers.ROWrapper[boutique.GetRecommendationsRequest, boutique.GetRecommendationsResponse](getRecommendations))
+	// http.HandleFunc("/ro_get_recommendations", wrappers.ROWrapper[boutique.GetRecommendationsRequest, boutique.GetRecommendationsResponse](getRecommendations))
+	http.HandleFunc("/ro_get_recommendations", wrappers.SlowpokeWrapper[boutique.GetRecommendationsRequest, boutique.GetRecommendationsResponse](getRecommendations, "getRecommendations"))
 	slowpoke.SlowpokeInit()
 	fmt.Println("Server started on port 3000")
 	listener, err := net.Listen("tcp", ":3000")
