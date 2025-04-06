@@ -3,7 +3,7 @@
 cd $(dirname $0)/../..
 
 EXP=dynamic-cache-http-sync
-DIR=synthetic/$EXP/locker-correction-norlock
+DIR=synthetic/$EXP/bus-theory-fixed-json-time-based-sleep
 mkdir -p $DIR
 
 # config
@@ -11,7 +11,7 @@ THREAD=8
 CONN=512
 NUM_REQ=40000
 POKER_BATCH=20000000
-NUM_EXP=1
+NUM_EXP=2
 REPETITION=1
 
 # Make it reproducible
@@ -23,7 +23,7 @@ do
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
 
-    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker$POKER_BATCH-n$NUM_EXP-rep$REPETITION-move-time-read-pipe.log
+    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker$POKER_BATCH-n$NUM_EXP-rep$REPETITION.log
     
     if [[ -e $output_file ]]; then
         echo "File $output_file already exists. Skipping..."
