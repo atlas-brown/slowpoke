@@ -9,8 +9,8 @@ repetitions=1
 num_req=20000
 poker_batch=40000000
 num_exp=2
-DIR=hotel/04-05-benchmarking-bus-theory
-FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch-all-flush-batch100-abs.log
+DIR=hotel/04-05-revert-no-flush-delay-before-proc
+FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then
     echo "File $DIR/$FILE already exists. Skipping test."
