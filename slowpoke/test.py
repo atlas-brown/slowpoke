@@ -62,8 +62,8 @@ class Runner:
                 d = delay/self.cpu_quota[service]
                 env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
                 # batch_size = max(10, int(500 * 1000 * self.request_ratio[service] * d - 10))
-                # batch_size = max(10, int(100 * 1000 * d))
-                batch_size = self.poker_batch
+                batch_size = max(10, int(100 * 1000 * d))
+                # batch_size = self.poker_batch
                 env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(batch_size)
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
