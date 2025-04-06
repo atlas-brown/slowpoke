@@ -18,7 +18,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func compose(ctx context.Context, req *movie.ComposeRequest) *movie.ComposeResponse {
-    slowpoke.SlowpokeCheck("compose");
+    // slowpoke.SlowpokeCheck("compose");
 	ok := movie.Compose(ctx, req.Username, req.Password, req.Title, req.Rating, req.Text)
 	//fmt.Printf("Page read: %v\n", page)
 	resp := movie.ComposeResponse{Ok: ok}
@@ -29,7 +29,8 @@ func main() {
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/compose", wrappers.NonROWrapper[movie.ComposeRequest, movie.ComposeResponse](compose))
+	// http.HandleFunc("/compose", wrappers.NonROWrapper[movie.ComposeRequest, movie.ComposeResponse](compose))
+	http.HandleFunc("/compose", wrappers.SlowpokeWrapper[movie.ComposeRequest, movie.ComposeResponse](compose, "compose"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)

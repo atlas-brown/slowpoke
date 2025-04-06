@@ -18,7 +18,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func readPage(ctx context.Context, req *movie.ReadPageRequest) *movie.ReadPageResponse {
-    slowpoke.SlowpokeCheck("readPage");
+    // slowpoke.SlowpokeCheck("readPage");
 	page := movie.ReadPage(ctx, req.MovieId)
 	//fmt.Printf("Page read: %v\n", page)
 	resp := movie.ReadPageResponse{Page: page}
@@ -29,7 +29,8 @@ func main() {
 	fmt.Println(runtime.GOMAXPROCS(8))
 	slowpoke.SlowpokeInit()
 	http.HandleFunc("/heartbeat", heartbeat)
-	http.HandleFunc("/ro_read_page", wrappers.ROWrapper[movie.ReadPageRequest, movie.ReadPageResponse](readPage))
+	// http.HandleFunc("/ro_read_page", wrappers.ROWrapper[movie.ReadPageRequest, movie.ReadPageResponse](readPage))
+	http.HandleFunc("/ro_read_page", wrappers.SlowpokeWrapper[movie.ReadPageRequest, movie.ReadPageResponse](readPage, "readPage"))
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)
