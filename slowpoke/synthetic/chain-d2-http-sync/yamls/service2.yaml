@@ -6,7 +6,7 @@ metadata:
         name: config-service2
     namespace: default
 data:
-    conf.json: '{"processes":5,"logging":false,"protocol":"http","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE2},"threads":1}}]}'
+    conf.json: '{"processes":10,"logging":false,"protocol":"http","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE2},"threads":1}}]}'
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -30,15 +30,13 @@ spec:
             nodeName: worker3
             containers:
                 - name: app
-                  image: yizhengx/mucache:synthetic-poker
+                  image: yizhengx/mucache:synthetic-all-flush-time-based-sleep
                   imagePullPolicy: Always
                   env:
                     - name: APP_NAME
                       value: service
                     - name: CONF
                       value: /usr/src/emulator/config/conf.json
-                    - name: SERVICE_NAME
-                      value: service2
                     - name: GOMEMLIMIT
                       value: "1024000000"
                     - name: SLOWPOKE_DELAY_MICROS
@@ -46,7 +44,7 @@ spec:
                     - name: SLOWPOKE_PRERUN
                       value: "${SLOWPOKE_PRERUN}"
                     - name: SLOWPOKE_POKER_BATCH_THRESHOLD
-                      value: "${SLOWPOKE_POKER_BATCH_THRESHOLD}"
+                      value: "${SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2}"
                   ports:
                     - containerPort: 5000
                   volumeMounts:
