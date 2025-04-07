@@ -8,9 +8,9 @@ conn=800
 repetitions=1
 num_req=50000
 poker_batch=60000000
-num_exp=2
+num_exp=1
 DIR=movie/all-flush-time-based-batching
-FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch-all-flush-per100req-batch.log
+FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch-no-flush-delay-before-process.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then
     echo "File $DIR/$FILE already exists. Skipping test."
