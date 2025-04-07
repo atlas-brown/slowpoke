@@ -4,13 +4,13 @@ cd $(dirname $0)/..
 
 target=profile
 thread=8
-conn=512
-repetitions=1
+conn=1024
+repetitions=2
 num_req=20000
 poker_batch=40000000
-num_exp=2
-DIR=hotel/04-05-revert-no-flush-delay-before-proc
-FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch.log
+num_exp=10
+DIR=hotel/04-06-all-flush-time-based-sleep
+FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-batch$poker_batch-relative100reqbatch.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then
     echo "File $DIR/$FILE already exists. Skipping test."
