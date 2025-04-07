@@ -3,7 +3,7 @@
 cd $(dirname $0)/../..
 
 EXP=chain-d2-http-sync
-DIR=synthetic/$EXP/locker-correction-norlock
+DIR=synthetic/$EXP/all-flush-sleep-time-based
 mkdir -p $DIR
 
 # config
@@ -12,7 +12,7 @@ CONN=512
 NUM_REQ=40000
 POKER_BATCH=20000000
 NUM_EXP=10
-REPETITION=2
+REPETITION=1
 
 # Make it reproducible
 target_service_random_pairs="0:4446 1:7748 2:22717"
