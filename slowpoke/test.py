@@ -112,10 +112,15 @@ class Runner:
         print(f"[test.py] Baseline throughput: {baseline_throughput}", flush=True)
         self.baseline_throughputs.append(baseline_throughput)
 
-        # groundtruth
-        print(f"[test.py] Running groundtruth experiment", flush=True)
+        slowdown = []
         groundtruth = []
-        for p_t in processing_time_range:
+        predicted = []
+        err = []
+        processing_time[self.target_service] = self.baseline_service_processing_time[self.target_service]
+        for i, p_t in enumerate(processing_time_range):
+            print(f"[test.py] Running {i}th optmization experiment", flush=True)
+
+            print(f"[test.py] Running {i}th groundtruth exp", flush=True)
             processing_time[self.target_service] = p_t
             res = self.exp(service_delay, processing_time)
             while int(res) == 0:
@@ -123,15 +128,7 @@ class Runner:
                 res = self.exp(service_delay, processing_time)
             groundtruth.append(res)
 
-        # baseline_throughput = 1575.0880421056315
-        # groundtruth = [1640.3420272239941, 1649.3207874339041]
-        
-        # slowdown
-        print(f"[test.py] Running slowdown experiment", flush=True)
-        slowdown = []
-        predicted = []
-        processing_time[self.target_service] = self.baseline_service_processing_time[self.target_service]
-        for p_t in processing_time_range:
+            print(f"[test.py] Running {i}th slowdown exp", flush=True)
             for service in service_delay:
                 if service != self.target_service:
                     if self.request_ratio[service] == 0:
@@ -154,8 +151,9 @@ class Runner:
                 print("[test.py] Error: Division by zero")
                 predicted_throughput = -1
             predicted.append(predicted_throughput)
+            err.append((predicted[-1]-groundtruth[-1])*100/groundtruth[-1])
+            print(f"[test.py] Finished running {i}th optmization experiment: groundtruth->{groundtruth[-1]}, slowdown->{slowdown[-1]}, predicted->{predicted[-1]}, err->{err[-1]}", flush=True)
         
-        err = [(predicted[i]-groundtruth[i])*100/groundtruth[i] for i in range(len(predicted))]
         print("[test.py] Baseline throughput: ", baseline_throughput, flush=True)
         print("[test.py] Groundtruth: ", groundtruth, flush=True)
         print("[test.py] Slowdown: ", slowdown, flush=True)
