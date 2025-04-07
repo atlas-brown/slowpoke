@@ -22,6 +22,7 @@ class Runner:
         self.slowdowns = []
         self.predicteds = []
         self.errs = []
+        self.poker_batch_req = args.poker_batch_req
         if args.clien_cpu_quota != -1:
             self.client_cpu_quota = args.clien_cpu_quota
         else:
@@ -49,22 +50,14 @@ class Runner:
             # This is used to set the processing time for synthetic benchmarks
             for service, processing_time in processing_time.items():
                 env[f"PROCESSING_TIME_{service.upper()}"] = str(round(processing_time/1e6, 8))
-            for service, delay in service_delay.items():
-                d = delay/self.cpu_quota[service]
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
-                batch_size = max(10, int(100 * 1000 * self.request_ratio[service] * d - 10))
-                # batch_size = max(10, int(100 * 1000 * d))
-                env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(batch_size)
         else:
             for service, p_ in processing_time.items():
                 env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)
-            for service, delay in service_delay.items():
-                d = delay/self.cpu_quota[service]
-                env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
-                batch_size = max(10, int(100 * 1000 * self.request_ratio[service] * d - 10))
-                # batch_size = max(10, int(100 * 1000 * d))
-                # batch_size = self.poker_batch
-                env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(batch_size)
+        for service, delay in service_delay.items():
+            d = delay/self.cpu_quota[service]
+            env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
+            batch_size = max(10, int(self.poker_batch_req * 1000 * self.request_ratio[service] * d - 10))
+            env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(batch_size)
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
         cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
@@ -230,6 +223,7 @@ def parse():
     parser.add_argument("--clien_cpu_quota", type=int, default=-1)
     parser.add_argument("--random_seed", type=int, default=1234)
     parser.add_argument("--poker_batch", type=int, default=20000000)
+    parser.add_argument("--poker_batch_req", type=int, default=100)
     args = parser.parse_args()
     return args
 
