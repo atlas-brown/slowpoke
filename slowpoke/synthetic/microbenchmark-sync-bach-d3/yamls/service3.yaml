@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: config-service3
+    labels:
+        name: config-service3
+    namespace: default
+data:
+    conf.json: '{"processes":10,"logging":false,"protocol":"http","endpoints":[{"name":"endpoint1","execution_mode":"sequential","cpu_complexity":{"execution_time":${PROCESSING_TIME_SERVICE3},"threads":1}}]}'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: service3
+    namespace: default
+    labels: {}
+spec:
+    selector:
+        matchLabels:
+            app: service3
+            version: ""
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: service3
+                version: ""
+            annotations: {}
+        spec:
+            nodeName: worker4
+            containers:
+                - name: app
+                  # image: yizhengx/mucache:synthetic-micro-sync-batch-delay-before-processing
+                  image: yizhengx/mucache:synthetic-all-flush-time-based-sleep
+                  imagePullPolicy: Always
+                  env:
+                    - name: APP_NAME
+                      value: service
+                    - name: CONF
+                      value: /usr/src/emulator/config/conf.json
+                    - name: GOMEMLIMIT
+                      value: "1024000000"
+                    - name: SLOWPOKE_DELAY_MICROS
+                      value: "${SLOWPOKE_DELAY_MICROS_SERVICE3}"
+                    - name: SLOWPOKE_PRERUN
+                      value: "${SLOWPOKE_PRERUN}"
+                    - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+                      value: "${SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3}"
+                  ports:
+                    - containerPort: 5000
+                  volumeMounts:
+                    - mountPath: /usr/src/emulator/config
+                      name: config-data-volume
+                  readinessProbe:
+                    httpGet:
+                        path: /
+                        port: 5000
+                    initialDelaySeconds: 2
+                    periodSeconds: 1
+            volumes:
+                - name: config-data-volume
+                  configMap:
+                    name: config-service3
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: service3
+    namespace: default
+    labels: {}
+    annotations:
+        http: /
+spec:
+    selector:
+        app: service3
+    ports:
+        - name: http
+          port: 80
+          targetPort: 5000
