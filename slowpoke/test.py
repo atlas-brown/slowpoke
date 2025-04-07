@@ -122,6 +122,8 @@ class Runner:
 
             print(f"[test.py] Running {i}th groundtruth exp", flush=True)
             processing_time[self.target_service] = p_t
+            for service in service_delay:
+                service_delay[service] = 0
             res = self.exp(service_delay, processing_time)
             while int(res) == 0:
                 print("[test.py] Found 0 throughtput, rerun experiment")

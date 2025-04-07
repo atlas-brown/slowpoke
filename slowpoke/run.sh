@@ -126,7 +126,7 @@ run_test() {
 
     # get the speed of the warmup test and estimate the duration
     speed=$(echo "$output" | grep "Requests/sec:" | awk '{print $2}')
-    duration=$(echo "2 * $TOTAL_REQ / $speed" | bc)
+    duration=$(echo "1.5 * $TOTAL_REQ / $speed" | bc)
     echo "[run.sh] Speed is $speed, duration is $duration"
 
     echo "[run.sh] Fix the request number."
