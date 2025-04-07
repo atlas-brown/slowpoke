@@ -164,7 +164,6 @@ func NonROWrapper[ReqType interface{}, RespType interface{}](handler func(contex
 func SlowpokeWrapper[ReqType interface{}, RespType interface{}](handler func(context.Context, *ReqType) *RespType, endpointName string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slowpoke.SlowpokeCheck(endpointName)
-		slowpoke.SlowpokeDelay()
 		ctx := r.Context()
 		input, err := io.ReadAll(r.Body)
 		r.Body.Close()
@@ -175,8 +174,9 @@ func SlowpokeWrapper[ReqType interface{}, RespType interface{}](handler func(con
 		}
 		resp := handler(ctx, &req)
 		utility.DumpJson(resp, w)
-		// if f, ok := w.(http.Flusher); ok {
-		// 	f.Flush()
-		// }
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+		slowpoke.SlowpokeDelay()
 	}
 }
