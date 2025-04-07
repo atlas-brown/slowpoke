@@ -129,6 +129,7 @@ class Runner:
             groundtruth.append(res)
 
             print(f"[test.py] Running {i}th slowdown exp", flush=True)
+            processing_time[self.target_service] = self.baseline_service_processing_time[self.target_service]
             for service in service_delay:
                 if service != self.target_service:
                     if self.request_ratio[service] == 0:
