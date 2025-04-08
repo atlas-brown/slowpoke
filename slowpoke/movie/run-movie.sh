@@ -5,7 +5,7 @@ cd $(dirname $0)/..
 target=moviereviews
 thread=8
 conn=1024
-repetitions=2
+repetitions=3
 num_req=20000
 poker_batch_req=100
 num_exp=10
