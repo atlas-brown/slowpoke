@@ -20,11 +20,10 @@ target=profile
 thread=8
 conn=256
 repetitions=3
-num_req=50000
-poker_batch=40000000
-poker_batch_req=50
+num_req=20000
+poker_batch_req=100
 num_exp=10
-DIR=social/04-07-all-flush-time-based-sleep
+DIR=social/04-08-pokerpp
 FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-poker_batch_req$poker_batch_req.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then

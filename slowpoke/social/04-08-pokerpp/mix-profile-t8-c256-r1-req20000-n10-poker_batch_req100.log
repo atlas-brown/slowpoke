@@ -1,0 +1,2265 @@
+benchmark                        : social
+num_threads                      : 8
+num_conns                        : 256
+target_service                   : hometimeline
+request_type                     : mix
+repetitions                      : 3
+target_num_exp                   : 10
+pre_run                          : False
+num_req                          : 20000
+groundtruths                     : []
+slowdowns                        : []
+predicteds                       : []
+errs                             : []
+poker_batch_req                  : 100
+client_cpu_quota                 : 4
+random_seed                      : 1234
+request_ratio                    : {'composepost': 0.09979209979, 'hometimeline': 0.7005428505, 'poststorage': 0.9497747748, 'socialgraph': 0.09979209979, 'usertimeline': 0.4022002772}
+baseline_service_processing_time : {'composepost': 0, 'hometimeline': 1000, 'poststorage': 0, 'socialgraph': 0, 'usertimeline': 0}
+cpu_quota                        : {'composepost': 2, 'hometimeline': 2, 'poststorage': 2, 'socialgraph': 2, 'usertimeline': 2}
+target_processing_time_range     : [0, 1000]
+baseline_throughputs             : []
+poker_batch                      : 20000000
+[test.py] Starting experiment...
+[test.py] >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Running experiment 0...
+[test.py] Actual processing time range: [0, 100, 200, 300, 400, 500, 600, 700, 800, 900]
+[test.py] Running baseline experiment
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-7lxgx:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:43:28.709399Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   188.69ms  171.18ms   1.20s    58.17%
+        Req/Sec   172.48     77.02   510.00     72.50%
+        Latency Distribution
+        50%  184.97ms
+        75%  289.27ms
+        90%  410.32ms
+        99%  693.41ms
+        4127 requests in 3.02s, 314.36KB read
+        Requests/sec:   1365.48
+        Transfer/sec:    104.01KB
+        [run.sh] Speed is 1365.48, duration is 21
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d21s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 21s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   180.18ms  181.30ms   1.26s    84.03%
+        Req/Sec   186.99     80.69   696.00     69.17%
+        Latency Distribution
+        50%  154.27ms
+        75%  285.81ms
+        90%  434.76ms
+        99%  706.16ms
+        20000 requests in 21.00s, 1.49MB read
+        Requests/sec:    952.37
+        Transfer/sec:     72.54KB
+        ------------------------------
+        stop time: 13.651807
+        stop time: 13.319635
+        stop time: 13.112577
+        stop time: 13.546725
+        stop time: 13.452786
+        stop time: 13.242441
+        stop time: 13.334121
+        stop time: 13.519767
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-xtw99     109m         11Mi
+        hometimeline-5b75f5789f-kpx75    589m         41Mi
+        poststorage-6f7cf87dc5-cfz9k     189m         22Mi
+        socialgraph-7885949c4-mt27l      8m           9Mi
+        ubuntu-client-76886f6bbd-7lxgx   81m          21Mi
+        usertimeline-647cdc4d75-2c4hz    118m         11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [13.651807, 13.319635, 13.112577, 13.546725, 13.452786, 13.242441, 13.334121, 13.519767]
+    [exp] Throughput: 1492.817787715134
+[test.py] Baseline throughput: 1492.817787715134
+[test.py] Running 0th optmization experiment
+[test.py] Running 0th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '0', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-h9jjl:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:45:02.685450Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency    94.92ms   80.93ms 577.66ms   56.01%
+        Req/Sec   350.45     65.31   515.00     65.98%
+        Latency Distribution
+        50%   99.68ms
+        75%  142.97ms
+        90%  199.19ms
+        99%  329.96ms
+        8412 requests in 3.09s, 640.76KB read
+        Requests/sec:   2721.68
+        Transfer/sec:    207.32KB
+        [run.sh] Speed is 2721.68, duration is 11
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d11s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 11s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency    95.12ms   81.48ms 521.12ms   55.50%
+        Req/Sec   340.03     77.37   828.00     71.40%
+        Latency Distribution
+        50%  101.36ms
+        75%  150.74ms
+        90%  197.73ms
+        99%  313.82ms
+        20001 requests in 11.00s, 1.49MB read
+        Requests/sec:   1818.25
+        Transfer/sec:    138.50KB
+        ------------------------------
+        stop time: 7.240651
+        stop time: 7.431672
+        stop time: 7.315217
+        stop time: 7.360771
+        stop time: 7.417342
+        stop time: 7.295005
+        stop time: 7.368298
+        stop time: 7.470091
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-f2vst     1m           10Mi
+        hometimeline-6665bb4554-2bvjn    0m           36Mi
+        poststorage-6f7cf87dc5-wx8br     0m           26Mi
+        socialgraph-7885949c4-mvbqw      0m           11Mi
+        ubuntu-client-76886f6bbd-h9jjl   1m           24Mi
+        usertimeline-647cdc4d75-q4dgb    1m           11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [7.240651, 7.431672, 7.315217, 7.360771, 7.417342, 7.295005, 7.368298, 7.470091]
+    [exp] Throughput: 2716.512543912637
+[test.py] Running 0th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '3510.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '368.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '3510.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '870.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-hlsrn:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:46:44.359332Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   186.56ms  139.32ms 801.72ms   55.32%
+        Req/Sec   168.77     53.53   320.00     71.67%
+        Latency Distribution
+        50%  204.79ms
+        75%  284.33ms
+        90%  356.40ms
+        99%  537.53ms
+        4044 requests in 3.10s, 308.04KB read
+        Requests/sec:   1304.39
+        Transfer/sec:     99.36KB
+        [run.sh] Speed is 1304.39, duration is 22
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d22s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 22s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   188.48ms  144.46ms 834.10ms   52.33%
+        Req/Sec   169.23     53.84   380.00     70.08%
+        Latency Distribution
+        50%  217.59ms
+        75%  298.84ms
+        90%  364.93ms
+        99%  518.60ms
+        20000 requests in 22.00s, 1.49MB read
+        Requests/sec:    909.08
+        Transfer/sec:     69.25KB
+        ------------------------------
+        stop time: 14.726262
+        stop time: 14.819332
+        stop time: 14.736998
+        stop time: 14.786624
+        stop time: 14.957255
+        stop time: 14.926140
+        stop time: 14.800020
+        stop time: 14.701049
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-676c8b7677-t2d4w     239m         10Mi
+        hometimeline-5b75f5789f-l9fmb    244m         14Mi
+        poststorage-87668cf95-557vs      78m          13Mi
+        socialgraph-57b986797c-sgsdf     67m          10Mi
+        ubuntu-client-76886f6bbd-hlsrn   2m           1Mi
+        usertimeline-747d4cdf7f-zpv8k    50m          8Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [14.726262, 14.819332, 14.736998, 14.786624, 14.957255, 14.92614, 14.80002, 14.701049]
+    [exp] Throughput: 1350.7389555140878
+[test.py] Finished running 0th optmization experiment: groundtruth->2716.512543912637, slowdown->1350.7389555140878, predicted->2563.6813660445923, err->-5.626006705197072
+[test.py] Running 1th optmization experiment
+[test.py] Running 1th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '100', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-x58kv:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:48:18.392300Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   104.67ms   85.37ms 600.73ms   56.70%
+        Req/Sec   319.44     69.71   490.00     69.58%
+        Latency Distribution
+        50%  112.92ms
+        75%  158.21ms
+        90%  210.48ms
+        99%  331.99ms
+        7637 requests in 3.02s, 581.72KB read
+        Requests/sec:   2531.00
+        Transfer/sec:    192.79KB
+        [run.sh] Speed is 2531.00, duration is 11
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d11s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 11s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency    97.56ms   84.97ms 496.75ms   54.53%
+        Req/Sec   332.63     76.69     0.95k    69.62%
+        Latency Distribution
+        50%  102.44ms
+        75%  156.10ms
+        90%  206.43ms
+        99%  324.46ms
+        20000 requests in 11.00s, 1.49MB read
+        Requests/sec:   1818.16
+        Transfer/sec:    138.49KB
+        ------------------------------
+        stop time: 7.372334
+        stop time: 7.617139
+        stop time: 7.577414
+        stop time: 7.346373
+        stop time: 7.687879
+        stop time: 7.590251
+        stop time: 7.662192
+        stop time: 7.573928
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-26s7h     342m         10Mi
+        hometimeline-5d7bbcf5dc-jndch    1394m        39Mi
+        poststorage-6f7cf87dc5-knfzr     651m         23Mi
+        socialgraph-7885949c4-p24b5      27m          11Mi
+        ubuntu-client-76886f6bbd-x58kv   1035m        34Mi
+        usertimeline-647cdc4d75-fdnqh    522m         12Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [7.372334, 7.617139, 7.577414, 7.346373, 7.687879, 7.590251, 7.662192, 7.573928]
+    [exp] Throughput: 2647.8006457654797
+[test.py] Running 1th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '3159.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '331.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '3159.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '783.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-4xcvt:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:49:58.943415Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   195.25ms  151.11ms 808.35ms   58.70%
+        Req/Sec   160.55     57.28   320.00     67.50%
+        Latency Distribution
+        50%  212.27ms
+        75%  290.70ms
+        90%  375.61ms
+        99%  607.17ms
+        3842 requests in 3.02s, 292.65KB read
+        Requests/sec:   1273.20
+        Transfer/sec:     96.98KB
+        [run.sh] Speed is 1273.20, duration is 23
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d23s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 23s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   186.09ms  147.19ms 817.96ms   53.27%
+        Req/Sec   171.28     56.86   530.00     67.27%
+        Latency Distribution
+        50%  209.91ms
+        75%  290.52ms
+        90%  369.57ms
+        99%  554.28ms
+        20000 requests in 23.00s, 1.49MB read
+        Requests/sec:    869.56
+        Transfer/sec:     66.24KB
+        ------------------------------
+        stop time: 14.743128
+        stop time: 14.418609
+        stop time: 14.847582
+        stop time: 14.441031
+        stop time: 14.679154
+        stop time: 14.486154
+        stop time: 14.768463
+        stop time: 14.512106
+        [run.sh] Checking the resource usage
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+        > error: metrics not available yet
+    [exp] Times: [14.743128, 14.418609, 14.847582, 14.441031, 14.679154, 14.486154, 14.768463, 14.512106]
+    [exp] Throughput: 1368.7353655990967
+[test.py] Finished running 1th optmization experiment: groundtruth->2647.8006457654797, slowdown->1368.7353655990967, predicted->2407.5666776068365, err->-9.072962820778809
+[test.py] Running 2th optmization experiment
+[test.py] Running 2th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '200', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-472vq:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:51:32.967424Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   108.85ms   89.71ms 616.62ms   54.20%
+        Req/Sec   299.71     74.88   515.00     70.42%
+        Latency Distribution
+        50%  118.89ms
+        75%  169.06ms
+        90%  221.44ms
+        99%  333.86ms
+        7164 requests in 3.02s, 545.70KB read
+        Requests/sec:   2371.57
+        Transfer/sec:    180.65KB
+        [run.sh] Speed is 2371.57, duration is 12
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d12s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 12s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   108.91ms   96.44ms 615.11ms   54.43%
+        Req/Sec   299.96     74.47   828.00     70.85%
+        Latency Distribution
+        50%  112.97ms
+        75%  172.54ms
+        90%  235.10ms
+        99%  374.96ms
+        20000 requests in 12.00s, 1.49MB read
+        Requests/sec:   1666.65
+        Transfer/sec:    126.95KB
+        ------------------------------
+        stop time: 8.287729
+        stop time: 8.465444
+        stop time: 8.249343
+        stop time: 8.380101
+        stop time: 8.206571
+        stop time: 8.404150
+        stop time: 8.381211
+        stop time: 8.492723
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-dn662     155m         10Mi
+        hometimeline-78c5bff588-rk4gq    590m         32Mi
+        poststorage-6f7cf87dc5-xx9mw     308m         23Mi
+        socialgraph-7885949c4-22jkr      14m          10Mi
+        ubuntu-client-76886f6bbd-472vq   2m           30Mi
+        usertimeline-647cdc4d75-8xtsk    195m         12Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [8.287729, 8.465444, 8.249343, 8.380101, 8.206571, 8.40415, 8.381211, 8.492723]
+    [exp] Throughput: 2392.7998737558787
+[test.py] Running 2th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '2808.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '295.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '2808.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '696.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-d5zs7:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:53:13.395222Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   196.98ms  163.37ms   1.00s    59.01%
+        Req/Sec   167.44     65.07   383.00     70.83%
+        Latency Distribution
+        50%  202.24ms
+        75%  295.42ms
+        90%  389.07ms
+        99%  718.17ms
+        4005 requests in 3.02s, 305.07KB read
+        Requests/sec:   1325.73
+        Transfer/sec:    100.98KB
+        [run.sh] Speed is 1325.73, duration is 22
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d22s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 22s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   190.07ms  152.51ms 994.86ms   54.98%
+        Req/Sec   169.39     57.25   393.00     66.44%
+        Latency Distribution
+        50%  208.27ms
+        75%  291.89ms
+        90%  376.04ms
+        99%  591.18ms
+        20000 requests in 22.00s, 1.49MB read
+        Requests/sec:    909.08
+        Transfer/sec:     69.25KB
+        ------------------------------
+        stop time: 14.853583
+        stop time: 14.869043
+        stop time: 14.681009
+        stop time: 14.949668
+        stop time: 14.614696
+        stop time: 14.969821
+        stop time: 14.818402
+        stop time: 14.590002
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-6b4b7c778-c5lkr      393m         11Mi
+        hometimeline-5b75f5789f-cjmjq    1911m        38Mi
+        poststorage-5447f84c55-cj286     1093m        28Mi
+        socialgraph-55f79687b6-nsnrp     77m          12Mi
+        ubuntu-client-76886f6bbd-d5zs7   410m         39Mi
+        usertimeline-5898bdb9b9-sd5z6    666m         12Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [14.853583, 14.869043, 14.681009, 14.949668, 14.614696, 14.969821, 14.818402, 14.590002]
+    [exp] Throughput: 1351.965399419926
+[test.py] Finished running 2th optmization experiment: groundtruth->2392.7998737558787, slowdown->1351.965399419926, predicted->2176.530748492614, err->-9.038329015113002
+[test.py] Running 3th optmization experiment
+[test.py] Running 3th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '300', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-ld6dr:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:54:47.384333Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   126.81ms  109.19ms 745.05ms   58.00%
+        Req/Sec   269.22     69.27   464.00     69.17%
+        Latency Distribution
+        50%  125.94ms
+        75%  191.01ms
+        90%  268.30ms
+        99%  443.29ms
+        6439 requests in 3.02s, 490.47KB read
+        Requests/sec:   2130.62
+        Transfer/sec:    162.29KB
+        [run.sh] Speed is 2130.62, duration is 14
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d14s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 14s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   118.75ms  107.01ms 790.87ms   55.21%
+        Req/Sec   274.27     71.06   580.00     68.92%
+        Latency Distribution
+        50%  121.04ms
+        75%  186.40ms
+        90%  260.71ms
+        99%  425.50ms
+        20001 requests in 14.00s, 1.49MB read
+        Requests/sec:   1428.63
+        Transfer/sec:    108.82KB
+        ------------------------------
+        stop time: 9.094171
+        stop time: 9.029132
+        stop time: 9.145117
+        stop time: 9.281715
+        stop time: 9.257336
+        stop time: 9.162487
+        stop time: 8.995658
+        stop time: 8.990912
+        [run.sh] Checking the resource usage
+        NAME                            CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-z2skm    142m         10Mi
+        hometimeline-76ffc658f7-mnj66   116m         13Mi
+        poststorage-6f7cf87dc5-mfjpc    44m          13Mi
+        usertimeline-647cdc4d75-ffrwf   21m          7Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [9.094171, 9.029132, 9.145117, 9.281715, 9.257336, 9.162487, 8.995658, 8.990912]
+    [exp] Throughput: 2193.0868201403446
+[test.py] Running 3th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '2457.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '258.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '2457.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '609.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-mchst:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:56:27.164292Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   189.89ms  145.99ms 747.63ms   55.25%
+        Req/Sec   164.31     56.00   292.00     67.92%
+        Latency Distribution
+        50%  217.59ms
+        75%  291.79ms
+        90%  370.77ms
+        99%  546.28ms
+        3930 requests in 3.02s, 299.36KB read
+        Requests/sec:   1301.24
+        Transfer/sec:     99.12KB
+        [run.sh] Speed is 1301.24, duration is 23
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d23s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 23s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   188.10ms  160.60ms   1.11s    55.96%
+        Req/Sec   172.43     61.74   370.00     67.10%
+        Latency Distribution
+        50%  198.61ms
+        75%  293.90ms
+        90%  384.88ms
+        99%  653.65ms
+        20000 requests in 23.00s, 1.49MB read
+        Requests/sec:    869.56
+        Transfer/sec:     66.24KB
+        ------------------------------
+        stop time: 14.546654
+        stop time: 14.180396
+        stop time: 14.678674
+        stop time: 14.348808
+        stop time: 14.446700
+        stop time: 14.732361
+        stop time: 14.578243
+        stop time: 14.733240
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-84bd5bdcbb-zgqmr     28m          13Mi
+        hometimeline-5b75f5789f-s26vw    601m         40Mi
+        poststorage-6df9888884-7slcg     41m          24Mi
+        socialgraph-5c6878449d-wkt8c     1m           11Mi
+        ubuntu-client-76886f6bbd-mchst   213m         34Mi
+        usertimeline-856575877c-qrxr4    213m         12Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [14.546654, 14.180396, 14.678674, 14.348808, 14.4467, 14.732361, 14.578243, 14.73324]
+    [exp] Throughput: 1376.4023862825811
+[test.py] Finished running 3th optmization experiment: groundtruth->2193.0868201403446, slowdown->1376.4023862825811, predicted->2077.5260968073185, err->-5.269318217216356
+[test.py] Running 4th optmization experiment
+[test.py] Running 4th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '400', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-h89zj:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:58:01.167676Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   130.46ms  111.04ms 843.25ms   54.62%
+        Req/Sec   255.52     71.19   444.00     69.17%
+        Latency Distribution
+        50%  139.39ms
+        75%  202.76ms
+        90%  273.87ms
+        99%  429.90ms
+        6110 requests in 3.02s, 465.41KB read
+        Requests/sec:   2022.58
+        Transfer/sec:    154.06KB
+        [run.sh] Speed is 2022.58, duration is 14
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d14s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 14s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   126.56ms  119.55ms 909.11ms   60.73%
+        Req/Sec   263.38     77.69   540.00     66.67%
+        Latency Distribution
+        50%  119.99ms
+        75%  196.32ms
+        90%  285.06ms
+        99%  480.78ms
+        20000 requests in 14.00s, 1.49MB read
+        Requests/sec:   1428.56
+        Transfer/sec:    108.82KB
+        ------------------------------
+        stop time: 9.501162
+        stop time: 9.257475
+        stop time: 9.681676
+        stop time: 9.475619
+        stop time: 9.685822
+        stop time: 9.617849
+        stop time: 9.481168
+        stop time: 9.204029
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-klnrt     0m           10Mi
+        hometimeline-67476c9fc4-fw4vk    135m         37Mi
+        poststorage-6f7cf87dc5-7kqz5     0m           24Mi
+        socialgraph-7885949c4-4b94c      0m           10Mi
+        ubuntu-client-76886f6bbd-h89zj   45m          25Mi
+        usertimeline-647cdc4d75-fb9kp    61m          11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [9.501162, 9.257475, 9.681676, 9.475619, 9.685822, 9.617849, 9.481168, 9.204029]
+    [exp] Throughput: 2107.903584490045
+[test.py] Running 4th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '2106.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '221.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '2106.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '522.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-k8v29:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T19:59:40.283297Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   189.75ms  148.26ms 776.03ms   55.10%
+        Req/Sec   167.73     59.94   340.00     67.08%
+        Latency Distribution
+        50%  213.03ms
+        75%  290.39ms
+        90%  379.99ms
+        99%  559.41ms
+        4012 requests in 3.02s, 305.60KB read
+        Requests/sec:   1329.44
+        Transfer/sec:    101.27KB
+        [run.sh] Speed is 1329.44, duration is 22
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d22s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 22s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   188.39ms  158.83ms   1.03s    54.79%
+        Req/Sec   172.17     61.40   350.00     68.28%
+        Latency Distribution
+        50%  200.00ms
+        75%  294.94ms
+        90%  389.41ms
+        99%  626.89ms
+        20000 requests in 22.00s, 1.49MB read
+        Requests/sec:    909.08
+        Transfer/sec:     69.25KB
+        ------------------------------
+        stop time: 14.550942
+        stop time: 14.657369
+        stop time: 14.749842
+        stop time: 14.001565
+        stop time: 14.536922
+        stop time: 14.742871
+        stop time: 14.462611
+        stop time: 14.776050
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7dd6956cc9-9xnfh     242m         11Mi
+        hometimeline-5b75f5789f-t4gqk    244m         42Mi
+        poststorage-8649b9fbb8-86fk8     77m          26Mi
+        socialgraph-8476fbbcb7-6756f     11m          11Mi
+        ubuntu-client-76886f6bbd-k8v29   1m           36Mi
+        usertimeline-7945dbd48c-tklwp    56m          11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [14.550942, 14.657369, 14.749842, 14.001565, 14.536922, 14.742871, 14.462611, 14.77605]
+    [exp] Throughput: 1373.6479312192505
+[test.py] Finished running 4th optmization experiment: groundtruth->2107.903584490045, slowdown->1373.6479312192505, predicted->1931.151662937239, err->-8.385199534425892
+[test.py] Running 5th optmization experiment
+[test.py] Running 5th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '500', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-brs9z:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:01:14.445539Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   144.78ms  123.78ms 780.92ms   56.24%
+        Req/Sec   234.35     76.28   454.00     70.42%
+        Latency Distribution
+        50%  148.61ms
+        75%  217.40ms
+        90%  314.59ms
+        99%  476.65ms
+        5606 requests in 3.02s, 427.02KB read
+        Requests/sec:   1856.38
+        Transfer/sec:    141.40KB
+        [run.sh] Speed is 1856.38, duration is 16
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d16s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 16s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   135.43ms  129.59ms 945.21ms   62.38%
+        Req/Sec   244.19     77.21   535.00     67.89%
+        Latency Distribution
+        50%  129.95ms
+        75%  211.19ms
+        90%  303.67ms
+        99%  540.38ms
+        20000 requests in 16.00s, 1.49MB read
+        Requests/sec:   1249.99
+        Transfer/sec:     95.21KB
+        ------------------------------
+        stop time: 10.252148
+        stop time: 10.320282
+        stop time: 10.192790
+        stop time: 10.364089
+        stop time: 10.310727
+        stop time: 10.060768
+        stop time: 10.340352
+        stop time: 10.266844
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-9dtxw     215m         10Mi
+        hometimeline-849447b99f-5qrs5    1323m        35Mi
+        poststorage-6f7cf87dc5-cstqg     419m         26Mi
+        socialgraph-7885949c4-ghtzn      15m          11Mi
+        ubuntu-client-76886f6bbd-brs9z   666m         36Mi
+        usertimeline-647cdc4d75-lxb9w    338m         11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [10.252148, 10.320282, 10.19279, 10.364089, 10.310727, 10.060768, 10.340352, 10.266844]
+    [exp] Throughput: 1948.6529936181614
+[test.py] Running 5th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '1755.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '184.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '1755.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '435.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-hrlll:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:02:52.919135Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   188.39ms  148.51ms 801.12ms   54.90%
+        Req/Sec   167.28     63.18   350.00     69.58%
+        Latency Distribution
+        50%  221.02ms
+        75%  293.84ms
+        90%  368.80ms
+        99%  524.24ms
+        4003 requests in 3.02s, 304.92KB read
+        Requests/sec:   1326.87
+        Transfer/sec:    101.07KB
+        [run.sh] Speed is 1326.87, duration is 22
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d22s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 22s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   185.01ms  154.10ms   1.00s    52.73%
+        Req/Sec   173.28     61.83   404.00     66.17%
+        Latency Distribution
+        50%  198.49ms
+        75%  294.97ms
+        90%  383.28ms
+        99%  571.17ms
+        20000 requests in 22.00s, 1.49MB read
+        Requests/sec:    909.09
+        Transfer/sec:     69.25KB
+        ------------------------------
+        stop time: 14.503101
+        stop time: 14.196601
+        stop time: 14.289468
+        stop time: 14.318277
+        stop time: 14.594556
+        stop time: 14.483969
+        stop time: 14.582151
+        stop time: 14.384318
+        [run.sh] Checking the resource usage
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+        > error: metrics not available yet
+    [exp] Times: [14.503101, 14.196601, 14.289468, 14.318277, 14.594556, 14.483969, 14.582151, 14.384318]
+    [exp] Throughput: 1387.0534391205472
+[test.py] Finished running 5th optmization experiment: groundtruth->1948.6529936181614, slowdown->1387.0534391205472, predicted->1832.1157458890993, err->-5.980400210336143
+[test.py] Running 6th optmization experiment
+[test.py] Running 6th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '600', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-r9rj2:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:04:27.038553Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   149.64ms  127.07ms 811.44ms   55.98%
+        Req/Sec   224.40     76.38   420.00     66.80%
+        Latency Distribution
+        50%  157.40ms
+        75%  229.69ms
+        90%  314.41ms
+        99%  491.70ms
+        5390 requests in 3.10s, 410.57KB read
+        Requests/sec:   1738.60
+        Transfer/sec:    132.43KB
+        [run.sh] Speed is 1738.60, duration is 17
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d17s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 17s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   145.55ms  139.99ms 862.71ms   61.46%
+        Req/Sec   227.54     82.20   610.00     67.81%
+        Latency Distribution
+        50%  137.80ms
+        75%  230.53ms
+        90%  335.33ms
+        99%  558.87ms
+        20000 requests in 17.00s, 1.49MB read
+        Requests/sec:   1176.46
+        Transfer/sec:     89.61KB
+        ------------------------------
+        stop time: 11.064455
+        stop time: 10.941672
+        stop time: 10.830061
+        stop time: 11.134716
+        stop time: 11.154943
+        stop time: 10.948661
+        stop time: 10.943127
+        stop time: 11.006867
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-bzxp6     131m         11Mi
+        hometimeline-6d5488775b-h9rtr    595m         40Mi
+        poststorage-6f7cf87dc5-qvthw     241m         23Mi
+        socialgraph-7885949c4-xt7mf      10m          11Mi
+        ubuntu-client-76886f6bbd-r9rj2   289m         35Mi
+        usertimeline-647cdc4d75-qfw2h    154m         12Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [11.064455, 10.941672, 10.830061, 11.134716, 11.154943, 10.948661, 10.943127, 11.006867]
+    [exp] Throughput: 1817.6757194263935
+[test.py] Running 6th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '1404.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '147.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '1404.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '348.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-d587d:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:06:04.774388Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   203.30ms  180.52ms   1.36s    59.08%
+        Req/Sec   168.73     66.67   363.00     67.50%
+        Latency Distribution
+        50%  204.78ms
+        75%  305.88ms
+        90%  434.87ms
+        99%  690.05ms
+        4037 requests in 3.01s, 307.51KB read
+        Requests/sec:   1339.31
+        Transfer/sec:    102.02KB
+        [run.sh] Speed is 1339.31, duration is 22
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d22s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 22s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   184.22ms  159.96ms   1.07s    53.46%
+        Req/Sec   175.73     61.80   450.00     66.96%
+        Latency Distribution
+        50%  197.56ms
+        75%  293.07ms
+        90%  387.80ms
+        99%  606.49ms
+        20000 requests in 22.00s, 1.49MB read
+        Requests/sec:    909.08
+        Transfer/sec:     69.25KB
+        ------------------------------
+        stop time: 14.374196
+        stop time: 14.205105
+        stop time: 14.219762
+        stop time: 14.214646
+        stop time: 14.324997
+        stop time: 14.417176
+        stop time: 14.127647
+        stop time: 14.257485
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-67fb4f4969-xxfb9     376m         11Mi
+        hometimeline-5b75f5789f-v2p2l    1076m        35Mi
+        poststorage-867895bb6-7267t      861m         26Mi
+        socialgraph-7587fc8fd9-qwcfp     65m          11Mi
+        ubuntu-client-76886f6bbd-d587d   492m         27Mi
+        usertimeline-7c6bdd6594-chzl9    527m         11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [14.374196, 14.205105, 14.219762, 14.214646, 14.324997, 14.417176, 14.127647, 14.257485]
+    [exp] Throughput: 1401.7748256555703
+[test.py] Finished running 6th optmization experiment: groundtruth->1817.6757194263935, slowdown->1401.7748256555703, predicted->1744.3703187495942, err->-4.032919617803576
+[test.py] Running 7th optmization experiment
+[test.py] Running 7th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '700', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-brw87:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:07:38.942502Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   161.39ms  148.89ms 969.28ms   58.27%
+        Req/Sec   209.39     74.76   430.00     63.75%
+        Latency Distribution
+        50%  159.71ms
+        75%  245.03ms
+        90%  360.49ms
+        99%  593.67ms
+        5010 requests in 3.02s, 381.62KB read
+        Requests/sec:   1661.25
+        Transfer/sec:    126.54KB
+        [run.sh] Speed is 1661.25, duration is 18
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d18s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 18s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   151.05ms  142.90ms 874.73ms   57.95%
+        Req/Sec   217.99     80.67   666.00     67.69%
+        Latency Distribution
+        50%  143.32ms
+        75%  239.90ms
+        90%  345.39ms
+        99%  548.79ms
+        20000 requests in 18.00s, 1.49MB read
+        Requests/sec:   1111.10
+        Transfer/sec:     84.63KB
+        ------------------------------
+        stop time: 11.374323
+        stop time: 11.659683
+        stop time: 11.471487
+        stop time: 11.436856
+        stop time: 11.552803
+        stop time: 11.527704
+        stop time: 11.595298
+        stop time: 11.506227
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-msfvd     146m         11Mi
+        hometimeline-8658dc864f-ggbcl    142m         40Mi
+        poststorage-6f7cf87dc5-5b7zl     40m          22Mi
+        socialgraph-7885949c4-8w5p9      61m          10Mi
+        ubuntu-client-76886f6bbd-brw87   4m           36Mi
+        usertimeline-647cdc4d75-pnvt4    20m          11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [11.374323, 11.659683, 11.471487, 11.436856, 11.552803, 11.527704, 11.595298, 11.506227]
+    [exp] Throughput: 1736.7823616638466
+[test.py] Running 7th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '1053.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '110.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '1053.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '261.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-5d5bb:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:09:16.235236Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   189.28ms  156.98ms 846.40ms   55.79%
+        Req/Sec   167.45     74.89   383.00     67.23%
+        Latency Distribution
+        50%  197.96ms
+        75%  295.53ms
+        90%  391.55ms
+        99%  634.17ms
+        3984 requests in 3.02s, 303.47KB read
+        Requests/sec:   1320.61
+        Transfer/sec:    100.59KB
+        [run.sh] Speed is 1320.61, duration is 22
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d22s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 22s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   184.58ms  164.19ms   1.18s    55.76%
+        Req/Sec   177.36     68.02   420.00     68.15%
+        Latency Distribution
+        50%  187.64ms
+        75%  287.38ms
+        90%  389.23ms
+        99%  667.72ms
+        20000 requests in 22.00s, 1.49MB read
+        Requests/sec:    909.08
+        Transfer/sec:     69.25KB
+        ------------------------------
+        stop time: 13.975112
+        stop time: 13.733759
+        stop time: 14.325808
+        stop time: 14.326661
+        stop time: 14.284583
+        stop time: 14.019353
+        stop time: 14.153952
+        stop time: 14.289980
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-59b7c74d4f-q7gkd     308m         12Mi
+        hometimeline-5b75f5789f-kkhtt    1654m        44Mi
+        poststorage-c97f5b7cd-btjn7      648m         22Mi
+        socialgraph-7555b7d49-6zxk5      40m          11Mi
+        ubuntu-client-76886f6bbd-5d5bb   460m         39Mi
+        usertimeline-58899d877b-pvpn4    580m         11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [13.975112, 13.733759, 14.325808, 14.326661, 14.284583, 14.019353, 14.153952, 14.28998]
+    [exp] Throughput: 1414.5621106285175
+[test.py] Finished running 7th optmization experiment: groundtruth->1736.7823616638466, slowdown->1414.5621106285175, predicted->1661.5404752769496, err->-4.332257630415759
+[test.py] Running 8th optmization experiment
+[test.py] Running 8th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '800', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-w86cw:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:10:50.408973Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   160.31ms  137.82ms 788.90ms   55.14%
+        Req/Sec   206.98     67.23   440.00     73.44%
+        Latency Distribution
+        50%  168.18ms
+        75%  251.42ms
+        90%  343.96ms
+        99%  529.80ms
+        4971 requests in 3.10s, 378.65KB read
+        Requests/sec:   1603.80
+        Transfer/sec:    122.16KB
+        [run.sh] Speed is 1603.80, duration is 18
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d18s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 18s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   165.98ms  163.57ms   1.11s    84.30%
+        Req/Sec   204.30     77.35   545.00     69.40%
+        Latency Distribution
+        50%  144.47ms
+        75%  262.63ms
+        90%  391.64ms
+        99%  649.08ms
+        20000 requests in 18.00s, 1.49MB read
+        Requests/sec:   1111.10
+        Transfer/sec:     84.63KB
+        ------------------------------
+        stop time: 12.099483
+        stop time: 12.393832
+        stop time: 12.423415
+        stop time: 12.196771
+        stop time: 12.341508
+        stop time: 12.062895
+        stop time: 12.395215
+        stop time: 12.366338
+        [run.sh] Checking the resource usage
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+        > error: metrics not available yet
+    [exp] Times: [12.099483, 12.393832, 12.423415, 12.196771, 12.341508, 12.062895, 12.395215, 12.366338]
+    [exp] Throughput: 1628.0106228100142
+[test.py] Running 8th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '702.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '73.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '702.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '174.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-x8glh:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:12:27.124390Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   189.50ms  156.96ms 804.54ms   54.69%
+        Req/Sec   167.71     72.29   370.00     67.92%
+        Latency Distribution
+        50%  205.96ms
+        75%  297.20ms
+        90%  384.91ms
+        99%  626.42ms
+        4012 requests in 3.02s, 305.60KB read
+        Requests/sec:   1328.78
+        Transfer/sec:    101.22KB
+        [run.sh] Speed is 1328.78, duration is 22
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d22s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 22s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   182.66ms  161.32ms 974.35ms   53.89%
+        Req/Sec   177.48     67.36   444.00     68.09%
+        Latency Distribution
+        50%  188.39ms
+        75%  289.77ms
+        90%  391.63ms
+        99%  624.62ms
+        20000 requests in 22.00s, 1.49MB read
+        Requests/sec:    909.08
+        Transfer/sec:     69.25KB
+        ------------------------------
+        stop time: 13.996933
+        stop time: 14.194866
+        stop time: 14.309595
+        stop time: 14.245560
+        stop time: 14.023198
+        stop time: 14.014478
+        stop time: 13.785173
+        stop time: 14.266465
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-56845cc559-9sjvs     174m         12Mi
+        hometimeline-5b75f5789f-ns88v    157m         39Mi
+        poststorage-bcb74bbd-26mdb       309m         20Mi
+        socialgraph-768bc785d5-4c7kz     25m          11Mi
+        ubuntu-client-76886f6bbd-x8glh   219m         34Mi
+        usertimeline-5f67dcf44c-fx9jj    157m         12Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [13.996933, 14.194866, 14.309595, 14.24556, 14.023198, 14.014478, 13.785173, 14.266465]
+    [exp] Throughput: 1417.9837993223953
+[test.py] Finished running 8th optmization experiment: groundtruth->1628.0106228100142, slowdown->1417.9837993223953, predicted->1574.375737709126, err->-3.2945046149829227
+[test.py] Running 9th optmization experiment
+[test.py] Running 9th groundtruth exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '900', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-pb89t:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:14:01.384459Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   174.56ms  156.21ms 997.09ms   57.77%
+        Req/Sec   190.98     80.34   454.00     66.25%
+        Latency Distribution
+        50%  171.74ms
+        75%  273.04ms
+        90%  385.64ms
+        99%  608.05ms
+        4569 requests in 3.02s, 348.03KB read
+        Requests/sec:   1512.81
+        Transfer/sec:    115.23KB
+        [run.sh] Speed is 1512.81, duration is 19
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d19s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 19s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   170.95ms  166.74ms   1.04s    65.21%
+        Req/Sec   196.91     80.71   626.00     66.11%
+        Latency Distribution
+        50%  152.04ms
+        75%  270.46ms
+        90%  401.56ms
+        99%  653.06ms
+        20000 requests in 19.00s, 1.49MB read
+        Requests/sec:   1052.62
+        Transfer/sec:     80.18KB
+        ------------------------------
+        stop time: 12.684487
+        stop time: 12.917224
+        stop time: 12.740721
+        stop time: 12.413578
+        stop time: 12.816620
+        stop time: 12.701897
+        stop time: 12.675210
+        stop time: 12.748312
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-7b4b6d79dd-2l48t     4m           11Mi
+        hometimeline-5d854766c-d4lps     0m           37Mi
+        poststorage-6f7cf87dc5-m8lk2     1m           23Mi
+        socialgraph-7885949c4-44vvl      3m           10Mi
+        ubuntu-client-76886f6bbd-pb89t   51m          23Mi
+        usertimeline-647cdc4d75-695kl    1m           11Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [12.684487, 12.917224, 12.740721, 12.413578, 12.81662, 12.701897, 12.67521, 12.748312]
+    [exp] Throughput: 1573.2848522983957
+[test.py] Running 9th slowdown exp
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '351.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '36.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '351.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '87.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-48cw9:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:15:37.479386Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   185.26ms  156.49ms   1.16s    56.36%
+        Req/Sec   174.75     70.09   420.00     63.87%
+        Latency Distribution
+        50%  206.14ms
+        75%  278.48ms
+        90%  379.24ms
+        99%  626.48ms
+        4171 requests in 3.02s, 317.71KB read
+        Requests/sec:   1382.75
+        Transfer/sec:    105.33KB
+        [run.sh] Speed is 1382.75, duration is 21
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d21s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 21s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   312.61ms  286.16ms   2.37s    58.41%
+        Req/Sec   117.65     65.75   393.00     66.63%
+        Latency Distribution
+        50%  290.63ms
+        75%  472.06ms
+        90%  700.60ms
+        99%    1.18s
+        19536 requests in 21.02s, 1.45MB read
+        Requests/sec:    929.20
+        Transfer/sec:     70.78KB
+        ------------------------------
+        stop time: 20.738781
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-97dcc56d7-6lm8w      17m          9Mi
+        hometimeline-5b75f5789f-tzgzs    597m         39Mi
+        poststorage-6f745744bc-wrjpz     52m          24Mi
+        socialgraph-58dfb945f7-kgvpx     2m           10Mi
+        ubuntu-client-76886f6bbd-48cw9   2m           23Mi
+        usertimeline-6946874bd4-8pmcs    131m         12Mi
+        [run.sh] Test finished with status 1
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+        > PANIC: unprotected error in call to Lua API (/wrk/fix_req_n.lua:32: bad argument #1 to 'format' (number expected, got nil))
+        > command terminated with exit code 1
+    [exp] Error running bash run.sh social mix 8 256 20000
+[test.py] Found 0 throughput, rerun experiment
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '351.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '36.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '351.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '87.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-99dgc:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:17:13.662174Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   185.77ms  152.85ms 889.61ms   55.77%
+        Req/Sec   176.41     68.36   360.00     68.33%
+        Latency Distribution
+        50%  196.92ms
+        75%  276.52ms
+        90%  394.19ms
+        99%  585.46ms
+        4220 requests in 3.02s, 321.45KB read
+        Requests/sec:   1398.86
+        Transfer/sec:    106.55KB
+        [run.sh] Speed is 1398.86, duration is 21
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d21s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 21s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   184.38ms  166.76ms   1.22s    56.62%
+        Req/Sec   178.58     66.38   525.00     67.59%
+        Latency Distribution
+        50%  182.42ms
+        75%  291.23ms
+        90%  397.16ms
+        99%  657.61ms
+        20000 requests in 21.00s, 1.49MB read
+        Requests/sec:    952.37
+        Transfer/sec:     72.54KB
+        ------------------------------
+        stop time: 14.002311
+        stop time: 13.888593
+        stop time: 13.801111
+        stop time: 14.216412
+        stop time: 14.087250
+        stop time: 14.158401
+        stop time: 13.793978
+        stop time: 14.157908
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        composepost-97dcc56d7-nfw8v      536m         10Mi
+        hometimeline-5b75f5789f-rz8c5    1806m        38Mi
+        poststorage-6f745744bc-bs5zk     955m         22Mi
+        socialgraph-58dfb945f7-zm65j     73m          12Mi
+        ubuntu-client-76886f6bbd-99dgc   727m         37Mi
+        usertimeline-6946874bd4-2ffvb    759m         12Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: no objects passed to apply
+    [exp] Times: [14.002311, 13.888593, 13.801111, 14.216412, 14.08725, 14.158401, 13.793978, 14.157908]
+    [exp] Throughput: 1427.2211244711298
+[test.py] Finished running 9th optmization experiment: groundtruth->1573.2848522983957, slowdown->1427.2211244711298, predicted->1502.3245487084596, err->-4.510327769715122
+[test.py] Baseline throughput:  1492.817787715134
+[test.py] Groundtruth:  [2716.512543912637, 2647.8006457654797, 2392.7998737558787, 2193.0868201403446, 2107.903584490045, 1948.6529936181614, 1817.6757194263935, 1736.7823616638466, 1628.0106228100142, 1573.2848522983957]
+[test.py] Slowdown:  [1350.7389555140878, 1368.7353655990967, 1351.965399419926, 1376.4023862825811, 1373.6479312192505, 1387.0534391205472, 1401.7748256555703, 1414.5621106285175, 1417.9837993223953, 1427.2211244711298]
+[test.py] Predicted:  [2563.6813660445923, 2407.5666776068365, 2176.530748492614, 2077.5260968073185, 1931.151662937239, 1832.1157458890993, 1744.3703187495942, 1661.5404752769496, 1574.375737709126, 1502.3245487084596]
+[test.py] Error percentage:  [-5.626006705197072, -9.072962820778809, -9.038329015113002, -5.269318217216356, -8.385199534425892, -5.980400210336143, -4.032919617803576, -4.332257630415759, -3.2945046149829227, -4.510327769715122]
+    [exp] Running (pre_run: False) workload social/mix request with the following configuration: {'CLIENT_CPU_QUOTA': '4', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST': '0', 'SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE': '1000', 'SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE': '0', 'SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH': '0', 'SLOWPOKE_PROCESSING_MICROS_USERTIMELINE': '0', 'SLOWPOKE_DELAY_MICROS_COMPOSEPOST': '3510.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST': '100', 'SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST': 'false', 'SLOWPOKE_DELAY_MICROS_HOMETIMELINE': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE': 'true', 'SLOWPOKE_DELAY_MICROS_POSTSTORAGE': '368.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE': 'false', 'SLOWPOKE_DELAY_MICROS_SOCIALGRAPH': '3510.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH': 'false', 'SLOWPOKE_DELAY_MICROS_USERTIMELINE': '870.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE': '100', 'SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE': 'false'}
+    [exp] Executing cmd `bash run.sh social mix 8 256 20000`:
+        [run.sh] Running benchmark social with request mix, thread 8, conn 256, duration 60
+        [run.sh] Deleting all services
+        service "composepost" deleted
+        deployment.apps "composepost" deleted
+        service "hometimeline" deleted
+        deployment.apps "hometimeline" deleted
+        service "poststorage" deleted
+        deployment.apps "poststorage" deleted
+        service "socialgraph" deleted
+        deployment.apps "socialgraph" deleted
+        service "usertimeline" deleted
+        deployment.apps "usertimeline" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        service/composepost created
+        deployment.apps/composepost created
+        service/hometimeline created
+        deployment.apps/hometimeline created
+        service/poststorage created
+        deployment.apps/poststorage created
+        service/socialgraph created
+        deployment.apps/socialgraph created
+        service/usertimeline created
+        deployment.apps/usertimeline created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Populating social benchmark
+        Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+        Analyzing social graph in: ./data/analysis.txt... DONE!
+        Populating social graph...
+        DONE!
+        [run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-rhcr7:/analysis.txt
+        [run.sh] Finished populating social
+        [run.sh] Starting the rust proxy first for social
+        [2m2025-04-08T20:22:03.254417Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c256 --timeout 3s -d3s -L http://localhost:3000
+        Running 3s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   197.30ms  150.57ms 979.65ms   57.49%
+        Req/Sec   160.59     59.72   310.00     65.42%
+        Latency Distribution
+        50%  208.61ms
+        75%  300.37ms
+        90%  375.80ms
+        99%  601.65ms
+        3844 requests in 3.02s, 292.80KB read
+        Requests/sec:   1271.25
+        Transfer/sec:     96.83KB
+        [run.sh] Speed is 1271.25, duration is 23
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c256 -d23s -s /wrk/fix_req_n.lua -L http://localhost:3000
+        Running 23s test @ http://localhost:3000
+        8 threads and 256 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   187.99ms  145.86ms 841.11ms   53.33%
+        Req/Sec   170.10     55.62   430.00     66.92%
+        Latency Distribution
+        50%  211.74ms
+        75%  291.67ms
+        90%  368.05ms
+        99%  552.55ms
+        20000 requests in 23.00s, 1.49MB read
+        Requests/sec:    869.56
+        Transfer/sec:     66.24KB
+        ------------------------------
+        stop time: 14.721588
+        stop time: 14.570546
+        stop time: 14.889532
+        stop time: 14.689520
+        stop time: 14.849706
+        stop time: 14.867756
+        stop time: 14.588993
+        stop time: 14.690679
+        [run.sh] Checking the resource usage
