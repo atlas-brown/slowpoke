@@ -19,6 +19,7 @@ import (
 	// "syscall"
 	"google.golang.org/grpc"
 	pb "github.com/eniac/mucache/pkg/pb"
+	"strings"
 )
 
 const printIntervalMillis = 30*1000
@@ -41,6 +42,15 @@ var (
 	pipe_recv_buf = make([]byte, 8)
 	grpcConn *grpc.ClientConn
 	initOnce sync.Once
+
+	// for pokerpp
+	servName string
+	neighbors map[string]net.Conn = make(map[string]net.Conn)
+	neighborsLock sync.RWMutex
+	isTarget bool
+	sleepPhase int
+	sleepPhaseLock sync.Mutex
+	reqcount = 0
 )
 
 func min(a, b int64) int64 {
@@ -117,6 +127,18 @@ func SlowpokeInit() {
 		fmt.Sscanf(env, "%d", &pokerBatchThreshold)
 		fmt.Printf("SLOWPOKE_POKER_BATCH_THRESHOLD=%d\n", pokerBatchThreshold)
 	}
+	if env, ok := os.LookupEnv("SLOWPOKE_SERV_NAME"); ok {
+		servName = strings.TrimSpace(env)
+		fmt.Printf("SLOWPOKE_SERV_NAME=%s\n", servName)
+	}
+	isTarget = false
+	if env, ok := os.LookupEnv("SLOWPOKE_IS_TARGET_SERVICE"); ok {
+		if env == "true" {
+			isTarget = true
+		} 
+		fmt.Printf("env=%s\n", env)
+	}
+	fmt.Printf("SLOWPOKE_IS_TARGET_SERVICE=%b\n", isTarget)
 
 	var fifo_path string;
 	var fifo_recover_path string;
@@ -159,6 +181,8 @@ func SlowpokeInit() {
 		_, err = recover_pipefile.Read(pipe_recv_buf);
 	}
 
+	go startControlServer()
+
 	if !prerun {
 		return
 	}
@@ -179,6 +203,42 @@ func getThreadCPUTime() int64 {
 	time := unix.Timespec{}
 	unix.ClockGettime(unix.CLOCK_THREAD_CPUTIME_ID, &time)
 	return time.Nano()
+}
+
+func SlowpokePokerPPDelay() {
+	// Delay
+	sync_guard.Lock()
+	accumulatedDelay += delayNanos
+	reqcount += 1
+	if isTarget && int64(reqcount) > pokerBatchThreshold {
+		pauseReq := PauseReq{Phase: sleepPhase + 1}
+		sync_guard.Unlock()
+		handlePause(pauseReq)
+		return
+	}
+	sync_guard.Unlock()
+}
+
+func SlowpokeDoDelay(delayToDo int64) {
+	// start := time.Now()
+	sync_guard.Lock()
+	binary.LittleEndian.PutUint64(pipebuf, uint64(delayToDo))
+	_, err := pipefile.Write(pipebuf);
+	if err != nil {
+		fmt.Println("Error writing to pipe:", err)
+		os.Stdout.Sync()
+		return
+	}
+	// fmt.Printf("sleeping for: %d\n", delayToDo)
+
+	// time.Sleep(time.Duration(accumulatedDelay) * time.Nanosecond)
+	_, err = recover_pipefile.Read(pipe_recv_buf);
+	if err != nil {
+		fmt.Println("Error reading from pipe:", err)
+		os.Stdout.Sync()
+		panic("pipe")
+	}
+	sync_guard.Unlock()
 }
 
 func SlowpokeCheck(serviceFuncName string) {
@@ -334,6 +394,7 @@ func performRequest[T interface{}](ctx context.Context, req *http.Request, res *
 func Invoke[T interface{}](ctx context.Context, app string, method string, input interface{}) T {
 	// sync_guard.RLock()
 	// sync_guard.RUnlock()
+	requestEndpointRegister(app)
 	buf, err := json.Marshal(input)
 	if err != nil {
 		panic(err)
