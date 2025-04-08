@@ -23,6 +23,7 @@ class Runner:
         self.predicteds = []
         self.errs = []
         self.poker_batch_req = args.poker_batch_req
+        # self.poker_relative_batch = args.poker_relative_batch
         if args.clien_cpu_quota != -1:
             self.client_cpu_quota = args.clien_cpu_quota
         else:
@@ -53,6 +54,11 @@ class Runner:
         else:
             for service, p_ in processing_time.items():
                 env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)
+        # expected_req_num = -1
+        # for service, delay in service_delay.items():
+        #     # we need to make sure the batch size for any service is larger than self.poker_relative_batch
+        #     cur_service_expected_num = self.poker_relative_batch / delay # num of calls needed for this service
+        #     expected_req_num = max(cur_service_expected_num/self.request_ratio[service], expected_req_num)
         for service, delay in service_delay.items():
             d = delay/self.cpu_quota[service]
             env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
@@ -224,6 +230,7 @@ def parse():
     parser.add_argument("--random_seed", type=int, default=1234)
     parser.add_argument("--poker_batch", type=int, default=20000000)
     parser.add_argument("--poker_batch_req", type=int, default=100)
+    parser.add_argument("--poker_relative_batch", type=int, default=20000000)
     args = parser.parse_args()
     return args
 
