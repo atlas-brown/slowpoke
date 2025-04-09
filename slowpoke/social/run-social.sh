@@ -18,12 +18,12 @@ cd $(dirname $0)/..
 
 target=profile
 thread=8
-conn=256
+conn=512
 repetitions=3
 num_req=20000
 poker_batch_req=100
 num_exp=10
-DIR=social/04-08-pokerpp
+DIR=social/04-09-pokerpp-rm-deadlock-debugging
 FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-poker_batch_req$poker_batch_req.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then
