@@ -30,7 +30,7 @@ spec:
             nodeName: worker6
             containers:
                 - name: app
-                  image: yizhengx/mucache:synthetic-all-flush-time-based-sleep
+                  image: yizhengx/mucache:synthetic-pokerpp
                   imagePullPolicy: Always
                   env:
                     - name: APP_NAME
@@ -45,8 +45,13 @@ spec:
                       value: "${SLOWPOKE_PRERUN}"
                     - name: SLOWPOKE_POKER_BATCH_THRESHOLD
                       value: "${SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE5}"
+                    - name: SLOWPOKE_SERV_NAME
+                      value: "service5"
+                    - name: SLOWPOKE_IS_TARGET_SERVICE
+                      value: "${SLOWPOKE_IS_TARGET_SERVICE_SERVICE5}"
                   ports:
                     - containerPort: 5000
+                    - containerPort: 5550
                   volumeMounts:
                     - mountPath: /usr/src/emulator/config
                       name: config-data-volume
@@ -76,3 +81,7 @@ spec:
         - name: http
           port: 80
           targetPort: 5000
+        - protocol: TCP
+          port: 5550
+          targetPort: 5550
+          name: pokerpp
