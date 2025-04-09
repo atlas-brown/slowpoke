@@ -37,6 +37,7 @@ func execTask(request *http.Request, endpoint *synthetic.Endpoint) Response {
 
 func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	slowpoke.SlowpokeCheck(handler.endpoint.Name)
+	slowpoke.SlowpokePokerPPDelay()
 	// slowpoke.SlowpokeDelay()
 	response := execTask(request, handler.endpoint)
 	utility.DumpJson(response, writer)
@@ -47,15 +48,13 @@ func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *ht
 	// 	slowpoke.SlowpokeDelay()
 	// }
 
-	f, ok := writer.(http.Flusher)
-	if ok {
-		f.Flush()
-		// slowpoke.SlowpokeFlushDelay(f)
-	} else {
-		panic("Flusher not available")
-	}
-	
-	slowpoke.SlowpokeDelay()
+	// f, ok := writer.(http.Flusher)
+	// if ok {
+	// 	f.Flush()
+	// 	// slowpoke.SlowpokeFlushDelay(f)
+	// } else {
+	// 	panic("Flusher not available")
+	// }
 }
 
 // Launch a HTTP server to serve one or more endpoints
