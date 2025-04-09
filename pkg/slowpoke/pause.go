@@ -72,9 +72,7 @@ func requestEndpointRegister(serv string) {
 }
 
 func requestPause(serv string, phase int) {
-	neighborsLock.RLock()
 	conn := neighbors[serv]
-	neighborsLock.RUnlock()
 	pauseReq := PauseReq{Phase: phase}
 	pauseReqJson, err := json.Marshal(pauseReq)
 	if err != nil {
@@ -104,10 +102,12 @@ func handlePause(pauseReq PauseReq) {
 		seen = false
 	}
 	sync_guard.Unlock()
+	//fmt.Printf("phase %v seen %v\n", p, seen)
 	if !seen {
 		neighborsLock.RLock()
 		defer neighborsLock.RUnlock()
 		for neighbor := range neighbors {
+			//fmt.Printf("requesting %v %v\n", neighbor, p)
 			requestPause(neighbor, p)
 		}
 		SlowpokeDoDelay(delayToDo)
