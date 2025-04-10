@@ -6,12 +6,12 @@ cd $(dirname "$0")/..
 
 target=cart
 thread=8
-conn=512
-repetitions=3
-num_req=200000
+conn=1024
+repetitions=2
+num_req=100000
 poker_batch_req=100
 num_exp=10
-DIR=boutique/04-08-pokerpp
+DIR=boutique/04-09-pokerpp-fixed-deadlock
 FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-poker_batch_req$poker_batch_req.log
 mkdir -p $DIR
 if [ -f $DIR/$FILE ]; then
