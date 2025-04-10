@@ -211,6 +211,8 @@ func SlowpokePokerPPDelay() {
 	accumulatedDelay += delayNanos
 	reqcount += 1
 	if isTarget && int64(reqcount) > pokerBatchThreshold {
+		// fmt.Printf("[%s][SlowpokePokerPPDelay] reqcout %d, sleepPhase %d \n", time.Now().Format(time.RFC3339), reqcount, sleepPhase + 1)
+		// os.Stdout.Sync()  
 		pauseReq := PauseReq{Phase: sleepPhase + 1}
 		sync_guard.Unlock()
 		handlePause(pauseReq)
@@ -229,7 +231,8 @@ func SlowpokeDoDelay(delayToDo int64) {
 		os.Stdout.Sync()
 		return
 	}
-	// fmt.Printf("sleeping for: %d\n", delayToDo)
+	// fmt.Printf("sleeping for: %d [%s]\n", delayToDo, time.Now().Format(time.RFC3339))
+	// os.Stdout.Sync()  
 
 	// time.Sleep(time.Duration(accumulatedDelay) * time.Nanosecond)
 	_, err = recover_pipefile.Read(pipe_recv_buf);

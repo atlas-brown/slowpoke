@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	// "os"
 )
 
 type Message struct {
@@ -102,12 +103,14 @@ func handlePause(pauseReq PauseReq) {
 		seen = false
 	}
 	sync_guard.Unlock()
-	//fmt.Printf("phase %v seen %v\n", p, seen)
+	// fmt.Printf("phase %v seen %v, delayToDo %v, reqCount %v\n", p, seen, delayToDo, reqcount)
+	// os.Stdout.Sync()  
 	if !seen {
 		neighborsLock.RLock()
 		defer neighborsLock.RUnlock()
 		for neighbor := range neighbors {
-			//fmt.Printf("requesting %v %v\n", neighbor, p)
+			// fmt.Printf("requesting %v %v\n", neighbor, p)
+			// os.Stdout.Sync()  
 			requestPause(neighbor, p)
 		}
 		SlowpokeDoDelay(delayToDo)
