@@ -9,11 +9,11 @@ mkdir -p $DIR
 # config
 THREAD=8
 CONN=512
-NUM_REQ=40000
+NUM_REQ=20000
 POKER_BATCH=30000000
 POKER_BATCH_REQ=100
 NUM_EXP=10
-REPETITION=1
+REPETITION=5
 
 # Make it reproducible
 target_service_random_pairs="0:24479 2:22197"
