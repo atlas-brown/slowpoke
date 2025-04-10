@@ -2,7 +2,7 @@
 
 cd $(dirname $0)
 
-all_prefix="fanout-w10 fanout-w7"
+all_prefix="fanout-w7 fanout-w10-http-sync fanout-w10-http-async"
 
 for prefix in $all_prefix
 do
