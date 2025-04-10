@@ -30,23 +30,28 @@ spec:
             nodeName: worker3
             containers:
                 - name: app
-                  image: yizhengx/mucache:synthetic-all-flush-time-based-sleep
+                  image: yizhengx/mucache:synthetic-pokerpp-0maxconn
                   imagePullPolicy: Always
                   env:
                     - name: APP_NAME
                       value: service
+                    - name: CONF
+                      value: /usr/src/emulator/config/conf.json
                     - name: GOMEMLIMIT
                       value: "1024000000"
                     - name: SLOWPOKE_DELAY_MICROS
                       value: "${SLOWPOKE_DELAY_MICROS_SERVICE2}"
                     - name: SLOWPOKE_PRERUN
                       value: "${SLOWPOKE_PRERUN}"
-                    - name: CONF
-                      value: /usr/src/emulator/config/conf.json
                     - name: SLOWPOKE_POKER_BATCH_THRESHOLD
                       value: "${SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2}"
+                    - name: SLOWPOKE_SERV_NAME
+                      value: "service2"
+                    - name: SLOWPOKE_IS_TARGET_SERVICE
+                      value: "${SLOWPOKE_IS_TARGET_SERVICE_SERVICE2}"
                   ports:
                     - containerPort: 5000
+                    - containerPort: 5550
                   volumeMounts:
                     - mountPath: /usr/src/emulator/config
                       name: config-data-volume
@@ -54,7 +59,7 @@ spec:
                     httpGet:
                         path: /
                         port: 5000
-                    initialDelaySeconds: 2
+                    initialDelaySeconds: 5
                     periodSeconds: 1
             volumes:
                 - name: config-data-volume
@@ -76,3 +81,7 @@ spec:
         - name: http
           port: 80
           targetPort: 5000
+        - protocol: TCP
+          port: 5550
+          targetPort: 5550
+          name: pokerpp
