@@ -5206,3 +5206,37 @@ poker_batch                      : 20000000
         [run.sh] Waiting for all pods to be running
         [run.sh] All pods are running
         [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c800 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency     1.42s   529.20ms   2.64s    58.07%
+        Req/Sec    65.21     45.68   210.00     67.55%
+        Latency Distribution
+        50%    1.38s
+        75%    1.70s
+        90%    2.23s
+        99%    2.57s
+        1245 requests in 3.03s, 193.32KB read
+        Requests/sec:    411.21
+        Transfer/sec:     63.85KB
+        [run.sh] Speed is 411.21, duration is 72
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c800 -d72s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-8cfffb9b9-l8ch8         1m           116Mi
+        service1-7585bd9d88-qmrm8        25m          25Mi
+        service10-8467f679d8-2xvct       6m           13Mi
+        service2-958786d58-2m5dh         1m           15Mi
+        service3-6ddd8b8f64-ngfgz        1m           16Mi
+        service4-9bb5bd9fd-dm8jl         1m           13Mi
+        service5-65b54fcdcb-2nk2v        6m           13Mi
+        service6-7dcff5bc4-bdzms         6m           14Mi
+        service7-7758b6668-htw9x         21m          14Mi
+        service8-778ccbf6cd-j6cnv        7m           18Mi
+        service9-54c984fd45-hppdk        6m           10Mi
+        ubuntu-client-76886f6bbd-rdtgh   0m           10Mi
