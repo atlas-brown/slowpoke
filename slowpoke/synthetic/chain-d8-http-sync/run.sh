@@ -1,29 +1,28 @@
 #!/bin/bash
 
+# Change this!!
+target_service_random_pairs="0:23379 5:28705 9:29196" # Make it reproducible
+
 cd $(dirname $0)/../..
 
-EXP=chain-d8-http-sync
-DIR=synthetic/$EXP/all-flush-fixed-json-time-based-sleep
+EXP=$(dirname $0 | xargs basename)
+DIR=synthetic/$EXP/04-09-pokerpp-rm-deadlock-0maxconn
 mkdir -p $DIR
 
 # config
 THREAD=8
 CONN=512
 NUM_REQ=20000
-POKER_BATCH=30000000
+POKER_BATCH_REQ=100
 NUM_EXP=10
-REPETITION=1
-
-# Make it reproducible
-# target_service_random_pairs="0:14443 9:21601"
-target_service_random_pairs="5:2676"
+REPETITION=5
 
 for pair in $target_service_random_pairs
 do 
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
 
-    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker$POKER_BATCH-n$NUM_EXP-rep$REPETITION-larger-target-execT.log
+    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker_batch_req$POKER_BATCH_REQ-n$NUM_EXP-rep$REPETITION.log
     
     if [[ -e $output_file ]]; then
         echo "File $output_file already exists. Skipping..."
@@ -41,6 +40,6 @@ do
         --num_req $NUM_REQ \
         --random_seed $random_seed \
         --repetition $REPETITION \
-        --poker_batch $POKER_BATCH \
+        --poker_batch_req $POKER_BATCH_REQ \
         >$output_file
 done
