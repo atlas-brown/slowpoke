@@ -1,22 +1,21 @@
 #!/bin/bash
 
+# Change this!!
+target_service_random_pairs="0:29513 5:30007" # Make it reproducible
+
 cd $(dirname $0)/../..
 
-EXP=fanout-w10-http-sync
-DIR=synthetic/$EXP/04-09-pokerpp
+EXP=$(dirname $0 | xargs basename)
+DIR=synthetic/$EXP/04-09-pokerpp-rm-deadlock-0maxconn
 mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=512
+CONN=800
 NUM_REQ=20000
 POKER_BATCH_REQ=100
 NUM_EXP=10
-REPETITION=1
-
-# Make it reproducible
-# target_service_random_pairs="0:29513 5:30007"
-target_service_random_pairs="0:29513"
+REPETITION=5
 
 for pair in $target_service_random_pairs
 do 

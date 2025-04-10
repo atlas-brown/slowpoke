@@ -32,6 +32,8 @@ func execTask(request *http.Request, endpoint *synthetic.Endpoint) Response {
 		networkRespStr += fmt.Sprintf("{%s: %s} ", key, value)
 	}
 	networkRespStr += "]"
+	cpuResp = ""
+	networkRespStr = ""
 	return Response{CPUResp: cpuResp, NetworkResp: networkRespStr}
 }
 
