@@ -4781,3 +4781,38 @@ poker_batch                      : 20000000
         service "service2" deleted
         deployment.apps "ubuntu-client" deleted
         [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] All pods can connect to all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   191.71ms  167.77ms   1.09s    73.81%
+        Req/Sec   386.29    135.96   720.00     71.05%
+        Latency Distribution
+        50%  142.13ms
+        75%  288.48ms
+        90%  435.30ms
+        99%  696.65ms
+        8854 requests in 3.03s, 1.34MB read
+        Requests/sec:   2917.66
+        Transfer/sec:    453.04KB
+        [run.sh] Speed is 2917.66, duration is 10
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d10s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
