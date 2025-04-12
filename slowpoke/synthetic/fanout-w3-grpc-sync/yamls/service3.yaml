@@ -27,40 +27,37 @@ spec:
                 version: ""
             annotations: {}
         spec:
-            nodeName: worker4
+            nodeName: worker3
             containers:
                 - name: app
-                  image: yizhengx/mucache:synthetic-pokerpp-0maxconn-grpc
+                  image: yizhengx/hydragen:fanout-w3-grpc-sync
                   imagePullPolicy: Always
                   env:
-                    - name: APP_NAME
-                      value: service
-                    - name: CONF
-                      value: /usr/src/emulator/config/conf.json
+                    - name: SERVICE_NAME
+                      value: service3
                     - name: GOMEMLIMIT
                       value: "1024000000"
                     - name: SLOWPOKE_DELAY_MICROS
                       value: "${SLOWPOKE_DELAY_MICROS_SERVICE3}"
                     - name: SLOWPOKE_PRERUN
                       value: "${SLOWPOKE_PRERUN}"
-                    - name: SLOWPOKE_POKER_BATCH_THRESHOLD
-                      value: "${SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3}"
-                    - name: SLOWPOKE_SERV_NAME
-                      value: "service3"
-                    - name: SLOWPOKE_IS_TARGET_SERVICE
-                      value: "${SLOWPOKE_IS_TARGET_SERVICE_SERVICE3}"
                   ports:
                     - containerPort: 5000
-                    - containerPort: 5550
                   volumeMounts:
                     - mountPath: /usr/src/emulator/config
                       name: config-data-volume
-                  # readinessProbe:
-                  #   grpcGet:
-                  #       path: /
-                  #       port: 5000
-                  #   initialDelaySeconds: 5
-                  #   periodSeconds: 1
+                  readinessProbe:
+                    exec:
+                        command: [/usr/bin/grpc_health_probe, '-addr=:5000']
+                    initialDelaySeconds: 2
+                    periodSeconds: 1
+                  resources:
+                    limits:
+                        cpu: 1000m
+                        memory: 1024M
+                    requests:
+                        cpu: 1000m
+                        memory: 512M
             volumes:
                 - name: config-data-volume
                   configMap:
@@ -81,7 +78,3 @@ spec:
         - name: grpc
           port: 80
           targetPort: 5000
-        - protocol: TCP
-          port: 5550
-          targetPort: 5550
-          name: pokerpp

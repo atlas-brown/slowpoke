@@ -2,45 +2,26 @@
 
 cd $(dirname $0)/../..
 
-EXP=fanout-w3-grpc-sync
-DIR=synthetic/$EXP/04-09-pokerpp-rm-deadlock
-mkdir -p $DIR
+exp=fanout-w3-grpc-sync
 
-# config
-THREAD=8
-CONN=256
-NUM_REQ=10000
-POKER_BATCH=30000000
-POKER_BATCH_REQ=100
-NUM_EXP=10
-REPETITION=5
+mkdir -p synthetic/$exp/results
 
-# Make it reproducible
-target_service_random_pairs="0:24479 2:22197"
-
-for pair in $target_service_random_pairs
+target_services="0 2"
+for target_service in $target_services
 do 
-    target_service=$(echo $pair | cut -d':' -f1)
-    random_seed=$(echo $pair | cut -d':' -f2)
-
-    output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker_batch_req$POKER_BATCH_REQ-n$NUM_EXP-rep$REPETITION-per100req.log
-    
-    if [[ -e $output_file ]]; then
-        echo "File $output_file already exists. Skipping..."
+    if [[ -e synthetic/$exp/results/$exp-service$target_service.log ]]; then
+        echo "File synthetic/$exp/results/$exp-service$target_service.log already exists. Skipping..."
         continue
     fi
-
-    touch $output_file
-    
+    touch synthetic/$exp/results/$exp-service$target_service.log
     python3 test.py -b synthetic \
-        -r $EXP \
+        -r $exp \
         -x service$target_service \
-        --num_exp $NUM_EXP \
-        -c $CONN \
-        -t $THREAD \
-        --num_req $NUM_REQ \
-        --random_seed $random_seed \
-        --repetition $REPETITION \
-        --poker_batch_req $POKER_BATCH_REQ \
-        >$output_file
+        --num_exp 10 \
+        -c 128 \
+        -t 2 \
+        --num_req 18000 \
+        --clien_cpu_quota 2 \
+        --random_seed $RANDOM \
+        >synthetic/$exp/results/$exp-service$target_service.log
 done
