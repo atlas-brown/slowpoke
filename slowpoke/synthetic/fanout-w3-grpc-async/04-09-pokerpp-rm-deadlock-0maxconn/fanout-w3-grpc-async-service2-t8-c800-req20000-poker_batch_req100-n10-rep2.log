@@ -1,0 +1,137 @@
+[config.py] Random numbers for execution time: [274.6383851603981, 416.9207636140391, 843.5944458592699, 918.0241003660359]
+benchmark                        : synthetic
+num_threads                      : 8
+num_conns                        : 800
+target_service                   : service2
+request_type                     : fanout-w3-grpc-async
+repetitions                      : 2
+target_num_exp                   : 10
+pre_run                          : False
+num_req                          : 20000
+groundtruths                     : []
+slowdowns                        : []
+predicteds                       : []
+errs                             : []
+poker_batch_req                  : 100
+client_cpu_quota                 : 2
+random_seed                      : 18674
+request_ratio                    : {'service0': 1, 'service1': 1, 'service2': 1, 'service3': 1}
+baseline_service_processing_time : {'service0': 918.02, 'service1': 843.59, 'service2': 833.84, 'service3': 274.64}
+cpu_quota                        : {'service0': 2, 'service1': 2, 'service2': 2, 'service3': 2}
+target_processing_time_range     : [0, 833.84]
+baseline_throughputs             : []
+poker_batch                      : 20000000
+[test.py] Starting experiment...
+[test.py] >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Running experiment 0...
+[test.py] Actual processing time range: [0, 83, 166, 249, 332, 415, 498, 581, 664, 747]
+[test.py] Running baseline experiment
+    [exp] Running (pre_run: False) workload synthetic/fanout-w3-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00091802', 'PROCESSING_TIME_SERVICE1': '0.00084359', 'PROCESSING_TIME_SERVICE2': '0.00083384', 'PROCESSING_TIME_SERVICE3': '0.00027464', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w3-grpc-async 8 800 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w3-grpc-async, thread 8, conn 800, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c800 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   541.55ms  249.77ms   1.32s    69.51%
+        Req/Sec   189.71    106.98   505.00     62.50%
+        Latency Distribution
+        50%  481.16ms
+        75%  702.98ms
+        90%  923.22ms
+        99%    1.20s
+        3867 requests in 3.04s, 600.44KB read
+        Requests/sec:   1273.69
+        Transfer/sec:    197.77KB
+        [run.sh] Speed is 1273.69, duration is 23
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c800 -d23s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        Running 23s test @ http://service0:80/endpoint1
+        8 threads and 800 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   553.42ms  255.10ms   1.87s    70.14%
+        Req/Sec   187.73    144.06   820.00     66.97%
+        Latency Distribution
+        50%  528.48ms
+        75%  692.97ms
+        90%  889.25ms
+        99%    1.26s
+        20000 requests in 23.00s, 3.03MB read
+        Requests/sec:    869.56
+        Transfer/sec:    135.02KB
+        ------------------------------
+        stop time: 14.242058
+        stop time: 14.201948
+        stop time: 14.134330
+        stop time: 14.313531
+        stop time: 14.226061
+        stop time: 14.217944
+        stop time: 14.175809
+        stop time: 14.191086
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-6fb7cc7c7f-p2hvw        713m         74Mi
+        service1-76b89695f7-l4j5l        1425m        19Mi
+        service2-7bdbb95446-8xtdl        405m         17Mi
+        service3-766854894f-fz7k8        367m         11Mi
+        ubuntu-client-76886f6bbd-crbgk   43m          0Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [14.242058, 14.201948, 14.13433, 14.313531, 14.226061, 14.217944, 14.175809, 14.191086]
+    [exp] Throughput: 1407.177716264372
+[test.py] Baseline throughput: 1407.177716264372
+[test.py] Running 0th optmization experiment
+[test.py] Running 0th groundtruth exp
+    [exp] Running (pre_run: False) workload synthetic/fanout-w3-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00091802', 'PROCESSING_TIME_SERVICE1': '0.00084359', 'PROCESSING_TIME_SERVICE2': '0.0', 'PROCESSING_TIME_SERVICE3': '0.00027464', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w3-grpc-async 8 800 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w3-grpc-async, thread 8, conn 800, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
