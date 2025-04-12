@@ -67,8 +67,13 @@ func execParallel(calledServices []synthetic.CalledService, request  *http.Reque
 			wg.Add(1)
 			go func(service synthetic.CalledService) {
 				defer wg.Done()
-				respRaw := slowpoke.Invoke[Response](request.Context(), service.Service, service.Endpoint, "")
-				resp := fmt.Sprintf("CPUResp: %s | NETResp : %s", respRaw.CPUResp, respRaw.NetworkResp)
+				var resp string
+				if service.Protocol == "grpc" {
+					resp = slowpoke.InvokeGRPC(context.Background(), service.Service, service.Endpoint, "")
+				} else {
+					respRaw := slowpoke.Invoke[Response](request.Context(), service.Service, service.Endpoint, "")
+					resp = fmt.Sprintf("CPUResp: %s | NETResp : %s", respRaw.CPUResp, respRaw.NetworkResp)
+				}
 				key := fmt.Sprintf("%s [%s,%d]", service.Service, service.Endpoint, i)
 				mu.Lock()
 				respMap[key] = resp

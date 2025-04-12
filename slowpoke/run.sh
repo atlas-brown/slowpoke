@@ -46,6 +46,11 @@ check_connectivity() {
 
 check_connectivity_all(){
     echo "[run.sh] Checking heartbeat for all services"
+    # if "grpc" in request, ignore
+    if [[ $request == *grpc* ]]; then
+        sleep 5
+        return 0
+    fi
     while true
     do
         all_connected=1
@@ -126,7 +131,7 @@ run_test() {
 
     # get the speed of the warmup test and estimate the duration
     speed=$(echo "$output" | grep "Requests/sec:" | awk '{print $2}')
-    duration=$(awk -v r="$TOTAL_REQ" -v s="$speed" 'BEGIN{print (1.5*r/s < 600) ? int(1.5*r/s) : 600}')
+    duration=$(awk -v r="$TOTAL_REQ" -v s="$speed" 'BEGIN{print (1.5*r/s < 200) ? int(1.5*r/s) : 200}')
     echo "[run.sh] Speed is $speed, duration is $duration"
 
     echo "[run.sh] Fix the request number."

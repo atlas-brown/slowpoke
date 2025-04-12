@@ -39,9 +39,11 @@ var (
 	pipebuf = make([]byte, 8)
 	pipefile *os.File
 	recover_pipefile *os.File
+	grpcConns map[string]*grpc.ClientConn = make(map[string]*grpc.ClientConn)
+	grpcConnLock sync.RWMutex
 	pipe_recv_buf = make([]byte, 8)
-	grpcConn *grpc.ClientConn
-	initOnce sync.Once
+	// grpcConn *grpc.ClientConn
+	// initOnce sync.Once
 
 	// for pokerpp
 	servName string
@@ -417,23 +419,37 @@ func Invoke[T interface{}](ctx context.Context, app string, method string, input
 	return res
 }
 
-func InitGRPCConn(app string) {
+func InitGRPCConn(app string) *grpc.ClientConn {
 	conn, err := grpc.Dial(fmt.Sprintf("%s.default.svc.cluster.local:%s", app, "80"), grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
-	grpcConn = conn
+	return conn
 }
 
 func InvokeGRPC(ctx context.Context, app string, method string, input interface{}) string {
 	// sync_guard.RLock()
 	// sync_guard.RUnlock()
-	// ctx, cancel := context.WithTimeout(ctx, time.Second)
-	// defer cancel()
 
-	initOnce.Do(func() {
-        InitGRPCConn(app)
-    })
+	requestEndpointRegister(app)
+
+	var grpcConn *grpc.ClientConn
+
+	grpcConnLock.RLock()
+	if _, ok := grpcConns[app]; ok {
+		grpcConn = grpcConns[app]
+	}
+	grpcConnLock.RUnlock()
+
+	if grpcConn == nil {
+		grpcConnLock.Lock()
+		if _, ok := grpcConns[app]; !ok {
+			grpcConns[app] = InitGRPCConn(app)
+		}
+		grpcConn = grpcConns[app]
+		grpcConnLock.Unlock()
+	}
+
 	client := pb.NewSimpleClient(grpcConn)
 	resp_, err := client.SimpleRPC(ctx, &pb.SimpleRequest{Endpoint: method})
 	if err != nil {

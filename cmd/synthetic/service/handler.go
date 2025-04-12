@@ -100,11 +100,11 @@ type grpcServer struct {
 }
 
 func (s *grpcServer) SimpleRPC(ctx context.Context, in *pb.SimpleRequest) (*pb.SimpleResponse, error) {
+	slowpoke.SlowpokePokerPPDelay()
 	target_endpoint := in.Endpoint
 	var response Response
 	for i := range s.endpoints {
 		if s.endpoints[i].Name == target_endpoint {
-			slowpoke.SlowpokeCheck(target_endpoint)
 			response = execTask(nil, &s.endpoints[i])
 		}
 	}
