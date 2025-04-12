@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Change this!!
-target_services="1:13668 4:15815 5:29066" # Make it reproducible
+target_service_random_pairs="1:13668 4:15815 5:29066" # Make it reproducible
 
 cd $(dirname $0)/../..
 
