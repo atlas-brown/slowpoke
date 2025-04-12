@@ -27,37 +27,34 @@ spec:
                 version: ""
             annotations: {}
         spec:
-            nodeName: worker1
+            nodeName: worker4
             containers:
                 - name: app
-                  image: yizhengx/hydragen:dynamic-cycle-grpc-async
+                  image: yizhengx/mucache:synthetic-pokerpp-0maxconn-grpc
                   imagePullPolicy: Always
                   env:
-                    - name: SERVICE_NAME
-                      value: service3
+                    - name: APP_NAME
+                      value: service
+                    - name: CONF
+                      value: /usr/src/emulator/config/conf.json
                     - name: GOMEMLIMIT
                       value: "1024000000"
                     - name: SLOWPOKE_DELAY_MICROS
                       value: "${SLOWPOKE_DELAY_MICROS_SERVICE3}"
                     - name: SLOWPOKE_PRERUN
                       value: "${SLOWPOKE_PRERUN}"
+                    - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+                      value: "${SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3}"
+                    - name: SLOWPOKE_SERV_NAME
+                      value: "service3"
+                    - name: SLOWPOKE_IS_TARGET_SERVICE
+                      value: "${SLOWPOKE_IS_TARGET_SERVICE_SERVICE3}"
                   ports:
                     - containerPort: 5000
+                    - containerPort: 5550
                   volumeMounts:
                     - mountPath: /usr/src/emulator/config
                       name: config-data-volume
-                  readinessProbe:
-                    exec:
-                        command: [/usr/bin/grpc_health_probe, '-addr=:5000']
-                    initialDelaySeconds: 2
-                    periodSeconds: 1
-                  resources:
-                    limits:
-                        cpu: 1000m
-                        memory: 1024M
-                    requests:
-                        cpu: 1000m
-                        memory: 512M
             volumes:
                 - name: config-data-volume
                   configMap:
@@ -78,3 +75,7 @@ spec:
         - name: grpc
           port: 80
           targetPort: 5000
+        - protocol: TCP
+          port: 5550
+          targetPort: 5550
+          name: pokerpp
