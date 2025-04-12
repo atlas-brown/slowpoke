@@ -1,6 +1,6 @@
 # fanout-w3-http-sync
 cd $(dirname $0)
-for folder in *http*
+for folder in *dag-balanced-http*
 do
     if [[ $folder == *fanout-w10* ]]; then
         continue
