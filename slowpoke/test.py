@@ -43,7 +43,7 @@ class Runner:
                 env_p[key] = value
         return env_p
     
-    def exp(self, service_delay, processing_time):
+    def exp(self, service_delay, processing_time, opt_time=None):
         env = os.environ.copy()
         env["CLIENT_CPU_QUOTA"] = str(self.client_cpu_quota)
         env["SLOWPOKE_POKER_BATCH_THRESHOLD"] = str(self.poker_batch)
@@ -59,12 +59,17 @@ class Runner:
         #     # we need to make sure the batch size for any service is larger than self.poker_relative_batch
         #     cur_service_expected_num = self.poker_relative_batch / delay # num of calls needed for this service
         #     expected_req_num = max(cur_service_expected_num/self.request_ratio[service], expected_req_num)
+        poker_batch_req = self.poker_batch_req
+        # if opt_time is not None:
+        #     if opt_time < 1:
+        #         opt_time *= 1e6
+        #     poker_batch_req = 50e3 * self.cpu_quota[self.target_service] / opt_time
         for service, delay in service_delay.items():
             d = delay/self.cpu_quota[service]
             env[f"SLOWPOKE_DELAY_MICROS_{service.upper()}"] = str(d)
             # batch_size = max(10, int(self.poker_batch_req * 1000 * self.request_ratio[service] * d - 10))
             # env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(batch_size)
-            env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(self.poker_batch_req)
+            env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = str(poker_batch_req)
             if service == self.target_service:
                 env[f"SLOWPOKE_IS_TARGET_SERVICE_{service.upper()}"] = "true"
             else:
@@ -145,7 +150,7 @@ class Runner:
                             ((self.target_processing_time_range[1] - p_t)*self.request_ratio[self.target_service])*self.cpu_quota[service] / (self.request_ratio[service]*self.cpu_quota[self.target_service])
                         )
                     service_delay[service] = delay
-            res = self.exp(service_delay, processing_time)
+            res = self.exp(service_delay, processing_time, self.target_processing_time_range[1] - p_t)
             while int(res) == 0:
                 print("[test.py] Found 0 throughput, rerun experiment")
                 res = self.exp(service_delay, processing_time)

@@ -103,7 +103,7 @@ func handlePause(pauseReq PauseReq) {
 		seen = false
 	}
 	sync_guard.Unlock()
-	// fmt.Printf("phase %v seen %v, delayToDo %v, reqCount %v\n", p, seen, delayToDo, reqcount)
+	fmt.Printf("phase %v seen %v, delayToDo %v, reqCount %v\n", p, seen, delayToDo, reqcount)
 	// os.Stdout.Sync()  
 	if !seen {
 		neighborsLock.RLock()
