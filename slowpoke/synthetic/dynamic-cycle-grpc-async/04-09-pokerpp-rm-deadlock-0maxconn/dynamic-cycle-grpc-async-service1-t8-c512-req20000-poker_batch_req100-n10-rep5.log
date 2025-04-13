@@ -9904,3 +9904,284 @@ poker_batch                      : 20000000
         [run.sh] Waiting for all pods to be running
         [run.sh] All pods are running
         [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   664.10ms  576.52ms   2.61s    77.31%
+        Req/Sec   125.82     77.64   370.00     71.19%
+        Latency Distribution
+        50%  471.38ms
+        75%  962.59ms
+        90%    1.57s
+        99%    2.48s
+        2367 requests in 3.03s, 367.53KB read
+        Requests/sec:    781.48
+        Transfer/sec:    121.34KB
+        [run.sh] Speed is 781.48, duration is 38
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d38s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-7b8799bf9f-sb2gk        1720m        53Mi
+        service1-745795666b-ls5zb        1255m        18Mi
+        service2-6b87dbcfcb-xdcd2        1242m        12Mi
+        service3-84d85b8f58-kbsh8        832m         10Mi
+        service4-7c644d7d76-sdgrt        580m         9Mi
+        ubuntu-client-76886f6bbd-jh99c   37m          19Mi
+        Running 38s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   523.84ms  352.92ms   2.96s    79.37%
+        Req/Sec   126.32     78.70   525.00     70.84%
+        Latency Distribution
+        50%  459.55ms
+        75%  657.47ms
+        90%  914.15ms
+        99%    1.93s
+        20000 requests in 38.00s, 3.03MB read
+        Requests/sec:    526.31
+        Transfer/sec:     81.72KB
+        ------------------------------
+        stop time: 20.011325
+        stop time: 20.358796
+        stop time: 20.364517
+        stop time: 20.444532
+        stop time: 20.690511
+        stop time: 20.745819
+        stop time: 20.754357
+        stop time: 20.961802
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [20.011325, 20.358796, 20.364517, 20.444532, 20.690511, 20.745819, 20.754357, 20.961802]
+    [exp] Throughput: 973.6407517190586
+[test.py] Finished running 8th optmization experiment: groundtruth->1107.2662674058279, slowdown->973.6407517190586, predicted->1120.2673439597647, err->1.1741599050422247
+[test.py] Running 9th optmization experiment
+[test.py] Running 9th groundtruth exp
+    [exp] Running (pre_run: False) workload synthetic/dynamic-cycle-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.001519', 'PROCESSING_TIME_SERVICE1': '0.000864', 'PROCESSING_TIME_SERVICE2': '0.00329369', 'PROCESSING_TIME_SERVICE3': '0.00147608', 'PROCESSING_TIME_SERVICE4': '0.00097575', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic dynamic-cycle-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request dynamic-cycle-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   465.95ms  304.44ms   1.70s    72.15%
+        Req/Sec   133.37     81.95   350.00     60.77%
+        Latency Distribution
+        50%  384.85ms
+        75%  607.66ms
+        90%    1.00s
+        99%    1.25s
+        3045 requests in 3.03s, 472.81KB read
+        Requests/sec:   1005.95
+        Transfer/sec:    156.20KB
+        [run.sh] Speed is 1005.95, duration is 29
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d29s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        Running 29s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   464.27ms  313.94ms   2.91s    77.67%
+        Req/Sec   141.84     85.24   590.00     70.42%
+        Latency Distribution
+        50%  392.95ms
+        75%  591.51ms
+        90%  843.73ms
+        99%    1.58s
+        20000 requests in 29.00s, 3.03MB read
+        Requests/sec:    689.65
+        Transfer/sec:    107.08KB
+        ------------------------------
+        stop time: 18.096407
+        stop time: 18.154336
+        stop time: 17.903995
+        stop time: 18.316982
+        stop time: 18.205711
+        stop time: 17.995800
+        stop time: 18.205162
+        stop time: 17.937162
+        [run.sh] Checking the resource usage
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: metrics not available yet
+    [exp] Times: [18.096407, 18.154336, 17.903995, 18.316982, 18.205711, 17.9958, 18.205162, 17.937162]
+    [exp] Throughput: 1104.8536878514192
+[test.py] Running 9th slowdown exp
+    [exp] Running (pre_run: False) workload synthetic/dynamic-cycle-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.001519', 'PROCESSING_TIME_SERVICE1': '0.00096864', 'PROCESSING_TIME_SERVICE2': '0.00329369', 'PROCESSING_TIME_SERVICE3': '0.00147608', 'PROCESSING_TIME_SERVICE4': '0.00097575', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '70.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '206.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '140.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '140.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic dynamic-cycle-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request dynamic-cycle-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   551.90ms  387.16ms   1.86s    63.86%
+        Req/Sec   128.50     88.53   333.00     61.40%
+        Latency Distribution
+        50%  439.83ms
+        75%  880.86ms
+        90%    1.10s
+        99%    1.49s
+        2373 requests in 3.03s, 368.46KB read
+        Requests/sec:    783.66
+        Transfer/sec:    121.68KB
+        [run.sh] Speed is 783.66, duration is 38
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d38s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-7798fc4cdd-kt4mj        334m         53Mi
+        service1-745795666b-zqkd9        472m         13Mi
+        service2-697c66f7ff-76j62        566m         10Mi
+        service3-767f8b8cbb-qssdt        319m         10Mi
+        service4-7ff8d6fdd-x2tmq         3m           10Mi
+        ubuntu-client-76886f6bbd-2hbhj   10m          14Mi
+        Running 38s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   481.31ms  268.16ms   2.42s    73.15%
+        Req/Sec   132.99     79.65   450.00     67.90%
+        Latency Distribution
+        50%  443.19ms
+        75%  614.90ms
+        90%  807.73ms
+        99%    1.36s
+        20000 requests in 38.00s, 3.03MB read
+        Requests/sec:    526.31
+        Transfer/sec:     81.72KB
+        ------------------------------
+        stop time: 19.407269
+        stop time: 18.870841
+        stop time: 19.277483
+        stop time: 19.064678
+        stop time: 19.056977
+        stop time: 19.462408
+        stop time: 19.349686
+        stop time: 19.036291
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [19.407269, 18.870841, 19.277483, 19.064678, 19.056977, 19.462408, 19.349686, 19.036291]
+    [exp] Throughput: 1042.1712444592233
+[test.py] Finished running 9th optmization experiment: groundtruth->1104.8536878514192, slowdown->1042.1712444592233, predicted->1124.320115720648, err->1.7619009723436392
+[test.py] Baseline throughput:  1098.7018535457348
+[test.py] Groundtruth:  [1124.8071772933656, 1122.3925199553498, 1121.9341291716983, 1119.1737632542352, 1120.705015352468, 1113.002635903274, 1124.922835566556, 1073.908021294871, 1107.2662674058279, 1104.8536878514192]
+[test.py] Slowdown:  [644.1719746403827, 677.2941541467396, 713.8390772848272, 728.4290487889392, 781.9592691296486, 822.1361768790221, 852.4852128447783, 914.4678971929586, 973.6407517190586, 1042.1712444592233]
+[test.py] Predicted:  [1106.9395709027626, 1121.334496820663, 1135.6833152753773, 1090.764118441712, 1127.2302691198859, 1124.9167060698035, 1098.934821708677, 1117.589029656678, 1120.2673439597647, 1124.320115720648]
+[test.py] Error percentage:  [-1.5885039455027288, -0.09426498447521557, 1.2254896028369995, -2.5384480717199813, 0.5822454328327915, 1.0704440207242083, -2.3102041345609603, 4.067481338777799, 1.1741599050422247, 1.7619009723436392]
+[test.py] ++++++++++++++++++++++++++++++++ Summary: 
+[test.py] Result for the experiment 0: 
+    Baseline throughput: 1092.6339277940242
+    Groundtruth: [1123.6610630344921, 1121.094543661584, 1111.3695276798285, 1112.2320015298194, 1122.1265836072778, 1118.1471530152999, 1119.5749500115032, 1099.8082594280515, 1102.0091658923616, 1088.5160576256046]
+    Slowdown:    [652.0139277836138, 674.7733714589286, 705.9742728678988, 730.9228563460207, 772.601786832851, 814.7842230621732, 873.5966999884658, 923.4042734434137, 965.1313951596828, 1016.4872968947202]
+    Predicted:   [1130.3001300770584, 1114.4417440901855, 1115.905272642649, 1096.3654375674632, 1107.8871134490114, 1111.197529869007, 1134.2701748045745, 1130.9652212785054, 1109.0168560026452, 1094.4854814175108]
+    Error Perc:  [0.5908424934327768, -0.5934200294713836, 0.4081221276859712, -1.426551649344067, -1.268971822456166, -0.6215302813723469, 1.312571774933001, 2.832944886834805, 0.6359012544699761, 0.5484001591053536]
+[test.py] Result for the experiment 1: 
+    Baseline throughput: 1057.8394408255426
+    Groundtruth: [1129.3191631917223, 1110.4662078608958, 1098.8907062328126, 1095.0756671620175, 1105.9042833483813, 1105.5442581600066, 1089.4377383915319, 1090.6115448143769, 1105.7038736365678, 1087.419073762803]
+    Slowdown:    [651.2439190302574, 666.9844375064076, 700.8606349578333, 737.5573952183324, 778.2847805885814, 815.1145467736417, 863.2481410828018, 913.777784377284, 948.0192793229725, 1018.9771502271136]
+    Predicted:   [1127.9881004023337, 1093.3543605421698, 1103.1824317204885, 1111.3606887635642, 1119.6102905285138, 1111.8120004845832, 1116.885821886295, 1116.5584664521668, 1086.4816952857375, 1097.372645720731]
+    Error Perc:  [-0.11786418160360686, -1.5409606521650672, 0.3905507129447526, 1.487113821435809, 1.239348412561923, 0.5669372599345964, 2.519472433118388, 2.3791167222795306, -1.7384562728906927, 0.9153390995327705]
+[test.py] Result for the experiment 2: 
+    Baseline throughput: 1099.2598456736735
+    Groundtruth: [1114.8916001349298, 1115.11186143581, 1110.50739610419, 1103.0944412030703, 1106.8855447970275, 1107.1098240006065, 1104.3735886019258, 1110.3319125595576, 1101.527000065293, 1093.6292650379355]
+    Slowdown:    [641.8805997538155, 667.0426591582232, 705.0770305469335, 733.0864023422843, 765.0231602394321, 815.0733594805808, 853.7154290404782, 914.5258374154481, 932.8957205023898, 1011.7834961897942]
+    Predicted:   [1100.190687112748, 1093.5108190696064, 1113.6651784573276, 1101.2404634124487, 1092.369487124401, 1111.7353736845882, 1100.9800077650746, 1117.675569001472, 1066.6639715623653, 1089.0340465394615]
+    Error Perc:  [-1.3185957289841106, -1.937118876880222, 0.2843549141784548, -0.16807063125072738, -1.3114325813413934, 0.41780405012278016, -0.3072855845047257, 0.6613929005233812, -3.1649726698357, -0.4201806448837643]
+[test.py] Result for the experiment 3: 
+    Baseline throughput: 1057.0817191227504
+    Groundtruth: [1104.6392293153024, 1110.4887901084433, 1109.4887688636236, 1101.982335360912, 1117.9242617072714, 1095.4685580223447, 1098.827750639365, 1115.462444899728, 1095.29298864965, 1095.6696485338978]
+    Slowdown:    [645.4826131290478, 677.9913223975395, 702.3246366053813, 737.0853128661572, 784.3052826745062, 825.6070744288751, 856.8726010546142, 926.9725573366418, 969.6098811003764, 1040.6308595647324]
+    Predicted:   [1110.8153796582642, 1123.2467548541267, 1106.813997998382, 1110.2891809931732, 1132.1118808434135, 1131.4250543937899, 1106.2365030072035, 1136.3225899382637, 1114.9343137842702, 1122.5275278828824]
+    Error Perc:  [0.5591101763414679, 1.1488602910109165, -0.24108138273279597, 0.7538093275824281, 1.269103786554827, 3.2822937827040524, 0.6742414690134759, 1.8700894085601236, 1.7932485041135346, 2.4512752894928527]
+[test.py] Result for the experiment 4: 
+    Baseline throughput: 1098.7018535457348
+    Groundtruth: [1124.8071772933656, 1122.3925199553498, 1121.9341291716983, 1119.1737632542352, 1120.705015352468, 1113.002635903274, 1124.922835566556, 1073.908021294871, 1107.2662674058279, 1104.8536878514192]
+    Slowdown:    [644.1719746403827, 677.2941541467396, 713.8390772848272, 728.4290487889392, 781.9592691296486, 822.1361768790221, 852.4852128447783, 914.4678971929586, 973.6407517190586, 1042.1712444592233]
+    Predicted:   [1106.9395709027626, 1121.334496820663, 1135.6833152753773, 1090.764118441712, 1127.2302691198859, 1124.9167060698035, 1098.934821708677, 1117.589029656678, 1120.2673439597647, 1124.320115720648]
+    Error Perc:  [-1.5885039455027288, -0.09426498447521557, 1.2254896028369995, -2.5384480717199813, 0.5822454328327915, 1.0704440207242083, -2.3102041345609603, 4.067481338777799, 1.1741599050422247, 1.7619009723436392]
