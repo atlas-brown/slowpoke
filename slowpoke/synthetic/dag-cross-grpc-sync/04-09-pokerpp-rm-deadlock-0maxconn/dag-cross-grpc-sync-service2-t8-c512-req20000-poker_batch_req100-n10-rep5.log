@@ -13268,3 +13268,33 @@ poker_batch                      : 20000000
         [run.sh] Client pod not found, deploying client
         deployment.apps/ubuntu-client created
         [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency     2.12s   586.25ms   3.00s    60.06%
+        Req/Sec    34.43     42.08   170.00     85.29%
+        Latency Distribution
+        50%    2.39s
+        75%    2.55s
+        90%    2.91s
+        99%    3.00s
+        331 requests in 3.03s, 51.40KB read
+        Socket errors: connect 0, read 0, write 0, timeout 3
+        Requests/sec:    109.35
+        Transfer/sec:     16.98KB
+        [run.sh] Speed is 109.35, duration is 200
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d200s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-57cf69db57-pvvw9        1640m        60Mi
+        service1-58d6786fb7-lpxxt        1152m        13Mi
+        service2-7bdbb95446-dqw6m        1221m        12Mi
+        service3-7cc6f4f59f-s7hqq        899m         17Mi
+        service4-5f8bbdbf95-hdlqn        520m         11Mi
+        ubuntu-client-76886f6bbd-48whd   13m          21Mi
