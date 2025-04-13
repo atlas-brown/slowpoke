@@ -4218,3 +4218,73 @@ poker_batch                      : 20000000
         [run.sh] Waiting for all pods to be running
         [run.sh] All pods are running
         [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   204.95ms  115.87ms 729.05ms   72.73%
+        Req/Sec   297.11    158.36   646.00     59.17%
+        Latency Distribution
+        50%  190.25ms
+        75%  267.19ms
+        90%  355.02ms
+        99%  546.54ms
+        7101 requests in 3.03s, 1.08MB read
+        Requests/sec:   2346.96
+        Transfer/sec:    364.42KB
+        [run.sh] Speed is 2346.96, duration is 12
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d12s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        Running 12s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   199.20ms   97.90ms 711.24ms   69.29%
+        Req/Sec   318.04    148.61   790.00     68.16%
+        Latency Distribution
+        50%  187.81ms
+        75%  258.56ms
+        90%  332.88ms
+        99%  467.50ms
+        20000 requests in 12.00s, 3.03MB read
+        Requests/sec:   1666.65
+        Transfer/sec:    258.79KB
+        ------------------------------
+        stop time: 7.944203
+        stop time: 7.715224
+        stop time: 7.938753
+        stop time: 7.930101
+        stop time: 7.918583
+        stop time: 7.942934
+        stop time: 7.951996
+        stop time: 7.934532
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-6f496748d4-67ltb        408m         43Mi
+        service1-745795666b-lqbw2        277m         11Mi
+        service2-6b7dfdd958-t7kp2        88m          10Mi
+        ubuntu-client-76886f6bbd-cx725   30m          0Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [7.944203, 7.715224, 7.938753, 7.930101, 7.918583, 7.942934, 7.951996, 7.934532]
+    [exp] Throughput: 2528.591814891402
+[test.py] Finished running 3th optmization experiment: groundtruth->3243.079182879444, slowdown->2528.591814891402, predicted->3313.4302481307805, err->2.16926757825486
+[test.py] Running 4th optmization experiment
+[test.py] Running 4th groundtruth exp
+    [exp] Running (pre_run: False) workload synthetic/dynamic-cache-grpc-sync request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.0004314', 'PROCESSING_TIME_SERVICE1': '0.000104', 'PROCESSING_TIME_SERVICE2': '0.00097274', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic dynamic-cache-grpc-sync 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request dynamic-cache-grpc-sync, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
