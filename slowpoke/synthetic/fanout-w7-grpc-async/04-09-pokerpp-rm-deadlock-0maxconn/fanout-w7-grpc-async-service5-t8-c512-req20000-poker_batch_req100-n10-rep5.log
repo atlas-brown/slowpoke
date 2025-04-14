@@ -3387,3 +3387,843 @@ poker_batch                      : 20000000
         [run.sh] Waiting for all pods to be running
         [run.sh] All pods are running
         [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   506.02ms  191.15ms   1.17s    66.00%
+        Req/Sec   144.04    112.30   464.00     66.32%
+        Latency Distribution
+        50%  483.27ms
+        75%  610.86ms
+        90%  806.17ms
+        99%  961.24ms
+        2850 requests in 3.03s, 442.53KB read
+        Requests/sec:    940.63
+        Transfer/sec:    146.05KB
+        [run.sh] Speed is 940.63, duration is 31
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d31s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        Running 31s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   458.66ms  190.51ms   1.42s    68.21%
+        Req/Sec   144.95    105.70   565.00     69.36%
+        Latency Distribution
+        50%  434.99ms
+        75%  581.06ms
+        90%  713.25ms
+        99%  986.01ms
+        20001 requests in 31.00s, 3.03MB read
+        Requests/sec:    645.19
+        Transfer/sec:    100.18KB
+        ------------------------------
+        stop time: 17.859054
+        stop time: 18.120642
+        stop time: 17.868951
+        stop time: 18.301431
+        stop time: 18.292709
+        stop time: 18.302088
+        stop time: 18.107913
+        stop time: 18.354370
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-6c76dcb9bc-9cn4m        1m           71Mi
+        service1-76b89695f7-v4l96        443m         11Mi
+        service2-8f7c6f8f5-drw4d         273m         15Mi
+        service3-766854894f-bdtfk        365m         13Mi
+        service4-6fb56c9f99-cbgp4        44m          13Mi
+        service5-858ff6f8bb-784d7        164m         10Mi
+        service6-67d69f5cf-ffsfs         0m           12Mi
+        service7-7d79587cdf-sm578        136m         12Mi
+        ubuntu-client-76886f6bbd-wlzdx   2m           0Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [17.859054, 18.120642, 17.868951, 18.301431, 18.292709, 18.302088, 18.107913, 18.35437]
+    [exp] Throughput: 1101.8740549966553
+[test.py] Running 3th slowdown exp
+    [exp] Running (pre_run: False) workload synthetic/fanout-w7-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00107965', 'PROCESSING_TIME_SERVICE1': '0.00106177', 'PROCESSING_TIME_SERVICE2': '0.00100369', 'PROCESSING_TIME_SERVICE3': '0.00074419', 'PROCESSING_TIME_SERVICE4': '0.00073525', 'PROCESSING_TIME_SERVICE5': '0.00137965', 'PROCESSING_TIME_SERVICE6': '0.00068159', 'PROCESSING_TIME_SERVICE7': '0.00050016', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '484.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '484.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '484.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '484.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '484.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE5': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE5': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE5': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE6': '484.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE6': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE6': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE7': '484.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE7': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE7': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w7-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w7-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        configmap "config-service5" deleted
+        deployment.apps "service5" deleted
+        service "service5" deleted
+        configmap "config-service6" deleted
+        deployment.apps "service6" deleted
+        service "service6" deleted
+        configmap "config-service7" deleted
+        deployment.apps "service7" deleted
+        service "service7" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        configmap/config-service5 created
+        deployment.apps/service5 created
+        service/service5 created
+        configmap/config-service6 created
+        deployment.apps/service6 created
+        service/service6 created
+        configmap/config-service7 created
+        deployment.apps/service7 created
+        service/service7 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   791.05ms  304.20ms   1.62s    70.34%
+        Req/Sec    95.81     73.63   320.00     61.07%
+        Latency Distribution
+        50%  817.24ms
+        75%  956.81ms
+        90%    1.14s
+        99%    1.54s
+        1608 requests in 3.02s, 249.68KB read
+        Requests/sec:    531.69
+        Transfer/sec:     82.56KB
+        [run.sh] Speed is 531.69, duration is 56
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d56s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-5bbc6475d7-cjsmr        390m         72Mi
+        service1-59cc5786c7-pcl9r        0m           15Mi
+        service2-59568fc8bc-grrl4        49m          13Mi
+        service3-f8d7998cc-8zmwp         0m           11Mi
+        service4-5b86679655-l9srw        147m         10Mi
+        service5-858ff6f8bb-tzklm        0m           12Mi
+        service6-66bb4df8c9-dcl6r        175m         14Mi
+        service7-f57bcc585-qlgs9         50m          10Mi
+        ubuntu-client-76886f6bbd-2gtvj   13m          0Mi
+        Running 1m test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   723.17ms  333.96ms   2.76s    71.17%
+        Req/Sec    98.78     85.90   510.00     75.05%
+        Latency Distribution
+        50%  684.25ms
+        75%  914.92ms
+        90%    1.14s
+        99%    1.77s
+        20000 requests in 0.93m, 3.03MB read
+        Requests/sec:    357.14
+        Transfer/sec:     55.45KB
+        ------------------------------
+        stop time: 28.630347
+        stop time: 28.538126
+        stop time: 28.811349
+        stop time: 28.627436
+        stop time: 28.592852
+        stop time: 28.613533
+        stop time: 28.614237
+        stop time: 28.605009
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [28.630347, 28.538126, 28.811349, 28.627436, 28.592852, 28.613533, 28.614237, 28.605009]
+    [exp] Throughput: 698.5896248289476
+[test.py] Finished running 3th optmization experiment: groundtruth->1101.8740549966553, slowdown->698.5896248289476, predicted->1055.8206504912348, err->-4.179552490285319
+[test.py] Running 4th optmization experiment
+[test.py] Running 4th groundtruth exp
+    [exp] Running (pre_run: False) workload synthetic/fanout-w7-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00107965', 'PROCESSING_TIME_SERVICE1': '0.00106177', 'PROCESSING_TIME_SERVICE2': '0.00100369', 'PROCESSING_TIME_SERVICE3': '0.00074419', 'PROCESSING_TIME_SERVICE4': '0.00073525', 'PROCESSING_TIME_SERVICE5': '0.000548', 'PROCESSING_TIME_SERVICE6': '0.00068159', 'PROCESSING_TIME_SERVICE7': '0.00050016', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE5': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE5': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE5': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE6': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE6': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE6': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE7': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE7': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE7': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w7-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w7-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        configmap "config-service5" deleted
+        deployment.apps "service5" deleted
+        service "service5" deleted
+        configmap "config-service6" deleted
+        deployment.apps "service6" deleted
+        service "service6" deleted
+        configmap "config-service7" deleted
+        deployment.apps "service7" deleted
+        service "service7" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        configmap/config-service5 created
+        deployment.apps/service5 created
+        service/service5 created
+        configmap/config-service6 created
+        deployment.apps/service6 created
+        service/service6 created
+        configmap/config-service7 created
+        deployment.apps/service7 created
+        service/service7 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   472.93ms  178.29ms   1.21s    70.55%
+        Req/Sec   150.88     98.86   363.00     62.83%
+        Latency Distribution
+        50%  453.57ms
+        75%  554.40ms
+        90%  737.90ms
+        99%    1.01s
+        2936 requests in 3.02s, 455.88KB read
+        Requests/sec:    971.33
+        Transfer/sec:    150.82KB
+        [run.sh] Speed is 971.33, duration is 30
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d30s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        Running 30s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   459.30ms  217.69ms   1.50s    70.49%
+        Req/Sec   143.79    101.01   540.00     70.85%
+        Latency Distribution
+        50%  442.02ms
+        75%  578.13ms
+        90%  751.76ms
+        99%    1.11s
+        20007 requests in 30.00s, 3.03MB read
+        Requests/sec:    666.90
+        Transfer/sec:    103.55KB
+        ------------------------------
+        stop time: 17.756548
+        stop time: 17.795847
+        stop time: 18.299276
+        stop time: 18.283411
+        stop time: 18.282582
+        stop time: 18.277064
+        stop time: 18.228679
+        stop time: 18.258508
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-6c76dcb9bc-kfvsj        609m         57Mi
+        service1-76b89695f7-sknd7        93m          11Mi
+        service2-8f7c6f8f5-n8gdt         241m         11Mi
+        service3-766854894f-jsv6d        0m           12Mi
+        service4-6fb56c9f99-w4x5f        302m         12Mi
+        service5-858ff6f8bb-s6v8r        105m         11Mi
+        service6-67d69f5cf-8p6rq         283m         11Mi
+        service7-7d79587cdf-f44dx        149m         10Mi
+        ubuntu-client-76886f6bbd-tsghl   17m          0Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [17.756548, 17.795847, 18.299276, 18.283411, 18.282582, 18.277064, 18.228679, 18.258508]
+    [exp] Throughput: 1102.065639511643
+[test.py] Running 4th slowdown exp
+    [exp] Running (pre_run: False) workload synthetic/fanout-w7-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00107965', 'PROCESSING_TIME_SERVICE1': '0.00106177', 'PROCESSING_TIME_SERVICE2': '0.00100369', 'PROCESSING_TIME_SERVICE3': '0.00074419', 'PROCESSING_TIME_SERVICE4': '0.00073525', 'PROCESSING_TIME_SERVICE5': '0.00137965', 'PROCESSING_TIME_SERVICE6': '0.00068159', 'PROCESSING_TIME_SERVICE7': '0.00050016', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '415.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '415.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '415.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '415.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '415.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE5': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE5': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE5': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE6': '415.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE6': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE6': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE7': '415.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE7': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE7': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w7-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w7-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        configmap "config-service5" deleted
+        deployment.apps "service5" deleted
+        service "service5" deleted
+        configmap "config-service6" deleted
+        deployment.apps "service6" deleted
+        service "service6" deleted
+        configmap "config-service7" deleted
+        deployment.apps "service7" deleted
+        service "service7" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        configmap/config-service5 created
+        deployment.apps/service5 created
+        service/service5 created
+        configmap/config-service6 created
+        deployment.apps/service6 created
+        service/service6 created
+        configmap/config-service7 created
+        deployment.apps/service7 created
+        service/service7 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   793.34ms  406.58ms   1.80s    61.37%
+        Req/Sec   105.33    101.16   460.00     81.94%
+        Latency Distribution
+        50%  855.79ms
+        75%    1.07s
+        90%    1.34s
+        99%    1.62s
+        1641 requests in 3.02s, 254.80KB read
+        Requests/sec:    543.40
+        Transfer/sec:     84.38KB
+        [run.sh] Speed is 543.40, duration is 55
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d55s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-67dd7955db-snsxq        1283m        76Mi
+        service1-7c646f6844-6lv8f        792m         16Mi
+        service2-59859b48f8-v4gc6        867m         13Mi
+        service3-799fc685bd-6m222        571m         15Mi
+        service4-5d4fc97774-9nlkr        663m         13Mi
+        service5-858ff6f8bb-8cmqz        1112m        15Mi
+        service6-6678dfdf46-qzwrw        625m         13Mi
+        service7-5ff966fc6d-qtt8n        490m         14Mi
+        ubuntu-client-76886f6bbd-6q289   26m          17Mi
+        Running 1m test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   674.14ms  267.31ms   2.28s    70.39%
+        Req/Sec   103.35     81.96   430.00     68.14%
+        Latency Distribution
+        50%  650.71ms
+        75%  829.41ms
+        90%    1.03s
+        99%    1.41s
+        20000 requests in 0.92m, 3.03MB read
+        Requests/sec:    363.64
+        Transfer/sec:     56.46KB
+        ------------------------------
+        stop time: 26.418824
+        stop time: 26.424888
+        stop time: 26.514227
+        stop time: 26.685389
+        stop time: 26.833141
+        stop time: 26.830325
+        stop time: 26.823796
+        stop time: 26.859662
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [26.418824, 26.424888, 26.514227, 26.685389, 26.833141, 26.830325, 26.823796, 26.859662]
+    [exp] Throughput: 749.7999486874404
+[test.py] Finished running 4th optmization experiment: groundtruth->1102.065639511643, slowdown->749.7999486874404, predicted->1089.4859350498054, err->-1.1414659899397612
+[test.py] Running 5th optmization experiment
+[test.py] Running 5th groundtruth exp
+    [exp] Running (pre_run: False) workload synthetic/fanout-w7-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00107965', 'PROCESSING_TIME_SERVICE1': '0.00106177', 'PROCESSING_TIME_SERVICE2': '0.00100369', 'PROCESSING_TIME_SERVICE3': '0.00074419', 'PROCESSING_TIME_SERVICE4': '0.00073525', 'PROCESSING_TIME_SERVICE5': '0.000685', 'PROCESSING_TIME_SERVICE6': '0.00068159', 'PROCESSING_TIME_SERVICE7': '0.00050016', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE5': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE5': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE5': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE6': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE6': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE6': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE7': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE7': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE7': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w7-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w7-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        configmap "config-service5" deleted
+        deployment.apps "service5" deleted
+        service "service5" deleted
+        configmap "config-service6" deleted
+        deployment.apps "service6" deleted
+        service "service6" deleted
+        configmap "config-service7" deleted
+        deployment.apps "service7" deleted
+        service "service7" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        configmap/config-service5 created
+        deployment.apps/service5 created
+        service/service5 created
+        configmap/config-service6 created
+        deployment.apps/service6 created
+        service/service6 created
+        configmap/config-service7 created
+        deployment.apps/service7 created
+        service/service7 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   488.24ms  190.97ms   1.13s    60.55%
+        Req/Sec   140.13    103.62   490.00     74.24%
+        Latency Distribution
+        50%  498.25ms
+        75%  635.43ms
+        90%  732.38ms
+        99%  897.32ms
+        2819 requests in 3.02s, 437.72KB read
+        Requests/sec:    933.03
+        Transfer/sec:    144.87KB
+        [run.sh] Speed is 933.03, duration is 32
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d32s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        Running 32s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   459.21ms  180.94ms   1.41s    68.45%
+        Req/Sec   142.42     99.56   494.00     66.25%
+        Latency Distribution
+        50%  444.55ms
+        75%  568.97ms
+        90%  692.75ms
+        99%  966.42ms
+        20000 requests in 32.00s, 3.03MB read
+        Requests/sec:    625.00
+        Transfer/sec:     97.05KB
+        ------------------------------
+        stop time: 18.009991
+        stop time: 18.410815
+        stop time: 18.074067
+        stop time: 18.072948
+        stop time: 18.037919
+        stop time: 18.447126
+        stop time: 18.052455
+        stop time: 18.135375
+        [run.sh] Checking the resource usage
+        NAME                             CPU(cores)   MEMORY(bytes)
+        service0-6c76dcb9bc-nljj5        1909m        71Mi
+        service1-76b89695f7-v9krt        1193m        13Mi
+        service2-8f7c6f8f5-4mqt6         1282m        12Mi
+        service3-766854894f-84b4f        832m         15Mi
+        service4-6fb56c9f99-rxnnx        973m         12Mi
+        service5-858ff6f8bb-wj2qm        912m         15Mi
+        service6-67d69f5cf-hn6g8         936m         13Mi
+        service7-7d79587cdf-zswxw        725m         14Mi
+        ubuntu-client-76886f6bbd-mzwk6   27m          15Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [18.009991, 18.410815, 18.074067, 18.072948, 18.037919, 18.447126, 18.052455, 18.135375]
+    [exp] Throughput: 1101.6196176862165
+[test.py] Running 5th slowdown exp
+    [exp] Running (pre_run: False) workload synthetic/fanout-w7-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00107965', 'PROCESSING_TIME_SERVICE1': '0.00106177', 'PROCESSING_TIME_SERVICE2': '0.00100369', 'PROCESSING_TIME_SERVICE3': '0.00074419', 'PROCESSING_TIME_SERVICE4': '0.00073525', 'PROCESSING_TIME_SERVICE5': '0.00137965', 'PROCESSING_TIME_SERVICE6': '0.00068159', 'PROCESSING_TIME_SERVICE7': '0.00050016', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '347.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '347.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '347.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '347.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '347.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE5': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE5': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE5': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE6': '347.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE6': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE6': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE7': '347.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE7': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE7': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w7-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w7-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        configmap "config-service5" deleted
+        deployment.apps "service5" deleted
+        service "service5" deleted
+        configmap "config-service6" deleted
+        deployment.apps "service6" deleted
+        service "service6" deleted
+        configmap "config-service7" deleted
+        deployment.apps "service7" deleted
+        service "service7" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        configmap/config-service5 created
+        deployment.apps/service5 created
+        service/service5 created
+        configmap/config-service6 created
+        deployment.apps/service6 created
+        service/service6 created
+        configmap/config-service7 created
+        deployment.apps/service7 created
+        service/service7 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   679.51ms  319.88ms   2.10s    74.45%
+        Req/Sec   102.66    108.13   535.00     88.77%
+        Latency Distribution
+        50%  679.49ms
+        75%  808.73ms
+        90%    1.04s
+        99%    1.65s
+        2018 requests in 3.04s, 313.34KB read
+        Requests/sec:    664.87
+        Transfer/sec:    103.24KB
+        [run.sh] Speed is 664.87, duration is 45
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d45s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        [run.sh] Checking the resource usage
+        Running 45s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   646.25ms  277.30ms   2.45s    67.27%
+        Req/Sec   104.46     87.76   550.00     75.35%
+        Latency Distribution
+        50%  620.09ms
+        75%  813.93ms
+        90%    1.02s
+        99%    1.37s
+        20000 requests in 45.00s, 3.03MB read
+        Requests/sec:    444.44
+        Transfer/sec:     69.01KB
+        ------------------------------
+        stop time: 25.099286
+        stop time: 25.595338
+        stop time: 25.490057
+        stop time: 25.541215
+        stop time: 25.536529
+        stop time: 25.530283
+        stop time: 25.875780
+        stop time: 25.802325
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+        > error: metrics not available yet
+    [exp] Times: [25.099286, 25.595338, 25.490057, 25.541215, 25.536529, 25.530283, 25.87578, 25.802325]
+    [exp] Throughput: 782.507770436654
+[test.py] Finished running 5th optmization experiment: groundtruth->1101.6196176862165, slowdown->782.507770436654, predicted->1074.5552417533377, err->-2.4567804983106107
+[test.py] Running 6th optmization experiment
+[test.py] Running 6th groundtruth exp
+    [exp] Running (pre_run: False) workload synthetic/fanout-w7-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00107965', 'PROCESSING_TIME_SERVICE1': '0.00106177', 'PROCESSING_TIME_SERVICE2': '0.00100369', 'PROCESSING_TIME_SERVICE3': '0.00074419', 'PROCESSING_TIME_SERVICE4': '0.00073525', 'PROCESSING_TIME_SERVICE5': '0.000822', 'PROCESSING_TIME_SERVICE6': '0.00068159', 'PROCESSING_TIME_SERVICE7': '0.00050016', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE5': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE5': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE5': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE6': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE6': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE6': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE7': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE7': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE7': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w7-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w7-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        configmap "config-service5" deleted
+        deployment.apps "service5" deleted
+        service "service5" deleted
+        configmap "config-service6" deleted
+        deployment.apps "service6" deleted
+        service "service6" deleted
+        configmap "config-service7" deleted
+        deployment.apps "service7" deleted
+        service "service7" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        configmap/config-service5 created
+        deployment.apps/service5 created
+        service/service5 created
+        configmap/config-service6 created
+        deployment.apps/service6 created
+        service/service6 created
+        configmap/config-service7 created
+        deployment.apps/service7 created
+        service/service7 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   503.96ms  200.93ms   1.04s    60.48%
+        Req/Sec   142.57    100.64   404.00     62.43%
+        Latency Distribution
+        50%  474.20ms
+        75%  684.04ms
+        90%  781.78ms
+        99%  889.74ms
+        2809 requests in 3.03s, 436.16KB read
+        Requests/sec:    926.79
+        Transfer/sec:    143.91KB
+        [run.sh] Speed is 926.79, duration is 32
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
+        [run.sh] /wrk/wrk --timeout 20s -t8 -c512 -d32s -L -s /wrk/fix_req_n.lua http://service0:80/endpoint1
+        Running 32s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   456.43ms  193.62ms   1.52s    69.97%
+        Req/Sec   145.05    102.80   600.00     68.06%
+        Latency Distribution
+        50%  429.64ms
+        75%  566.50ms
+        90%  715.53ms
+        99%    1.00s
+        20000 requests in 32.00s, 3.03MB read
+        Requests/sec:    625.00
+        Transfer/sec:     97.05KB
+        ------------------------------
+        stop time: 17.616275
+        stop time: 17.736047
+        stop time: 17.865539
+        stop time: 18.094151
+        stop time: 18.170207
+        stop time: 18.322740
+        stop time: 18.350221
+        stop time: 18.288458
+        [run.sh] Checking the resource usage
+        NAME                        CPU(cores)   MEMORY(bytes)
+        service0-6c76dcb9bc-2qct7   58m          72Mi
+        service1-76b89695f7-d2fv5   0m           12Mi
+        service2-8f7c6f8f5-rr268    0m           12Mi
+        service3-766854894f-z5pxs   0m           11Mi
+        service4-6fb56c9f99-54gzp   0m           11Mi
+        service5-858ff6f8bb-pnq29   0m           12Mi
+        service6-67d69f5cf-dzvqj    0m           10Mi
+        service7-7d79587cdf-jv99x   0m           9Mi
+        [run.sh] Test finished with status 0
+        > STDERR
+        > No resources found in default namespace.
+    [exp] Times: [17.616275, 17.736047, 17.865539, 18.094151, 18.170207, 18.32274, 18.350221, 18.288458]
+    [exp] Throughput: 1107.6984920581965
+[test.py] Running 6th slowdown exp
+    [exp] Running (pre_run: False) workload synthetic/fanout-w7-grpc-async request with the following configuration: {'CLIENT_CPU_QUOTA': '2', 'SLOWPOKE_POKER_BATCH_THRESHOLD': '20000000', 'PROCESSING_TIME_SERVICE0': '0.00107965', 'PROCESSING_TIME_SERVICE1': '0.00106177', 'PROCESSING_TIME_SERVICE2': '0.00100369', 'PROCESSING_TIME_SERVICE3': '0.00074419', 'PROCESSING_TIME_SERVICE4': '0.00073525', 'PROCESSING_TIME_SERVICE5': '0.00137965', 'PROCESSING_TIME_SERVICE6': '0.00068159', 'PROCESSING_TIME_SERVICE7': '0.00050016', 'SLOWPOKE_DELAY_MICROS_SERVICE0': '278.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE0': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE0': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE1': '278.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE1': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE1': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE2': '278.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE2': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE2': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE3': '278.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE3': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE3': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE4': '278.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE4': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE4': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE5': '0.0', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE5': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE5': 'true', 'SLOWPOKE_DELAY_MICROS_SERVICE6': '278.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE6': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE6': 'false', 'SLOWPOKE_DELAY_MICROS_SERVICE7': '278.5', 'SLOWPOKE_POKER_BATCH_THRESHOLD_SERVICE7': '100', 'SLOWPOKE_IS_TARGET_SERVICE_SERVICE7': 'false'}
+    [exp] Executing cmd `bash run.sh synthetic fanout-w7-grpc-async 8 512 20000`:
+        [run.sh] Running benchmark synthetic with request fanout-w7-grpc-async, thread 8, conn 512, duration 60
+        [run.sh] Deleting all services
+        configmap "config-service0" deleted
+        deployment.apps "service0" deleted
+        service "service0" deleted
+        configmap "config-service1" deleted
+        deployment.apps "service1" deleted
+        service "service1" deleted
+        configmap "config-service2" deleted
+        deployment.apps "service2" deleted
+        service "service2" deleted
+        configmap "config-service3" deleted
+        deployment.apps "service3" deleted
+        service "service3" deleted
+        configmap "config-service4" deleted
+        deployment.apps "service4" deleted
+        service "service4" deleted
+        configmap "config-service5" deleted
+        deployment.apps "service5" deleted
+        service "service5" deleted
+        configmap "config-service6" deleted
+        deployment.apps "service6" deleted
+        service "service6" deleted
+        configmap "config-service7" deleted
+        deployment.apps "service7" deleted
+        service "service7" deleted
+        deployment.apps "ubuntu-client" deleted
+        [run.sh] Waiting for all pods to be deleted
+        [run.sh] Deploying all services
+        configmap/config-service0 created
+        deployment.apps/service0 created
+        service/service0 created
+        configmap/config-service1 created
+        deployment.apps/service1 created
+        service/service1 created
+        configmap/config-service2 created
+        deployment.apps/service2 created
+        service/service2 created
+        configmap/config-service3 created
+        deployment.apps/service3 created
+        service/service3 created
+        configmap/config-service4 created
+        deployment.apps/service4 created
+        service/service4 created
+        configmap/config-service5 created
+        deployment.apps/service5 created
+        service/service5 created
+        configmap/config-service6 created
+        deployment.apps/service6 created
+        service/service6 created
+        configmap/config-service7 created
+        deployment.apps/service7 created
+        service/service7 created
+        [run.sh] Client pod not found, deploying client
+        deployment.apps/ubuntu-client created
+        [run.sh] Waiting for all pods to be running
+        [run.sh] All pods are running
+        [run.sh] Checking heartbeat for all services
+        [run.sh] Running warmup test
+        [run.sh] /wrk/wrk -t8 -c512 --timeout 3s -d3s -L http://service0:80/endpoint1
+        Running 3s test @ http://service0:80/endpoint1
+        8 threads and 512 connections
+        Thread Stats   Avg      Stdev     Max   +/- Stdev
+        Latency   655.13ms  222.73ms   1.22s    64.96%
+        Req/Sec   111.81     90.91   414.00     74.71%
+        Latency Distribution
+        50%  670.48ms
+        75%  841.24ms
+        90%  916.51ms
+        99%    1.08s
+        2066 requests in 3.03s, 320.79KB read
+        Requests/sec:    682.05
+        Transfer/sec:    105.90KB
+        [run.sh] Speed is 682.05, duration is 43
+        [run.sh] Fix the request number.
+        [run.sh] Running the actual test
