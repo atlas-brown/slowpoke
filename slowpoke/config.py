@@ -181,11 +181,11 @@ def get_baseline_service_processing_time_synthetic(target, request, random_seed)
     processing_time = {}
     for i in range(num):
         if i in leaf_nodes[topology] and f"service{i}" == target:
-            processing_time[f"service{i}"] = round(2 * random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
+            processing_time[f"service{i}"] = round(2 * random_numbers.pop(-1)/ service_reuse[topology][i], 2)
         elif f"service{i}" == target:
-            processing_time[f"service{i}"] = round(random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
+            processing_time[f"service{i}"] = round(random_numbers.pop(-1)/service_reuse[topology][i], 2)
         else:
-            processing_time[f"service{i}"] = round(random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
+            processing_time[f"service{i}"] = round(random_numbers.pop(-1)/service_reuse[topology][i], 2)
     return processing_time
 
 def get_cpu_quota(benchmark, request):
