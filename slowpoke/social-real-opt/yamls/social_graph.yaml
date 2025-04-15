@@ -1,0 +1,83 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "socialgraph"
+  labels:
+    app: "socialgraph"
+spec:
+  selector:
+    app: "socialgraph"
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      name: http
+    - protocol: TCP
+      port: 5550
+      targetPort: 5550
+      name: zmq1
+    - protocol: TCP
+      port: 5551
+      targetPort: 5551
+      name: zmq2
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "socialgraph"
+  labels:
+    app: "socialgraph"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "socialgraph"
+  template:
+    metadata:
+      labels:
+        app: "socialgraph"
+    spec:
+      containers:
+        - name: "socialgraph"
+          image: yizhengx/mucache:social-pokerpp
+          env:
+            - name: APP_PORT
+              value: "3000"
+            - name: APP_NAME
+              value: "social_graph"
+            - name: SLOWPOKE_SERV_NAME
+              value: "socialgraph"
+            - name: APP_NAMESPACE
+              value: "social"
+            - name: NODE_IDX
+              value: "1"
+            - name: CM_ENABLED
+              value: "false"
+            - name: EXPIRATION_TTL
+              value: "0"
+            - name: SLOWPOKE_DELAY_MICROS
+              value: "${SLOWPOKE_DELAY_MICROS_SOCIALGRAPH}"
+            - name: SLOWPOKE_PROCESSING_MICROS
+              value: "${SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH}"
+            - name: SLOWPOKE_PRERUN
+              value: "${SLOWPOKE_PRERUN}"
+            - name: SLOWPOKE_POKER_BATCH_THRESHOLD
+              value: "${SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH}"
+            - name: SLOWPOKE_IS_TARGET_SERVICE
+              value: "${SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH}"
+          ports:
+            - containerPort: 3000
+            - containerPort: 5550
+            - containerPort: 5551
+          imagePullPolicy: Always
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - worker4
