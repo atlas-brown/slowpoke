@@ -82,14 +82,14 @@ cd $(dirname $0)
 # export SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE=false
 
 DIR=/home/ubuntu/mucache/slowpoke/social-real-opt/results
-for i in $(seq 6 10); do
-    FILE=slowdown-corrected-$i.log
+for i in $(seq 1 10); do
+    FILE=slowdown-corrected-512-$i.log
     if [ ! -d "$DIR" ]; then
     mkdir -p $DIR
     fi
     if [ -f "$DIR/$FILE" ]; then
     echo "$DIR/$FILE exists."
-    exit 0
+    continue
     fi
     source <(python3 env.py baseline-$i.log premesaurement-$i.log)
     env | grep SLOWPOKE > $DIR/$FILE

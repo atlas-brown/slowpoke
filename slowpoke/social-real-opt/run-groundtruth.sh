@@ -22,14 +22,14 @@ export SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE=100
 export SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE=false
 
 DIR=/home/ubuntu/mucache/slowpoke/social-real-opt/results
-for i in $(seq 6 10); do
+for i in $(seq 1 10); do
     FILE=groundtruth-$i.log
     if [ ! -d "$DIR" ]; then
     mkdir -p $DIR
     fi
     if [ -f "$DIR/$FILE" ]; then
     echo "$DIR/$FILE exists."
-    exit 0
+    continue
     fi
     env | grep SLOWPOKE > $DIR/$FILE
     bash /home/ubuntu/mucache/slowpoke/run.sh social mix 8 1024 20000 > $DIR/$FILE

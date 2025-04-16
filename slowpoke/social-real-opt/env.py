@@ -9,6 +9,7 @@ ratios = {
 }
 
 target = "hometimeline"
+debug=True
 
 file_name = sys.argv[1]
 times = []
@@ -19,12 +20,12 @@ with open(f"results/{file_name}", 'r') as f:
         if line_output.startswith(time_prefix):
             times.append(float(line_output[len(time_prefix):]))
 baseline_throughput = 20000 * ratios[target] / (sum(times)/len(times)) 
-# print(f"baseline_throughput: {baseline_throughput}")
+# if debug: print(f"baseline_throughput: {baseline_throughput}")
 
 base_processing_time = 2000000 / baseline_throughput
-# print(f"base_processing_time: {base_processing_time}")
+# if debug: print(f"base_processing_time: {base_processing_time}")
 opt_t = opt_notcorrected = base_processing_time / 2
-# print(f"opt_notcorrected: {opt_notcorrected}")
+# if debug: print(f"opt_notcorrected: {opt_notcorrected}")
 if len(sys.argv) > 2:
     premeasure_file = sys.argv[2]
     times = []
@@ -35,11 +36,11 @@ if len(sys.argv) > 2:
             if line_output.startswith(time_prefix):
                 times.append(float(line_output[len(time_prefix):]))
     throughput = 20000 * ratios[target] / (sum(times)/len(times))
-    # print(f"premesaured throughput: {throughput}")
+    # if debug: print(f"premesaured throughput: {throughput}")
     opt_processing_time =  2000000 / throughput
-    # print(f"opt_processing_time: {opt_processing_time}")
+    # if debug: print(f"opt_processing_time: {opt_processing_time}")
     opt_t = opt_corrected = base_processing_time - opt_processing_time
-    # print(f"opt_corrected: {opt_corrected}")
+    # if debug: print(f"opt_corrected: {opt_corrected}")
 
 env = {}
 env["SLOWPOKE_OPT_TIME"] = str(opt_t)
@@ -48,6 +49,7 @@ for service, ratio in ratios.items():
     if service == target:
         env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = 1000
         env[f"SLOWPOKE_IS_TARGET_SERVICE_{service.upper()}"] = "true"
+        env[f"SLOWPOKE_POKER_BATCH_THRESHOLD_{service.upper()}"] = 100
         continue
     delay = opt_t * ratios[target] / (ratio * 2)
     env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = 0
@@ -60,7 +62,7 @@ if len(sys.argv) <= 3:
         print(f"export {key}={value}")
     exit(0)
 
-# print prediction
+# if debug: print prediction
 idx = int(sys.argv[3])
 times = []
 with open(f"results/groundtruth-{idx}.log", 'r') as f:
@@ -70,7 +72,7 @@ with open(f"results/groundtruth-{idx}.log", 'r') as f:
         if line_output.startswith(time_prefix):
             times.append(float(line_output[len(time_prefix):]))
 groundtruth = 20000 / (sum(times)/len(times))
-print(f"groundtruth: {groundtruth}")
+if debug: print(f"groundtruth: {groundtruth}")
 
 times = []
 with open(f"results/slowdown-{idx}.log", 'r') as f:
@@ -80,19 +82,21 @@ with open(f"results/slowdown-{idx}.log", 'r') as f:
         if line_output.startswith(time_prefix):
             times.append(float(line_output[len(time_prefix):]))
 throughput = 20000 / (sum(times)/len(times))
+# if debug: print(f"slowdown: {throughput}")
 predicted = 1000000 / (1000000 / throughput - (opt_notcorrected * ratios[target] / 2))
-print(f"predicted: {predicted}")
+if debug: print(f"predicted: {predicted}")
 
 times = []
-with open(f"results/slowdown-{idx}.log", 'r') as f:
+with open(f"results/slowdown-corrected-{idx}.log", 'r') as f:
     for line in f.readlines():
         line_output = line.strip()
         time_prefix = 'stop time: '
         if line_output.startswith(time_prefix):
             times.append(float(line_output[len(time_prefix):]))
 throughput = 20000 / (sum(times)/len(times))
+# if debug: print(f"slowdown_corrected: {throughput}")
 predicted_correction = 1000000 / (1000000 / throughput - (opt_corrected * ratios[target] / 2))
-print(f"predicted_correction: {predicted_correction}")
+if debug: print(f"predicted_correction: {predicted_correction}")
 
 # 4000000 / (3,158.2869254324 * 0.7005428505) = 1,807.8970816646
 # baseline_throughput = 1,500.08378436712 * 0.7005428505
