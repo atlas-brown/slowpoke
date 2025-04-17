@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Change this!!
-target_service_random_pairs="1:8422 4:21912 5:2217" # Make it reproducible
+target_service_random_pairs="5:2217" # Make it reproducible 1:8422 4:21912 
 
 cd $(dirname $0)/../..
 
 EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-09-pokerpp-rm-deadlock-0maxconn
+DIR=synthetic/$EXP/04-13-pokerpp-rm-deadlock-0maxconn
 mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=512
+CONN=256
 NUM_REQ=20000
 POKER_BATCH_REQ=100
 NUM_EXP=10

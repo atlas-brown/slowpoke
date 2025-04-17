@@ -1,0 +1,110 @@
+SLOWPOKE_POKER_BATCH_THRESHOLD_SOCIALGRAPH=100
+SLOWPOKE_IS_TARGET_SERVICE_POSTSTORAGE=false
+SLOWPOKE_POKER_BATCH_THRESHOLD_HOMETIMELINE=100
+SLOWPOKE_IS_TARGET_SERVICE_USERTIMELINE=false
+SLOWPOKE_PROCESSING_MICROS_USERTIMELINE=0
+SLOWPOKE_IS_TARGET_SERVICE_SOCIALGRAPH=false
+SLOWPOKE_DELAY_MICROS_SOCIALGRAPH=3552.0440194757834
+SLOWPOKE_IS_TARGET_SERVICE_HOMETIMELINE=true
+SLOWPOKE_POKER_BATCH_THRESHOLD_POSTSTORAGE=100
+SLOWPOKE_PROCESSING_MICROS_SOCIALGRAPH=0
+SLOWPOKE_DELAY_MICROS_COMPOSEPOST=3552.0440194757834
+SLOWPOKE_PROCESSING_MICROS_HOMETIMELINE=1000
+SLOWPOKE_DELAY_MICROS_USERTIMELINE=881.3169740152533
+SLOWPOKE_IS_TARGET_SERVICE_COMPOSEPOST=false
+SLOWPOKE_PROCESSING_MICROS_POSTSTORAGE=0
+SLOWPOKE_POKER_BATCH_THRESHOLD_COMPOSEPOST=100
+SLOWPOKE_PROCESSING_MICROS_COMPOSEPOST=0
+SLOWPOKE_DELAY_MICROS_POSTSTORAGE=373.2105133289544
+SLOWPOKE_OPT_TIME=1011.9750162235082
+SLOWPOKE_POKER_BATCH_THRESHOLD_USERTIMELINE=100
+[run.sh] Running benchmark social with request mix, thread 8, conn 1024, duration 60
+[run.sh] Deleting all services
+service "composepost" deleted
+deployment.apps "composepost" deleted
+service "hometimeline" deleted
+deployment.apps "hometimeline" deleted
+service "poststorage" deleted
+deployment.apps "poststorage" deleted
+service "socialgraph" deleted
+deployment.apps "socialgraph" deleted
+service "usertimeline" deleted
+deployment.apps "usertimeline" deleted
+deployment.apps "ubuntu-client" deleted
+[run.sh] Waiting for all pods to be deleted
+[run.sh] Deploying all services
+service/composepost created
+deployment.apps/composepost created
+service/hometimeline created
+deployment.apps/hometimeline created
+service/poststorage created
+deployment.apps/poststorage created
+service/socialgraph created
+deployment.apps/socialgraph created
+service/usertimeline created
+deployment.apps/usertimeline created
+[run.sh] Client pod not found, deploying client
+deployment.apps/ubuntu-client created
+[run.sh] Waiting for all pods to be running
+[run.sh] All pods are running
+[run.sh] Checking heartbeat for all services
+[run.sh] All pods can connect to all services
+[run.sh] Populating social benchmark
+Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+Analyzing social graph in: ./data/analysis.txt... DONE!
+Populating social graph... 
+DONE!
+[run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-hbmpv:/analysis.txt
+[run.sh] Finished populating social
+[run.sh] Starting the rust proxy first for social
+[2m2025-04-16T01:59:48.686206Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+[run.sh] Running warmup test
+[run.sh] /wrk/wrk -t8 -c1024 --timeout 3s -d3s -L http://localhost:3000
+Running 3s test @ http://localhost:3000
+  8 threads and 1024 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   514.80ms  459.07ms   1.79s    56.29%
+    Req/Sec   175.00    103.98   494.00     64.68%
+  Latency Distribution
+     50%  397.25ms
+     75%  935.04ms
+     90%    1.19s 
+     99%    1.65s 
+  4119 requests in 3.04s, 313.75KB read
+Requests/sec:   1356.67
+Transfer/sec:    103.34KB
+[run.sh] Speed is 1356.67, duration is 22
+[run.sh] Fix the request number.
+[run.sh] Running the actual test
+[run.sh] /wrk/wrk --timeout 20s -t8 -c1024 -d22s -s /wrk/fix_req_n.lua -L http://localhost:3000
+Running 22s test @ http://localhost:3000
+  8 threads and 1024 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   660.53ms  559.63ms   1.86s    50.65%
+    Req/Sec   185.84     99.15   800.00     69.26%
+  Latency Distribution
+     50%    1.01s 
+     75%    1.16s 
+     90%    1.27s 
+     99%    1.53s 
+  20000 requests in 22.00s, 1.49MB read
+Requests/sec:    909.09
+Transfer/sec:     69.25KB
+------------------------------
+stop time: 13.051079
+stop time: 13.804934
+stop time: 13.283391
+stop time: 13.732217
+stop time: 13.265894
+stop time: 13.665192
+stop time: 14.011410
+stop time: 13.923656
+[run.sh] Checking the resource usage
+NAME                             CPU(cores)   MEMORY(bytes)   
+composepost-8584854857-n8ct6     113m         16Mi            
+hometimeline-7b9d96d685-ffk4g    363m         96Mi            
+poststorage-797f98969f-jts2f     415m         29Mi            
+socialgraph-8f4c4bbdf-zjlhl      16m          14Mi            
+ubuntu-client-76886f6bbd-hbmpv   46m          104Mi           
+usertimeline-5f8dd67b7f-686p4    200m         17Mi            
+[run.sh] Test finished with status 0

@@ -1,0 +1,90 @@
+[run.sh] Running benchmark social with request mix, thread 8, conn 1024, duration 60
+[run.sh] Deleting all services
+service "composepost" deleted
+deployment.apps "composepost" deleted
+service "hometimeline" deleted
+deployment.apps "hometimeline" deleted
+service "poststorage" deleted
+deployment.apps "poststorage" deleted
+service "socialgraph" deleted
+deployment.apps "socialgraph" deleted
+service "usertimeline" deleted
+deployment.apps "usertimeline" deleted
+deployment.apps "ubuntu-client" deleted
+[run.sh] Waiting for all pods to be deleted
+[run.sh] Deploying all services
+service/composepost created
+deployment.apps/composepost created
+service/hometimeline created
+deployment.apps/hometimeline created
+service/poststorage created
+deployment.apps/poststorage created
+service/socialgraph created
+deployment.apps/socialgraph created
+service/usertimeline created
+deployment.apps/usertimeline created
+[run.sh] Client pod not found, deploying client
+deployment.apps/ubuntu-client created
+[run.sh] Waiting for all pods to be running
+[run.sh] All pods are running
+[run.sh] Checking heartbeat for all services
+[run.sh] All pods can connect to all services
+[run.sh] Populating social benchmark
+Parsing social graph file: ./data/socfb-Reed98.mtx... DONE!
+Analyzing social graph in: ./data/analysis.txt... DONE!
+Populating social graph... 
+DONE!
+[run.sh] Copying social/analysis.txt to ubuntu-client-76886f6bbd-w2rqn:/analysis.txt
+[run.sh] Finished populating social
+[run.sh] Starting the rust proxy first for social
+[2m2025-04-15T20:27:12.041605Z[0m [32m INFO[0m [2mproxy::social[0m[2m:[0m Reading social graph from /analysis.txt
+[run.sh] Running warmup test
+[run.sh] /wrk/wrk -t8 -c1024 --timeout 3s -d3s -L http://localhost:3000
+Running 3s test @ http://localhost:3000
+  8 threads and 1024 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   245.47ms  256.84ms   1.24s    77.29%
+    Req/Sec   384.26    157.82     1.14k    69.58%
+  Latency Distribution
+     50%  169.79ms
+     75%  488.87ms
+     90%  574.68ms
+     99%  933.16ms
+  9186 requests in 3.03s, 699.71KB read
+Requests/sec:   3035.13
+Transfer/sec:    231.19KB
+[run.sh] Speed is 3035.13, duration is 9
+[run.sh] Fix the request number.
+[run.sh] Running the actual test
+[run.sh] /wrk/wrk --timeout 20s -t8 -c1024 -d9s -s /wrk/fix_req_n.lua -L http://localhost:3000
+Running 9s test @ http://localhost:3000
+  8 threads and 1024 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   291.44ms  278.08ms   1.41s    52.29%
+    Req/Sec   399.00    154.20     1.46k    72.47%
+  Latency Distribution
+     50%  294.91ms
+     75%  529.66ms
+     90%  629.23ms
+     99%  973.06ms
+  20000 requests in 9.00s, 1.49MB read
+Requests/sec:   2222.19
+Transfer/sec:    169.27KB
+------------------------------
+stop time: 5.681776
+stop time: 6.231890
+stop time: 6.432315
+stop time: 6.314373
+stop time: 6.420530
+stop time: 6.405012
+stop time: 6.547734
+stop time: 6.289003
+[run.sh] Checking the resource usage
+NAME                             CPU(cores)   MEMORY(bytes)   
+composepost-7b4b6d79dd-plvlm     0m           14Mi            
+hometimeline-79bbcdf9d-2pxq6     0m           74Mi            
+poststorage-6f7cf87dc5-cpbkd     129m         41Mi            
+socialgraph-7885949c4-stkgl      0m           10Mi            
+ubuntu-client-76886f6bbd-w2rqn   1m           67Mi            
+usertimeline-647cdc4d75-8lgbg    0m           16Mi            
+[run.sh] Test finished with status 0
