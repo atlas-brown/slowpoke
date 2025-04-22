@@ -6,12 +6,12 @@ target_service_random_pairs="0:25948" # 5:2137" # Make it reproducible
 cd $(dirname $0)/../..
 
 EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-09-pokerpp-rm-deadlock-0maxconn
+DIR=synthetic/$EXP/04-22-pokerpp-delay-after-processing
 mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=256
+CONN=512
 NUM_REQ=20000
 POKER_BATCH_REQ=100
 NUM_EXP=10
