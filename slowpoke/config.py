@@ -169,6 +169,33 @@ def get_baseline_service_processing_time(benchmark, request, target, random_seed
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
+# def get_baseline_service_processing_time_synthetic(target, request, random_seed):
+#     topology = "-".join(request.split("-")[:2])
+#     num = len(service_reuse[topology])
+#     random.seed(random_seed)
+#     random_numbers = [random.gauss(700, 300) for i in range(num)]
+#     random_numbers = [abs(r) for r in random_numbers]   # just in case
+#     random_numbers.sort()
+#     print(f"[config.py] Random numbers for execution time: {random_numbers}")
+#     # use the random number to also decide if we want the target service is the bottleneck
+#     is_bottleneck = random.choice([True,True,False])
+#     print(f"[config.py] Is bottleneck: {is_bottleneck}")
+#     picked_service = target
+#     if not is_bottleneck:
+#         # pick a random service that is not the target service
+#         while picked_service == target:
+#             picked_service = f"service{random.randint(0, num-1)}"
+#     processing_time = {}
+#     picked_idx = int(picked_service.replace("service", ""))
+#     processing_time[picked_service] = round(2 * random_numbers.pop(-1)/ service_reuse[topology][picked_idx], 2)
+
+#     for i in range(num):
+#         service_name = f"service{i}"
+#         if service_name == picked_service:
+#             continue
+#         processing_time[f"service{i}"] = round(random_numbers.pop(-1) / service_reuse[topology][i], 2)
+#     return processing_time
+
 def get_baseline_service_processing_time_synthetic(target, request, random_seed):
     topology = "-".join(request.split("-")[:2])
     num = len(service_reuse[topology])
@@ -181,11 +208,11 @@ def get_baseline_service_processing_time_synthetic(target, request, random_seed)
     processing_time = {}
     for i in range(num):
         if i in leaf_nodes[topology] and f"service{i}" == target:
-            processing_time[f"service{i}"] = round(2 * random_numbers.pop(-1)/ service_reuse[topology][i], 2)
+            processing_time[f"service{i}"] = round(2 * random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
         elif f"service{i}" == target:
-            processing_time[f"service{i}"] = round(random_numbers.pop(-1)/service_reuse[topology][i], 2)
+            processing_time[f"service{i}"] = round(random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
         else:
-            processing_time[f"service{i}"] = round(random_numbers.pop(-1)/service_reuse[topology][i], 2)
+            processing_time[f"service{i}"] = round(random_numbers.pop(-1) * max(service_reuse[topology]) / service_reuse[topology][i], 2)
     return processing_time
 
 def get_cpu_quota(benchmark, request):

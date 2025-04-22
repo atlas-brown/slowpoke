@@ -39,9 +39,9 @@ func execTask(request *http.Request, endpoint *synthetic.Endpoint) Response {
 
 func (handler endpointHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	slowpoke.SlowpokeCheck(handler.endpoint.Name)
-	slowpoke.SlowpokePokerPPDelay()
 	// slowpoke.SlowpokeDelay()
 	response := execTask(request, handler.endpoint)
+	slowpoke.SlowpokePokerPPDelay()
 	utility.DumpJson(response, writer)
 	// f, ok := writer.(http.Flusher)
 	// if ok {
@@ -100,7 +100,6 @@ type grpcServer struct {
 }
 
 func (s *grpcServer) SimpleRPC(ctx context.Context, in *pb.SimpleRequest) (*pb.SimpleResponse, error) {
-	slowpoke.SlowpokePokerPPDelay()
 	target_endpoint := in.Endpoint
 	var response Response
 	for i := range s.endpoints {
@@ -115,6 +114,7 @@ func (s *grpcServer) SimpleRPC(ctx context.Context, in *pb.SimpleRequest) (*pb.S
 	} else {
 		respStr = string(jsonBytes)
 	}
+	slowpoke.SlowpokePokerPPDelay()
 	return &pb.SimpleResponse{Resp: respStr}, nil
 }
 
