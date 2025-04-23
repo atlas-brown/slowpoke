@@ -123,6 +123,9 @@ void *monitor_fifo(void *arg) {
             precise_sleep(accumulated_nano_sleep);
             long long end_time = get_current_time_ns();
             accumulated_nano_sleep -= (end_time - start_time);
+            // printf("Received %lld ns, started pc at %lld, ended pc at %lld, accumulated %lld, sleeped %lld\n",
+                   nanosleep, start_time, end_time, accumulated_nano_sleep, (end_time - start_time));
+            fflush(stdout);
             if (write(fifo_recover_fd, send_buf, sizeof(send_buf)) == -1) {
                 perror("write");
                 pthread_exit(NULL);

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"time"
 	// "os"
 )
 
@@ -103,9 +104,11 @@ func handlePause(pauseReq PauseReq) {
 		seen = false
 	}
 	sync_guard.Unlock()
-	fmt.Printf("phase %v seen %v, delayToDo %v, reqCount %v\n", p, seen, delayToDo, reqcount)
+	// fmt.Printf("phase %v seen %v, delayToDo %v, reqCount %v\n", p, seen, delayToDo, reqcount)
 	// os.Stdout.Sync()  
 	if !seen {
+		now := time.Now().UnixNano()
+		// fmt.Printf("Received %v, started at %v, ended at %v\n", p, now, now+1)
 		neighborsLock.RLock()
 		defer neighborsLock.RUnlock()
 		for neighbor := range neighbors {

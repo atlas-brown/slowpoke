@@ -2,7 +2,7 @@
 
 # Change this!!
 # 2:16181 3:23541
-target_service_random_pairs="4:21636" # Make it reproducible
+target_service_random_pairs="3:21636" # Make it reproducible
 
 cd $(dirname $0)/../..
 
