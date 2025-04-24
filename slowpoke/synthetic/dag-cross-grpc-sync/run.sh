@@ -7,12 +7,12 @@ target_service_random_pairs="4:1348"
 cd $(dirname $0)/../..
 
 EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-13-pokerpp-rm-deadlock-0maxconn
+DIR=synthetic/$EXP/04-22-less-conn
 mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=512
+CONN=256
 NUM_REQ=20000
 POKER_BATCH_REQ=100
 NUM_EXP=10

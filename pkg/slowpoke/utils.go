@@ -263,7 +263,7 @@ func SlowpokeCheck(serviceFuncName string) {
 		for {
 			current := counter.(int) // Safely type assert
 			if requestCounters.CompareAndSwap(serviceFuncName, current, current+1) {
-				break // Exit loop when successful
+				break // Exit loop when succeßssful
 			}
 		
 			// Retry in case of failure (another goroutine modified the value)
