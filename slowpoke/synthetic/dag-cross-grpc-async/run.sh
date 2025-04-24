@@ -2,7 +2,7 @@
 
 # Change this!!
 # 2:16181 3:23541
-target_service_random_pairs="4:21636" # Make it reproducible
+target_service_random_pairs="4:21636 2:16181 3:23541" # Make it reproducible
 
 cd $(dirname $0)/../..
 
@@ -12,7 +12,7 @@ mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=128
+CONN=256
 NUM_REQ=20000
 POKER_BATCH_REQ=100
 NUM_EXP=10

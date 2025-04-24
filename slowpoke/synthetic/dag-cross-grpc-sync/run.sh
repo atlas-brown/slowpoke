@@ -2,7 +2,7 @@
 
 # Change this!!
 #2:12895 3:19434 
-target_service_random_pairs="4:1348"
+target_service_random_pairs="2:12895 3:19434 4:1348"
 
 cd $(dirname $0)/../..
 
