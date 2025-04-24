@@ -6,7 +6,7 @@ target_service_random_pairs="0:25948" # 5:2137" # Make it reproducible
 cd $(dirname $0)/../..
 
 EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-22-pokerpp-delay-after-processing
+DIR=synthetic/$EXP/04-23-lower-conn
 mkdir -p $DIR
 
 # config
@@ -15,7 +15,7 @@ CONN=512
 NUM_REQ=20000
 POKER_BATCH_REQ=100
 NUM_EXP=10
-REPETITION=3
+REPETITION=5
 
 for pair in $target_service_random_pairs
 do 
