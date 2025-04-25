@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Change this!!
-target_service_random_pairs="1:13668 4:15815 5:29066" # Make it reproducible
+target_service_random_pairs="4:15815" # Make it reproducible 1:13668 4:15815 5:29066
 
 cd $(dirname $0)/../..
 
@@ -11,7 +11,7 @@ mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=512
+CONN=256
 NUM_REQ=20000
 POKER_BATCH_REQ=100
 NUM_EXP=10
