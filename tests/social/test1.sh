@@ -1,1 +1,0 @@
-python3 tests/social/test_compose_post.py --social_graph $(kip social_graph) --compose_post $(kip compose_post) --post_storage $(kip post_storage) --user_timeline $(kip user_timeline) --home_timeline $(kip home_timeline)

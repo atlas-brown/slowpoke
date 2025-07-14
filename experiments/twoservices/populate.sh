@@ -1,1 +1,0 @@
-curl -X POST $(kip callee)/write -d '{"k": 1, "v": 1}'
