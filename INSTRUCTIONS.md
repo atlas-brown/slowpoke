@@ -29,7 +29,7 @@ Confirm that the benchmark programs, their inputs, and automation scripts are al
 > AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are provided for efficiency.
 > We provide a kubernete cluster with X machines for each reviwer. To request access to the control node, please send a request to slowpoke@brown.edu. Once the access is granted, reviwers can start/stop the clusters whenever.
 
-# Artifact Functional (20 minutes, optionally 3 hours)
+# Artifact Functional (20 minutes)
 
 Confirm sufficient documentation, key components as described in the paper, and execution with min inputs (about 20 minutes):
 
