@@ -41,7 +41,7 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 > At this point, **run `git clone https://github.com/atlas-brown/slowpoke`**
 
-**Quickstart: Running a demo experiment (e.g., `online-boutique`):** To quickly execute a specific benchmark such as `online-boutique`... (2 minutes):
+**Quickstart: Running a demo experiment:** To quickly execute a demo experiment, we provide
 
 ```sh
 ./script/demo.sh
