@@ -13,7 +13,7 @@ This artifact targets the following badges:
 * [ ] [Artifact available](#artifact-available): Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available (about 10 minutes).
 * [ ] [Artifact functional](#artifact-functional): Reviewers are expected to confirm sufficient documentation, key components as described in the paper, and execution with one experiment (about 20 minutes).
 * [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce _key_ results of section 5 of the paper (3 hours).
-
+****
 # Artifact Available (10 minutes)
 
 Confirm that the benchmark programs, their inputs, and automation scripts are all publicly available:
@@ -31,20 +31,19 @@ Confirm that the benchmark programs, their inputs, and automation scripts are al
 
 # Artifact Functional (20 minutes)
 
-Confirm sufficient documentation, key components as described in the paper, and execution with min inputs (about 20 minutes):
+Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
 
-<!-- * Exercisability: Instructions below set up an Debian-based container and run _all_ benchmarks on `min` inputs (`all.sh`) or run specific benchmarks. -->
-
-* Documentation:
-* Key components:
-* Benchmarks:
+* Documentation: The top-level [README]() file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
+* Key components: 
+  * Slowpoke: [User-level library]() and [Poker runtime]().
+  * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
 
 > At this point, **run `git clone https://github.com/atlas-brown/slowpoke`**
 
-**Quickstart: Running a demo experiment:** To quickly execute a demo experiment, we provide
+**Quickstart:** To quickly execute a demo experiment, invoke the top-level `main.sh` script with the `--demo` flag. This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
 
 ```sh
-./script/demo.sh
+./main.sh --demo
 ```
 
 # Results Reproducible (about 3 hours)
