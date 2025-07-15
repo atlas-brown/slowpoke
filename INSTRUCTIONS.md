@@ -42,6 +42,17 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 > At this point, **run `git clone https://github.com/atlas-brown/slowpoke`**
 
+**Setup (optional):** We provide fully initialized and configured Kubernetes clusters for convenience.  
+Optionally, reviewers may set up their own EC2 machines using the following script:
+```
+# Create a EC2 cluster with 8 worker nodes and one control node
+python3 script/setup/ec2_cluster -n 8
+# Initialize the Kubernete clusters and return the control node IP
+IP=$(./script/setup/initialize-aws.sh)
+# ssh into the control node
+ssh -i slowpoke.pem ubuntu@$IP
+```
+
 **Quickstart:** To quickly execute a demo experiment, invoke the top-level `main.sh` script with the `--demo` flag after `ssh` into the control node. This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
 
 ```sh

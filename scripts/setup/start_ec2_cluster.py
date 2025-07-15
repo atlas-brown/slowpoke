@@ -1,0 +1,5 @@
+import ec2_cluster
+import sys
+
+ec2_cluster.parse_args(sys.argv)
+ec2_cluster.start_ec2()
