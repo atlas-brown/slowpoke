@@ -4,16 +4,16 @@ The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `
 
 **(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.**
 
-**(C2) Slowpoke accurately quantifies throughput after scaling optimizations or when the bottleneck is caused by mutex contention.**
+<!-- **(C2) Slowpoke accurately quantifies throughput after scaling optimizations or when the bottleneck is caused by mutex contention.** -->
 
-**(C3) Slowpoke accurately quantifies throguhput optimizations across synthetic microservice applications covering a wide range of microservice characteristics.**
+**(C2) Slowpoke accurately quantifies throguhput optimizations across synthetic microservice applications covering a wide range of microservice characteristics.**
 
 This artifact targets the following badges:
 
 * [ ] [Artifact available](#artifact-available): Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available (about 10 minutes).
 * [ ] [Artifact functional](#artifact-functional): Reviewers are expected to confirm sufficient documentation, key components as described in the paper, and execution with one experiment (about 20 minutes).
 * [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce _key_ results of section 5 of the paper (3 hours).
-****
+
 # Artifact Available (10 minutes)
 
 Confirm that the benchmark programs, their inputs, and automation scripts are all publicly available:
@@ -27,7 +27,9 @@ Confirm that the benchmark programs, their inputs, and automation scripts are al
 4. Additional scripts are available in the [`scripts/`]() directory of the repository.
 
 > AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are provided for efficiency.
-> We provide a kubernete cluster with X machines for each reviwer. To request access to the control node, please send a request to slowpoke@brown.edu. Once the access is granted, reviwers can start/stop the clusters whenever.
+> We provide a kubernete cluster with X machines for each reviwer, with all dependencies satisfied.
+> To request access to the control node, please send a request to slowpoke@brown.edu. 
+> Once the access is granted, reviwers can start/stop the clusters as needed.
 
 # Artifact Functional (20 minutes)
 
@@ -40,10 +42,46 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 > At this point, **run `git clone https://github.com/atlas-brown/slowpoke`**
 
-**Quickstart:** To quickly execute a demo experiment, invoke the top-level `main.sh` script with the `--demo` flag. This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
+**Quickstart:** To quickly execute a demo experiment, invoke the top-level `main.sh` script with the `--demo` flag after `ssh` into the control node. This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
 
 ```sh
 ./main.sh --demo
 ```
 
-# Results Reproducible (about 3 hours)
+# Results Reproducible (about 2 hours)
+The key results of Slowpoke's accuracy are the following: 
+
+**(C1, §5.1, Fig.8) Across four real-world benchmarks**
+
+<!-- **(C2, §5.3, Fig.11) After scaling optimizations or when the bottleneck is caused by mutex contention** -->
+
+**(C2, §5.2, Fig.9) Across synthetic microservice applications**
+
+The results presented in the paper are based on 10 optimizations, each reducing the target service's processing time by increments ranging from 10\% to 100\%.  
+Executing the full set of experiments takes several days to complete.  
+To enable more efficient reproduction without loss of insight, we sample 5 optimizations from the same range.  
+
+**C1 (X minutes):** Invoke the top-level `main.sh` script with the `--real-world` flag. This will run experiments for both predictions and ground truth measurements, and generate Figure 7 using 5 optimizations.
+```bash
+./main.sh --real-world
+```
+
+The results in the paper are generated from 9 synthetic topologies (Fig. 7), each evaluated under three different configuration parameters, resulting in a total of 108 applications.  
+This exhaustive exploration is time-consuming. 
+To reduce evaluation time, we sample one application from each topology.  
+**C2 (X minutes):** Invoke the top-level `main.sh` script with the `--synthetic` flag. 
+This runs experiments for both predictions and ground truth, and outputs Figure 9 with 45 data points.  
+
+```bash
+./main.sh --synthetic
+```
+
+# Optional: Applying Slowpoke to All Benchmarks (2–3 days)
+
+We also provide scripts to reproduce all experiments from the paper using the full set of optimization samples, including the scenarios where the bottleneck is due to mutex contention (as described in §5.3).  
+To generate the complete set of results, invoke the main script for each case with the `--full` flag:
+
+```bash
+./main.sh --real-world --full
+./main.sh --synthetic --full
+./main.sh --mutex
