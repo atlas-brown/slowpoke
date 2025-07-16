@@ -74,11 +74,11 @@ ssh -i slowpoke.pem ubuntu@$IP
 # Results Reproducible (about 2 hours)
 The key results of Slowpoke's accuracy are the following: 
 
-**(C1, §5.1, Fig.8) Across four real-world benchmarks**
+**(§5.1, Fig.8) Across four real-world benchmarks**
 
 <!-- **(C2, §5.3, Fig.11) After scaling optimizations or when the bottleneck is caused by mutex contention** -->
 
-**(C2, §5.2, Fig.9) Across synthetic microservice applications**
+**(§5.2, Fig.9) Across synthetic microservice applications**
 
 The results presented in the paper are based on 10 optimizations, each reducing the target service's processing time by increments ranging from 10\% to 100\%.  
 Executing the full set of experiments takes several days to complete.  
