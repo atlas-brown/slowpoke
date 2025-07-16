@@ -2,11 +2,18 @@
 
 The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `:`):
 
-**(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.**
+* **Slowpoke**: the system for accurate what-if analysis of throughput optimizations in complex microservice architectures.
+
+* **A performance model**: a formal model that explains why Slowpoke can accurately predict end-to-end throughput improvements.
+
+* **A lightweight distributed slowdown mechanism**: a distributed protocol improving prediction accuracy by coordinating pauses across microservices.
+
+
+<!-- **(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.** -->
 
 <!-- **(C2) Slowpoke accurately quantifies throughput after scaling optimizations or when the bottleneck is caused by mutex contention.** -->
 
-**(C2) Slowpoke accurately quantifies throguhput optimizations across synthetic microservice applications covering a wide range of microservice characteristics.**
+<!-- **(C2) Slowpoke accurately quantifies throguhput optimizations across synthetic microservice applications covering a wide range of microservice characteristics.** -->
 
 This artifact targets the following badges:
 
@@ -28,7 +35,7 @@ Confirm that the benchmark programs, their inputs, and automation scripts are al
 
 > AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are provided for efficiency.
 > We provide a kubernete cluster with X machines for each reviwer, with all dependencies satisfied.
-> To request access to the control node, please send a request to slowpoke@brown.edu. 
+> To request access to the control node, please comment your public keys on hotcrp. 
 > Once the access is granted, reviwers can start/stop the clusters as needed.
 
 # Artifact Functional (20 minutes)
@@ -36,9 +43,14 @@ Confirm that the benchmark programs, their inputs, and automation scripts are al
 Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
 
 * Documentation: The top-level [README]() file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
-* Key components: 
+* Completeness: 
   * Slowpoke: [User-level library]() and [Poker runtime]().
   * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
+* **Exercisability**:
+  * **EC2 cluster setup**: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
+  * **Building and deploying applications with Slowpoke**: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
+  * **Automated testing framework**: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
+
 
 > At this point, **run `git clone https://github.com/atlas-brown/slowpoke`**
 
