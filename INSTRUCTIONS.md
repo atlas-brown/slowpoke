@@ -38,6 +38,12 @@ Confirm that the benchmark programs, their inputs, and automation scripts are al
 > To request access to the control node, please comment your public keys on hotcrp. 
 > Once the access is granted, reviwers can start/stop the clusters as needed.
 
+<details><summary>other stuff</summary>
+  * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
+  * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
+  * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
+</details>
+
 # Artifact Functional (20 minutes)
 
 Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
@@ -46,13 +52,19 @@ Confirm sufficient documentation, key components as described in the paper, and 
 * **Completeness**: 
   * Slowpoke: [User-level library]() and [Poker runtime]().
   * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
-* **Exercisability**:
-  * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
-  * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
-  * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
+* **Exercisability**: See below
 
 
 > At this point, **run `git clone https://github.com/atlas-brown/slowpoke`**
+
+**Quickstart:** To quickly execute a demo experiment, run `./run_functional.sh` after `ssh` into the control node. This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
+
+```bash
+./run_functional.sh
+```
+
+<details>
+ <summary>What `run_functional.sh` does</summary>
 
 **Setup (optional):** We provide fully initialized and configured Kubernetes clusters for convenience.  
 Optionally, reviewers may set up their own EC2 machines using the following script:
@@ -64,12 +76,7 @@ IP=$(./script/setup/initialize-aws.sh)
 # ssh into the control node
 ssh -i slowpoke.pem ubuntu@$IP
 ```
-
-**Quickstart:** To quickly execute a demo experiment, invoke the top-level `main.sh` script with the `--demo` flag after `ssh` into the control node. This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
-
-```sh
-./main.sh --demo
-```
+</details>
 
 # Results Reproducible (about 2 hours)
 The key results of Slowpoke's accuracy are the following: 
