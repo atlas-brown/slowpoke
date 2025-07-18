@@ -23,7 +23,21 @@ This artifact targets the following badges:
 
 # Artifact Available (10 minutes)
 
-Confirm that the benchmark programs, their inputs, and automation scripts are all publicly available:
+The Slowpoke artifact is available at https://github.com/atlas-brown/slowpoke, commit hash XXXX.
+
+To confim this, run
+
+```bash
+$ git clone https://github.com/atlas-brown/slowpoke
+$ cd slowpoke
+$ git checkout XXXX
+```
+
+<details><summary>other stuff</summary>
+  * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
+  * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
+  * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
+ Confirm that the benchmark programs, their inputs, and automation scripts are all publicly available:
 
 1. The code is hosted at: [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke)
 
@@ -37,25 +51,43 @@ Confirm that the benchmark programs, their inputs, and automation scripts are al
 > We provide a kubernete cluster with X machines for each reviwer, with all dependencies satisfied.
 > To request access to the control node, please comment your public keys on hotcrp. 
 > Once the access is granted, reviwers can start/stop the clusters as needed.
-
-<details><summary>other stuff</summary>
-  * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
-  * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
-  * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
 </details>
 
 # Artifact Functional (20 minutes)
 
 Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
 
-* **Documentation**: The top-level [README]() file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
-* **Completeness**: 
+* Documentation: The top-level [README]() file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
+* Completeness:
   * Slowpoke: [User-level library]() and [Poker runtime]().
   * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
-* **Exercisability**: See below
+* Exercisability: See below
 
+To run Slowpoke, one needs to set up a kubernetes cluster.
 
-> At this point, **run `git clone https://github.com/atlas-brown/slowpoke`**
+For artifact reviewers, we prepared the clusters on AWS. Here is how to use it:
+
+First, **From your local machine** sign into the gateway machine we created on AWS
+(Contact us if you do not have an account set up yet)
+```bash
+ssh aec1@3.133.138.10
+```
+
+**On the gateway machine**, the reviewer will see two folders: `scripts` and `cluster_info`. To start the cluster and ssh into it, run 
+```bash
+$ python3 ./scripts/start_ec2_cluster.py -d cluster_info
+$ ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)
+```
+And when you want to stop the cluster, exit the ssh session and run
+```bash
+$ python3 ./scripts/stop_ec2_cluster.py -d cluster_info
+```
+
+**The cluster costs around $2/hour. So we advise the reviewers not to leave them up when unused.**
+
+<details><summary>Explaination</summary>
+The cluster is already set up using scripts in this repo under [`scripts/setup/`]() (see. The cluster contains 2 AWS `m5.xlarge` and 12 `m5.large` EC2 instances. The public IPs of the EC2 machines will be stored in `~/cluster_info/ec2_ips`, first one is the kubernetes control node, the second one is worker node that runs the workload generator, the rest are worker nodes that run the services in each benchmark
+</details>
 
 **Quickstart:** To quickly execute a demo experiment, run `./run_functional.sh` after `ssh` into the control node. This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
 
