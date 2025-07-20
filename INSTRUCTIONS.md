@@ -152,6 +152,8 @@ To enable more efficient reproduction without loss of insight, we sample 5 optim
 ./main.sh --real-world
 ```
 
+**To self: remember to add the service deletion script**
+
 hotel reservation: 18 minutes errors: [-2.684722102591385, 2.2647041284859606, 0.2594638696769054, -3.591321001845969, 2.9804826213333375]
 
 online-boutique: 19 minutes errors: [-7.1738703485706985, -5.916802465834088, -3.9139179253133833, -1.8576624448109162, 0.028792889928492823]
