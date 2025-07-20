@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd $(dirname $0)
+mkdir -p results
 # bash ./slowpoke/boutique/run-boutique-medium.sh results/boutique_medium.log
 # bash ./slowpoke/hotel/run-hotel-medium.sh results/hotel_medium.log
 # bash ./slowpoke/social/run-social-medium.sh results/social_medium.log
