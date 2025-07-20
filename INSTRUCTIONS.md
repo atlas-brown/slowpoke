@@ -70,7 +70,7 @@ For artifact reviewers, we prepared the clusters on AWS. Here is how to use it:
 First, **From your local machine**, sign into the gateway machine we created on AWS
 (Contact us if you do not have an account set up yet)
 ```bash
-$ ssh aec1@3.133.138.10
+$ ssh ae1@3.133.138.10
 ```
 
 **On the gateway machine**, the reviewer will see two folders: `scripts` and `cluster_info`. To start the cluster and ssh into the cluster control node, run 
