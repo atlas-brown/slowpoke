@@ -21,4 +21,6 @@ if [ -f $DIR/$FILE ]; then
     exit 0
 fi
 
+kubectl delete deployments --all
+kubectl delete services --all
 python3 test.py -b movie -r mix -x moviereviews --num_exp $num_exp -t $thread -c $conn --poker_batch_req $poker_batch_req --repetition $repetitions --num_req $num_req >$outfile
