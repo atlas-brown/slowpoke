@@ -74,8 +74,11 @@ init_cluster () {
 
 init_dependencies () {
     sudo apt-get -y install python3
-    sudo apt-get -y install python3-pip
+    sudo apt-get -y install python3-pip python3-matplotlib
     sudo apt-get -y install screen
+    sudo apt-get -y install nginx
+    # enable anyone to drop things in shared directory
+    sudo chmod 777 /var/www/html
     sudo pip3 install --upgrade pip
     sudo pip3 install pandas
     # sudo python3 -m pip install --upgrade Pillow

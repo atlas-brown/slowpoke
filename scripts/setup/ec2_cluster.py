@@ -19,6 +19,8 @@ import argparse
 
 OBJDIR = Path('.')
 ARGS = None
+WORKER_NUM = 4
+IMAGE_ID = 'ami-0d1b5a8c13042c939'
 SCRIPT_BASE = Path(__file__).parent
 KEY_FILE = 'slowpoke-expr.pem'
 KEYNAME_FILE = 'key_name'
@@ -47,8 +49,8 @@ def parse_args(args):
     global OBJDIR
     OBJDIR = Path(parsed_args.temp_dir)
 
-    global ARGS
-    ARGS = parsed_args
+    global WORKER_NUM
+    WORKER_NUM = parsed_args.num
 
 def get_vpc():
     out = run(f'aws ec2 describe-vpcs --filters Name=isDefault,Values=true '
@@ -122,7 +124,7 @@ def query_ec2_status(iid):
     return stdout
 
 def create_ec2_instance(num, itype, keyname, groupid, instance_name):
-    out = run(f'aws ec2 run-instances --image-id ami-0e1bed4f06a3b463d '
+    out = run(f'aws ec2 run-instances --image-id {IMAGE_ID} '
               f'--count {num} --instance-type {itype} '
               f'--key-name {keyname} --security-group-ids {groupid} '
               f'--associate-public-ip-address '
@@ -137,13 +139,10 @@ def create_ec2_instance(num, itype, keyname, groupid, instance_name):
 def setup_ec2():
     groupid = get_s(SG_FILE)
     keyname = get_s(KEYNAME_FILE)
-    foldername = ARGS.temp_dir
+    foldername = OBJDIR
     print(f'[setup_ec2] creating control node and one worker node of type mx.2xlarge')
     create_ec2_instance(2, 'm5.2xlarge', keyname, groupid, f"{foldername}-control")
-    num, itype = 4, 'm5.large'
-    if ARGS is not None:
-        num = ARGS.num
-        itype = ARGS.type
+    num, itype = WORKER_NUM, 'm5.large'
     print(f'[setup_ec2] creating {num} workers of type {itype}')
     create_ec2_instance(num, itype, keyname, groupid, f"{foldername}-worker")
     print(f'instances saved to {OBJDIR / EC2_FILE}')
