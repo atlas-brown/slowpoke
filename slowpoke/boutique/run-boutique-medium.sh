@@ -22,4 +22,7 @@ if [ -f $DIR/$FILE ]; then
     echo "File $DIR/$FILE already exists. Skipping test."
     exit 0
 fi
+
+kubectl delete deployments --all
+kubectl delete services --all
 python3 test.py -b boutique -x frontend -r mix -t $thread -c $conn --num_exp $num_exp --repetitions $repetitions --num_req $num_req --poker_batch_req $poker_batch_req >$outfile
