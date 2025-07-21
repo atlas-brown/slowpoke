@@ -61,7 +61,7 @@ $ git checkout XXXX
 
 Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
 
-* Documentation: The top-level [README]() file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
+* Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
 * Completeness:
   * Slowpoke: [User-level library]() and [Poker runtime]().
   * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
