@@ -1,6 +1,6 @@
 **TODO: change repo permission**
+**TODO: remember to add the service deletion script**
 
-**TODO: mention screen and kubernetes cleanup**
 # Overview
 
 The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `:`):
@@ -138,42 +138,68 @@ ssh -i slowpoke.pem ubuntu@$IP
 </details>
 
 # Results Reproducible (about 2 hours)
-The key results of Slowpoke's accuracy are the following: 
+
+For this step we strongly recommend the reviewers using `screen` or `tmux` to avoid accidental disconnect.
+The key results of Slowpoke's accuracy is represented by the following experiment
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
 
-<!-- **(C2, §5.3, Fig.11) After scaling optimizations or when the bottleneck is caused by mutex contention** -->
+The results in the paper is done with each benchmark having 10 hypothetical optimization points and 3 repetitions. To make the artifact evaluation process faster, we take only every other optimization point (5 optimization points) and run them once. The entire process should take about 1.5 hours. To run them, make sure you are in `~/slowpoke`, then
 
-**(§5.2, Fig.9) Across synthetic microservice applications**
+```console
+$ # Recommend doing the following command in screen or tmux
+$ ./run_reproducible.sh
+The results are stored in /home/ubuntu/slowpoke/results
+To visualize the results, run: 
+
+python3 /home/ubuntu/slowpoke/draw.py /home/ubuntu/slowpoke/results
+```
+
+There will not be intermediate output. Although the log file `results/boutique_medium.log`, `results/hotel_medium.log`, `results/social_medium.log`, and `results/movie_medium.log` will grow overtime and should make progress at least once per minute.
+
+To see the results, run (as the previous script suggested)
+
+```console
+$ python3 /home/ubuntu/slowpoke/draw.py /home/ubuntu/slowpoke/results
+Result for /home/ubuntu/slowpoke/results/boutique_medium.log is available at
+http://xx.xx.xx.xx/boutique_medium.png
+...
+```
+Open the links printed, and the files will be served from there.
+
+<details>
+ <summary>
+  Explaination
+ </summary>
+
+
+(18 minutes) hotel reservation errors: [-2.684722102591385, 2.2647041284859606, 0.2594638696769054, -3.591321001845969, 2.9804826213333375]
+
+(19 minutes) online-boutique errors: [-7.1738703485706985, -5.916802465834088, -3.9139179253133833, -1.8576624448109162, 0.028792889928492823]
+
+(17 minutes) social network errors: [2.056515017954307, -5.524510290578988, -6.066724216678917, -2.149487791284433, -0.44225723157220204]
+
+(21 minutes) movie error: [-2.401952364289003, -0.3078691157346066, -0.28027965186679527, -0.8809673184547445, 0.834048643872503]
+
+</details>
+
+<!--**(§5.2, Fig.9) Across synthetic microservice applications**
 
 The results presented in the paper are based on 10 optimizations, each reducing the target service's processing time by increments ranging from 10\% to 100\%.  
 Executing the full set of experiments takes several days to complete.  
-To enable more efficient reproduction without loss of insight, we sample 5 optimizations from the same range.  
+To enable more efficient reproduction without loss of insight, we sample 5 optimizations from the same range.  -->
 
-**C1 (X minutes):** Invoke the top-level `main.sh` script with the `--real-world` flag. This will run experiments for both predictions and ground truth measurements, and generate Figure 7 using 5 optimizations.
-```bash
-./main.sh --real-world
-```
 
-**To self: remember to add the service deletion script**
 
-hotel reservation: 18 minutes errors: [-2.684722102591385, 2.2647041284859606, 0.2594638696769054, -3.591321001845969, 2.9804826213333375]
 
-online-boutique: 19 minutes errors: [-7.1738703485706985, -5.916802465834088, -3.9139179253133833, -1.8576624448109162, 0.028792889928492823]
 
-social network: 17 minutes errors: [2.056515017954307, -5.524510290578988, -6.066724216678917, -2.149487791284433, -0.44225723157220204]
 
-movie: 21 minutes error: [-2.401952364289003, -0.3078691157346066, -0.28027965186679527, -0.8809673184547445, 0.834048643872503]
-
-The results in the paper are generated from 9 synthetic topologies (Fig. 7), each evaluated under three different configuration parameters, resulting in a total of 108 applications.  
+<!-- The results in the paper are generated from 9 synthetic topologies (Fig. 7), each evaluated under three different configuration parameters, resulting in a total of 108 applications.  
 This exhaustive exploration is time-consuming. 
 To reduce evaluation time, we sample one application from each topology.  
 **C2 (X minutes):** Invoke the top-level `main.sh` script with the `--synthetic` flag. 
-This runs experiments for both predictions and ground truth, and outputs Figure 9 with 45 data points.  
+This runs experiments for both predictions and ground truth, and outputs Figure 9 with 45 data points.  -->
 
-```bash
-./main.sh --synthetic
-```
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
