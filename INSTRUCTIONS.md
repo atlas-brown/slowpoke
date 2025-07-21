@@ -1,4 +1,7 @@
 **TODO: change repo permission**
+
+**TODO: remember to add the service deletion script**
+
 # Overview
 
 The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `:`):
@@ -7,7 +10,7 @@ The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `
 
 * **A performance model**: a formal model that explains why Slowpoke can accurately predict end-to-end throughput improvements.
 
-* **A lightweight distributed slowdown mechanism**: a distributed protocol improving prediction accuracy by coordinating pauses across microservices.
+* **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables acurate prediction.
 
 
 <!-- **(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.** -->
@@ -20,7 +23,7 @@ This artifact targets the following badges:
 
 * [ ] [Artifact available](#artifact-available): Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available (about 10 minutes).
 * [ ] [Artifact functional](#artifact-functional): Reviewers are expected to confirm sufficient documentation, key components as described in the paper, and execution with one experiment (about 20 minutes).
-* [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce _key_ results of section 5 of the paper (3 hours).
+* [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce _key_ results of section 5 of the paper (1.5 hours).
 
 # Artifact Available (10 minutes)
 
@@ -58,18 +61,20 @@ $ git checkout XXXX
 
 Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
 
-* Documentation: The top-level [README]() file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
+* Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
 * Completeness:
   * Slowpoke: [User-level library]() and [Poker runtime]().
   * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
 * Exercisability: See below
 
-To run Slowpoke, one needs to set up a kubernetes cluster.
+To run Slowpoke, one needs to set up a kubernetes cluster. For artifact reviewers, we prepared the clusters on AWS. 
 
-For artifact reviewers, we prepared the clusters on AWS. Here is how to use it:
+**IMPORTANT: Make sure you contact the authors for the account and ssh key setup**
+
+Here is how to use them:
 
 First, **From your local machine**, sign into the gateway machine we created on AWS
-(Contact us if you do not have an account set up yet)
+(`ae1` is a placeholder username)
 ```bash
 $ ssh ae1@3.133.138.10
 ```
@@ -135,43 +140,69 @@ ssh -i slowpoke.pem ubuntu@$IP
 ```
 </details>
 
-# Results Reproducible (about 2 hours)
-The key results of Slowpoke's accuracy are the following: 
+# Results Reproducible (about 1.5 hours)
+
+For this step we strongly recommend the reviewers using `screen` or `tmux` to avoid accidental disconnect.
+The key results of Slowpoke's accuracy is represented by the following experiment
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
 
-<!-- **(C2, §5.3, Fig.11) After scaling optimizations or when the bottleneck is caused by mutex contention** -->
+The results in the paper is done with each benchmark having 10 hypothetical optimization points and 3 repetitions. To make the artifact evaluation process faster, we take only every other optimization point (5 optimization points) and run them once. The entire process should take about 1.5 hours. To run them, make sure you are in `~/slowpoke`, then
 
-**(§5.2, Fig.9) Across synthetic microservice applications**
+```console
+$ # Recommend doing the following command in screen or tmux
+$ ./run_reproducible.sh
+The results are stored in /home/ubuntu/slowpoke/results
+To visualize the results, run: 
+
+python3 /home/ubuntu/slowpoke/draw.py /home/ubuntu/slowpoke/results
+```
+
+There will not be intermediate output. Although the log file `results/boutique_medium.log`, `results/hotel_medium.log`, `results/social_medium.log`, and `results/movie_medium.log` will grow overtime and should make progress at least once per minute.
+
+To see the results, run (as the previous script suggested)
+
+```console
+$ python3 /home/ubuntu/slowpoke/draw.py /home/ubuntu/slowpoke/results
+Result for /home/ubuntu/slowpoke/results/boutique_medium.log is available at
+http://xx.xx.xx.xx/boutique_medium.png
+...
+```
+Open the links printed, and the files will be served from there.
+
+<details>
+ <summary>
+  Explaination
+ </summary>
+
+
+(18 minutes) hotel reservation errors: [-2.684722102591385, 2.2647041284859606, 0.2594638696769054, -3.591321001845969, 2.9804826213333375]
+
+(19 minutes) online-boutique errors: [-7.1738703485706985, -5.916802465834088, -3.9139179253133833, -1.8576624448109162, 0.028792889928492823]
+
+(17 minutes) social network errors: [2.056515017954307, -5.524510290578988, -6.066724216678917, -2.149487791284433, -0.44225723157220204]
+
+(21 minutes) movie error: [-2.401952364289003, -0.3078691157346066, -0.28027965186679527, -0.8809673184547445, 0.834048643872503]
+
+</details>
+
+<!--**(§5.2, Fig.9) Across synthetic microservice applications**
 
 The results presented in the paper are based on 10 optimizations, each reducing the target service's processing time by increments ranging from 10\% to 100\%.  
 Executing the full set of experiments takes several days to complete.  
-To enable more efficient reproduction without loss of insight, we sample 5 optimizations from the same range.  
+To enable more efficient reproduction without loss of insight, we sample 5 optimizations from the same range.  -->
 
-**C1 (X minutes):** Invoke the top-level `main.sh` script with the `--real-world` flag. This will run experiments for both predictions and ground truth measurements, and generate Figure 7 using 5 optimizations.
-```bash
-./main.sh --real-world
-```
 
-**To self: remember to add the service deletion script**
 
-hotel reservation: 18 minutes errors: [-2.684722102591385, 2.2647041284859606, 0.2594638696769054, -3.591321001845969, 2.9804826213333375]
 
-online-boutique: 19 minutes errors: [-7.1738703485706985, -5.916802465834088, -3.9139179253133833, -1.8576624448109162, 0.028792889928492823]
 
-social network: 17 minutes errors: [2.056515017954307, -5.524510290578988, -6.066724216678917, -2.149487791284433, -0.44225723157220204]
 
-movie: 21 minutes error: [-2.401952364289003, -0.3078691157346066, -0.28027965186679527, -0.8809673184547445, 0.834048643872503]
-
-The results in the paper are generated from 9 synthetic topologies (Fig. 7), each evaluated under three different configuration parameters, resulting in a total of 108 applications.  
+<!-- The results in the paper are generated from 9 synthetic topologies (Fig. 7), each evaluated under three different configuration parameters, resulting in a total of 108 applications.  
 This exhaustive exploration is time-consuming. 
 To reduce evaluation time, we sample one application from each topology.  
 **C2 (X minutes):** Invoke the top-level `main.sh` script with the `--synthetic` flag. 
-This runs experiments for both predictions and ground truth, and outputs Figure 9 with 45 data points.  
+This runs experiments for both predictions and ground truth, and outputs Figure 9 with 45 data points.  -->
 
-```bash
-./main.sh --synthetic
-```
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
