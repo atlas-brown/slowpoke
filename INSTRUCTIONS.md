@@ -137,7 +137,7 @@ ssh -i slowpoke.pem ubuntu@$IP
 ```
 </details>
 
-# Results Reproducible (about 2 hours)
+# Results Reproducible (about 1.5 hours)
 
 For this step we strongly recommend the reviewers using `screen` or `tmux` to avoid accidental disconnect.
 The key results of Slowpoke's accuracy is represented by the following experiment
