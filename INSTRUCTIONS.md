@@ -67,14 +67,14 @@ Confirm sufficient documentation, key components as described in the paper, and 
   * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
 * Exercisability: See below
 
-To run Slowpoke, one needs to set up a kubernetes cluster.
+To run Slowpoke, one needs to set up a kubernetes cluster. For artifact reviewers, we prepared the clusters on AWS. 
 
-For artifact reviewers, we prepared the clusters on AWS. **Make sure you contact the authors for the account and ssh key setup**
+**IMPORTANT: Make sure you contact the authors for the account and ssh key setup**
 
 Here is how to use them:
 
 First, **From your local machine**, sign into the gateway machine we created on AWS
-(Contact us if you do not have an account set up yet)
+(`ae1` is a placeholder username)
 ```bash
 $ ssh ae1@3.133.138.10
 ```
