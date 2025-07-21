@@ -3,7 +3,7 @@ set -euo pipefail
 
 outfile=$1
 outdir=$(realpath $(dirname $outfile))
-name=$(basename outfile)
+name=$(basename $outfile)
 outfile=$outdir/$name
 cd $(dirname "$0")/..
 
