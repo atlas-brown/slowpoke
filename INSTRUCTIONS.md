@@ -10,7 +10,7 @@ The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `
 
 * **A performance model**: a formal model that explains why Slowpoke can accurately predict end-to-end throughput improvements.
 
-* **A lightweight distributed slowdown mechanism**: a distributed protocol improving prediction accuracy by coordinating pauses across microservices.
+* **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables acurate prediction.
 
 
 <!-- **(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.** -->
@@ -23,7 +23,7 @@ This artifact targets the following badges:
 
 * [ ] [Artifact available](#artifact-available): Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available (about 10 minutes).
 * [ ] [Artifact functional](#artifact-functional): Reviewers are expected to confirm sufficient documentation, key components as described in the paper, and execution with one experiment (about 20 minutes).
-* [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce _key_ results of section 5 of the paper (3 hours).
+* [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce _key_ results of section 5 of the paper (1.5 hours).
 
 # Artifact Available (10 minutes)
 
