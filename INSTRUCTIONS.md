@@ -69,7 +69,9 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 To run Slowpoke, one needs to set up a kubernetes cluster.
 
-For artifact reviewers, we prepared the clusters on AWS. Here is how to use it:
+For artifact reviewers, we prepared the clusters on AWS. **Make sure you contact the authors for the account and ssh key setup**
+
+Here is how to use them:
 
 First, **From your local machine**, sign into the gateway machine we created on AWS
 (Contact us if you do not have an account set up yet)
