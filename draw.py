@@ -51,12 +51,13 @@ if __name__ == "__main__":
         x = list(range(1, len(groundtruth) + 1))
         # Or to plot vs slowdown factors, uncomment:
         # x = slowdown
+        x = [e * 20 for e in x]
 
         plt.figure()
-        plt.plot(x, groundtruth, label='Groundtruth', marker='o')
-        plt.plot(x, predicted,   label='Predicted',   marker='s')
+        plt.plot(x, list(reversed(groundtruth)), label='Groundtruth', marker='o')
+        plt.plot(x, list(reversed(predicted)),   label='Predicted',   marker='s')
 
-        plt.xlabel('Test Point')            # or 'Slowdown factor' if using slowdown
+        plt.xlabel('Optimized processing time (%)')            # or 'Slowdown factor' if using slowdown
         plt.ylabel('Throughput')
         plt.title('Predicted vs. Groundtruth Throughput')
         plt.legend()

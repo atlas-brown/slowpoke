@@ -2,7 +2,7 @@
 
 outfile=$1
 outdir=$(realpath $(dirname $outfile))
-name=$(basename outfile)
+name=$(basename $outfile)
 outfile=$outdir/$name
 cd $(dirname "$0")/..
 
@@ -12,9 +12,9 @@ target=cart
 thread=8
 conn=512
 repetitions=1
-num_req=100000
+num_req=40000
 poker_batch_req=100
-num_exp=10
+num_exp=5
 DIR=boutique/04-15-pokerpp-fixed-deadlock
 FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-poker_batch_req$poker_batch_req.log
 mkdir -p $DIR
