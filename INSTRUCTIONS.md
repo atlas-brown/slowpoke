@@ -183,18 +183,14 @@ Open the links printed, and the files will be served from there. You can also in
 
 <details>
  <summary>
-  Explaination
+  Sample results
  </summary>
+We did a run on the same environment and the results are stored in [`sample_output/`](sample_output)
 
-
-(18 minutes) hotel reservation errors: [-2.684722102591385, 2.2647041284859606, 0.2594638696769054, -3.591321001845969, 2.9804826213333375]
-
-(19 minutes) online-boutique errors: [-7.1738703485706985, -5.916802465834088, -3.9139179253133833, -1.8576624448109162, 0.028792889928492823]
-
-(17 minutes) social network errors: [2.056515017954307, -5.524510290578988, -6.066724216678917, -2.149487791284433, -0.44225723157220204]
-
-(21 minutes) movie error: [-2.401952364289003, -0.3078691157346066, -0.28027965186679527, -0.8809673184547445, 0.834048643872503]
-
+![boutique](sample_output/boutique_medium.png)
+![movie](sample_output/movie_medium.png)
+![hotel](sample_output/hotel_medium.png)
+![social](sample_output/social_medium.png)
 </details>
 
 <!--**(§5.2, Fig.9) Across synthetic microservice applications**
