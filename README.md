@@ -27,8 +27,6 @@ To use Slowpoke for a microservice application, changes in three places are need
 3. Deployment configuration change: Slowpoke's runtime changes inserts artificial pauses based on environment variables `SLOWPOKE_DELAY_MICROS`, `SLOWPOKE_PRERUN`, `SLOWPOKE_POKER_BATCH_THRESHOLD`, and `SLOWPOKE_IS_TARGET_SERVICE`. Set these values accordingly when launching a deployment, or programatically pass in the values similar to [`slowpoke/boutique/yamls/cart.yaml`](slowpoke/boutique/yamls/cart.yaml).
 4. Run slowpoke's end-to-end profiling with XXX
 
-### (Optional) AWS Setup
-
 #### Application Code
 The application needs to include Slowpoke's runtime as dependency, and register request handler to the Slowpoke wrapper. Currently we only support Go (See example in XX)
 
