@@ -162,6 +162,7 @@ The results in the paper is done with each benchmark having 10 hypothetical opti
 ```console
 $ # Recommend doing the following command in screen or tmux
 $ ./run_reproducible.sh
+...
 The results are stored in /home/ubuntu/slowpoke/results
 To visualize the results, run: 
 
