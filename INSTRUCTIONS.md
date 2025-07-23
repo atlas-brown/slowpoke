@@ -185,11 +185,19 @@ Open the links printed, and the files will be served from there. You can also in
  <summary>
   Sample results
  </summary>
+ 
 We did a run on the same environment and the results are stored in [`sample_output/`](sample_output)
 
+Online-boutique
 ![boutique](sample_output/boutique_medium.png)
+
+Movie
 ![movie](sample_output/movie_medium.png)
+
+Hotel reservation
 ![hotel](sample_output/hotel_medium.png)
+
+Social network
 ![social](sample_output/social_medium.png)
 </details>
 
