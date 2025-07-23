@@ -51,7 +51,9 @@ In this repository, the reviewer is expected to verify
 * Completeness:
   * Slowpoke's user-level library: [initialization code](pkg/slowpoke/utils.go), [request handler wrapper](pkg/wrapper/wrappers.go) 
   * Poker, the controller that pauses services: [Go component](pkg/slowpoke/pause.go) [C component](slowpoke/poker/poker.c).
-  * Four real-world benchmarks (i.e., hotel, boutique, social, and movie in [entry points](cmd/) and [request handlers](internal)) and a synthetic benchmark emulator ([source](cmd/synthetic/service)) that dynamically changes behavior based on configuration files and [108 example configuration files](slowpoke/synthetic/) used in our evaluation.
+  * Benchmarks:
+    * Four real-world benchmarks: hotel (Hotel reservation), boutique (online-boutique), social (social media), and movie (movie rating), located in [entry points](cmd/) and [request handlers](internal))
+    * A synthetic benchmark emulator ([source](cmd/synthetic/service)) that dynamically changes behavior based on configuration files and [108 example configuration files](slowpoke/synthetic/) used in our evaluation.
 * Exercisability: See below
 
 To run Slowpoke, one needs to set up a kubernetes cluster. For artifact reviewers, we prepared the clusters on AWS. 
@@ -107,7 +109,7 @@ Then run (takes about 5 minutes)
 ```console
 $ ./run_functional.sh
 ```
-This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
+This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
 
 The reviewer should expect to see a file created at `results/boutique_tiny.log`, and at the end of it something like
 ```console
@@ -141,7 +143,7 @@ ssh -i slowpoke.pem ubuntu@$IP
 # Results Reproducible (about 2.5 hours)
 
 For this step we strongly recommend the reviewers using `screen` or `tmux` to avoid accidental disconnect.
-The key results of Slowpoke's accuracy is represented by the following experiment
+The key results of Slowpoke's accuracy is represented by the following experiments
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
 
