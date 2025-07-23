@@ -30,17 +30,17 @@ $ cd slowpoke
 $ git checkout XXXX
 ```
 
+The reviewer should be able to confirm that the repository is available and contains the following components:
+
 The reviewers are expected to see 
 
-1. The code is hosted at: [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke)
+1. Slowpoke's Go runtime is available in the [`pkg/slowpoke/`](pkg/slowpoke), the controller program (Poker) is located at [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c).
 
-2. Slowpoke's Go runtime is available in the [`pkg/slowpoke/`](pkg/slowpoke), the other half of the runtime (the controller process) is located at [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c).
+2. The testing scripts are in [`slowpoke/`](slowpoke) as well as top-level scripts [`run_function.sh`](run_functional.sh) and [`run_reproducible.sh`](run_reproducible.sh).
 
-3. Slowpoke's prediction model is currently implemented inside the evaluation script in [`slowpoke/test.py`](slowpoke/teset.py).
+3. Benchmarks is available in [`cmd/`](cmd) (Command line entry points) and [`internal/`](inernal) (Request handlers).
 
-4. Benchmarks is available in [`cmd/`](cmd) (Command line entry points) and [`internal/`](inernal) (Request handlers).
-
-<details><summary>Basic directory structure</summary>
+<!--<details><summary>Basic directory structure</summary>
   * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
   * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
   * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
@@ -51,11 +51,13 @@ The reviewers are expected to see
 > We provide a kubernete cluster with 13 machines for each reviwer, with all dependencies pre-installed.
 > To request access to the control node, please comment your public keys on hotcrp. 
 > Once the access is granted, reviwers can start/stop the clusters as needed.
-</details>
+</details>-->
 
 # Artifact Functional (20 minutes)
 
 Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
+
+In this repository, the reviewer is expected to verify
 
 * Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
 * Completeness:
