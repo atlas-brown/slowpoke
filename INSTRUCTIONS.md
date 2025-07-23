@@ -52,7 +52,7 @@ In this repository, the reviewer is expected to verify
   * Slowpoke's user-level library: [initialization code](pkg/slowpoke/utils.go), [request handler wrapper](pkg/wrapper/wrappers.go) 
   * Poker, the controller that pauses services: [Go component](pkg/slowpoke/pause.go) [C component](slowpoke/poker/poker.c).
   * Benchmarks:
-    * Four real-world benchmarks: hotel (Hotel reservation), boutique (online-boutique), social (social media), and movie (movie rating), located in [entry points](cmd/) and [request handlers](internal))
+    * Four real-world benchmarks: hotel (hotelReservation), boutique (Online Boutique), social (socialNetwork), and movie (mediaMicroservices), located in [entry points](cmd/) and [request handlers](internal)), adopted from [MuCache](https://www.usenix.org/conference/nsdi24/presentation/zhang-haoran)'s porting of the original benchmarks
     * A synthetic benchmark emulator ([source](cmd/synthetic/service)) that dynamically changes behavior based on configuration files and [108 example configuration files](slowpoke/synthetic/) used in our evaluation.
 * Exercisability: See below
 
