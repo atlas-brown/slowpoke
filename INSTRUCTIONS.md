@@ -10,7 +10,7 @@ The paper makes the following contributions, stated in page 2:
 
 * **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables accurate prediction.
 
-This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform accurate what-if analysis on end-to-end throughput, targetting four real-world microservice benchmarks (and optionally 108 synthetic microservice applications).
+This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform accurate what-if analysis on end-to-end throughput, targeting four real-world microservice benchmarks (and optionally 108 synthetic microservice applications).
 
 This artifact targets the following badges:
 
@@ -40,18 +40,6 @@ The reviewers are expected to see
 
 3. Benchmarks is available in [`cmd/`](cmd) (Command line entry points) and [`internal/`](inernal) (Request handlers).
 
-<!--<details><summary>Basic directory structure</summary>
-  * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
-  * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
-  * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
- Confirm that the benchmark programs, their inputs, and automation scripts are all publicly available:
-
-
-> AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are also pre-built for efficiency.
-> We provide a kubernete cluster with 13 machines for each reviwer, with all dependencies pre-installed.
-> To request access to the control node, please comment your public keys on hotcrp. 
-> Once the access is granted, reviwers can start/stop the clusters as needed.
-</details>-->
 
 # Artifact Functional (20 minutes)
 
