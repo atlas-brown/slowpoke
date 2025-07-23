@@ -63,7 +63,7 @@ In this repository, the reviewer is expected to verify
 * Completeness:
   * Slowpoke's user-level library: [initialization code](pkg/slowpoke/utils.go), [request handler wrapper](pkg/wrapper/wrappers.go) 
   * Poker, the controller that pauses services: [Go component](pkg/slowpoke/pause.go) [C component](slowpoke/poker/poker.c).
-  * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files and [108 example configuration files]() used in our evaluation.
+  * Four real-world benchmarks (i.e., hotel, boutique, social, and movie in [entry points](cmd/) and [request handlers](internal)) and a synthetic benchmark emulator ([source](cmd/synthetic/service)) that dynamically changes behavior based on configuration files and [108 example configuration files](slowpoke/synthetic/) used in our evaluation.
 * Exercisability: See below
 
 To run Slowpoke, one needs to set up a kubernetes cluster. For artifact reviewers, we prepared the clusters on AWS. 
@@ -157,7 +157,7 @@ The key results of Slowpoke's accuracy is represented by the following experimen
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
 
-The results in the paper is done with each benchmark having 10 hypothetical optimization points and 3 repetitions. To make the artifact evaluation process faster, we only run 10 points once. The entire process should take about 2.5 hours. To run them, make sure you are in `~/slowpoke`, then
+The results in the paper is done with each benchmark having 10 hypothetical optimization points and 3 repetitions. To make the artifact evaluation process faster, we only run them once. The entire process should take about 2.5 hours. To run them, make sure you are in `~/slowpoke`, then
 
 ```console
 $ # Recommend doing the following command in screen or tmux
