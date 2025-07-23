@@ -170,7 +170,7 @@ Result for /home/ubuntu/slowpoke/results/boutique_medium.log is available at
 http://xx.xx.xx.xx/boutique_medium.png
 ...
 ```
-Open the links printed, and the files will be served from there. You can also inspect the log files directly.
+The reviewer can expect to see plots comparing predicted throughput and groundtruth by opening the links. The log files can also be inspected directly. The reviewer should see the relative prediction error (the `Error Perc:` row in the log file) to be within 10%, and most of them centers around 0-4%. 
 
 <details>
  <summary>
