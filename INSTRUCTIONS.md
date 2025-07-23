@@ -2,7 +2,7 @@
 
 # Overview
 
-The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `:`):
+The paper makes the following contributions on pg. 2:
 
 * **Slowpoke**: the system for accurate what-if analysis of throughput optimizations in complex microservice architectures.
 
@@ -10,6 +10,7 @@ The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `
 
 * **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables acurate prediction.
 
+This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform what-if analysis on end-to-end throughput on four established microservice benchmarks.
 
 <!-- **(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.** -->
 
