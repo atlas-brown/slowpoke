@@ -8,7 +8,7 @@ The paper makes the following contributions, stated in page 2:
 
 * **A performance model**: a formal model that explains why Slowpoke can accurately predict end-to-end throughput improvements.
 
-* **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables acurate prediction.
+* **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables accurate prediction.
 
 This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform accurate what-if analysis on end-to-end throughput, targetting four real-world microservice benchmarks (and optionally 108 synthetic microservice applications).
 
