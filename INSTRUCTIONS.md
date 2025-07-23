@@ -10,13 +10,7 @@ The paper makes the following contributions on pg. 2:
 
 * **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables acurate prediction.
 
-This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform what-if analysis on end-to-end throughput, targetting four established microservice benchmarks (and optionally 108 synthetic microservice applications).
-
-<!-- **(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.** -->
-
-<!-- **(C2) Slowpoke accurately quantifies throughput after scaling optimizations or when the bottleneck is caused by mutex contention.** -->
-
-<!-- **(C2) Slowpoke accurately quantifies throguhput optimizations across synthetic microservice applications covering a wide range of microservice characteristics.** -->
+This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform accurate what-if analysis on end-to-end throughput, targetting four real-world microservice benchmarks (and optionally 108 synthetic microservice applications).
 
 This artifact targets the following badges:
 
@@ -36,11 +30,7 @@ $ cd slowpoke
 $ git checkout XXXX
 ```
 
-<details><summary>Basic directory structure</summary>
-  * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
-  * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
-  * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
- Confirm that the benchmark programs, their inputs, and automation scripts are all publicly available:
+The reviewers are expected to see 
 
 1. The code is hosted at: [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke)
 
@@ -49,6 +39,13 @@ $ git checkout XXXX
 3. Slowpoke's prediction model is currently implemented inside the evaluation script in [`slowpoke/test.py`](slowpoke/teset.py).
 
 4. Benchmarks is available in [`cmd/`](cmd) (Command line entry points) and [`internal/`](inernal) (Request handlers).
+
+<details><summary>Basic directory structure</summary>
+  * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
+  * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
+  * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
+ Confirm that the benchmark programs, their inputs, and automation scripts are all publicly available:
+
 
 > AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are also pre-built for efficiency.
 > We provide a kubernete cluster with 13 machines for each reviwer, with all dependencies pre-installed.
