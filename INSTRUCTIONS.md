@@ -45,11 +45,11 @@ $ git checkout XXXX
 
 1. The code is hosted at: [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke)
 
-2. Slowpoke is available in the [`pkg/slowpoke/`]() directory of the repository, including a third-party lib and Poker runtime.
+2. Slowpoke's Go runtime is available in the [`pkg/slowpoke/`](pkg/slowpoke), the other half of the runtime (the controller process) is located at [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c).
 
-3. Benchmarks are available in the [`benchmarks/`]() directory of the repository.
+3. Slowpoke's prediction model is currently implemented inside the evaluation script in [`slowpoke/test.py`](slowpoke/teset.py).
 
-4. Additional scripts are available in the [`scripts/`]() directory of the repository.
+4. Benchmarks is available in [`cmd/`](cmd) (Command line entry points) and [`internal/`](inernal) (Request handlers).
 
 > AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are provided for efficiency.
 > We provide a kubernete cluster with X machines for each reviwer, with all dependencies satisfied.
@@ -63,7 +63,8 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 * Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
 * Completeness:
-  * Slowpoke: [User-level library]() and [Poker runtime]().
+  * Slowpoke's user-level library: [initialization code](pkg/slowpoke/utils.go), [request handler wrapper](pkg/wrapper/wrappers.go) 
+  * Poker, the controller that pauses services: [Go component](pkg/slowpoke/pause.go) [C component](slowpoke/poker/poker.c).
   * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
 * Exercisability: See below
 
