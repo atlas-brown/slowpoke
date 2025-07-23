@@ -2,7 +2,7 @@
 
 # Overview
 
-The paper makes the following contributions on pg. 2:
+The paper makes the following contributions on p. 2:
 
 * **Slowpoke**: the system for accurate what-if analysis of throughput optimizations in complex microservice architectures.
 
