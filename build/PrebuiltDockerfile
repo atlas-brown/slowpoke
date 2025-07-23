@@ -1,0 +1,42 @@
+# Stage 1: Build Stage
+FROM golang:alpine AS builder
+
+ARG BENCHMARK="boutique"
+
+RUN echo "Building image for ${BENCHMARK} benchmark"
+
+# Install dependencies
+RUN apk add --no-cache gcc musl-dev zeromq-dev iftop
+
+WORKDIR /app
+
+# Copy dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source files
+COPY ./cmd ./cmd
+COPY ./internal ./internal
+COPY ./pkg ./pkg
+RUN mkdir /slowpoke
+COPY ./slowpoke/poker /slowpoke/poker
+
+RUN gcc /slowpoke/poker/poker.c -O2 -o /usr/bin/poker
+# Build all applications inside /app/cmd/boutique/
+RUN mkdir -p /app/bin && \
+    for d in /app/cmd/${BENCHMARK}/*; do \
+        if [ -d "$d" ]; then \
+            APP_NAME=$(basename "$d"); \
+            echo "Building $APP_NAME"; \
+            CGO_ENABLED=1 GOOS=linux go build -tags k8s,node1 -o /app/bin/${APP_NAME} "$d/."; \
+        fi \
+    done
+
+ENV APP_NAME=$APP_NAME
+ENV APP_NAMESPACE=$APP_NAMESPACE
+ENV NODE_IDX=$NODE_IDX
+ENV CM_ENABLED=$CM_ENABLED
+ENV EXPIRATION_TTL=$EXPIRATION_TTL
+
+ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/poker /app/bin/${APP_NAME} -logtostderr=true"]
+# ENTRYPOINT ["/bin/sh", "-c", "/app/bin/${APP_NAME} -logtostderr=true"]

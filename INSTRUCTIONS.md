@@ -1,10 +1,8 @@
 **TODO: change repo permission**
 
-**TODO: remember to add the service deletion script**
-
 # Overview
 
-The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `:`):
+The paper makes the following contributions on pg. 2:
 
 * **Slowpoke**: the system for accurate what-if analysis of throughput optimizations in complex microservice architectures.
 
@@ -12,12 +10,7 @@ The paper makes the following claims on pg. 2 (Comments to AEC reviewers after `
 
 * **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables acurate prediction.
 
-
-<!-- **(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.** -->
-
-<!-- **(C2) Slowpoke accurately quantifies throughput after scaling optimizations or when the bottleneck is caused by mutex contention.** -->
-
-<!-- **(C2) Slowpoke accurately quantifies throguhput optimizations across synthetic microservice applications covering a wide range of microservice characteristics.** -->
+This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform accurate what-if analysis on end-to-end throughput, targetting four real-world microservice benchmarks (and optionally 108 synthetic microservice applications).
 
 This artifact targets the following badges:
 
@@ -37,34 +30,40 @@ $ cd slowpoke
 $ git checkout XXXX
 ```
 
-<details><summary>other stuff</summary>
+The reviewer should be able to confirm that the repository is available and contains the following components:
+
+The reviewers are expected to see 
+
+1. Slowpoke's Go runtime is available in the [`pkg/slowpoke/`](pkg/slowpoke), the controller program (Poker) is located at [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c).
+
+2. The testing scripts are in [`slowpoke/`](slowpoke) as well as top-level scripts [`run_function.sh`](run_functional.sh) and [`run_reproducible.sh`](run_reproducible.sh).
+
+3. Benchmarks is available in [`cmd/`](cmd) (Command line entry points) and [`internal/`](inernal) (Request handlers).
+
+<!--<details><summary>Basic directory structure</summary>
   * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
   * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
   * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
  Confirm that the benchmark programs, their inputs, and automation scripts are all publicly available:
 
-1. The code is hosted at: [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke)
 
-2. Slowpoke is available in the [`pkg/slowpoke/`]() directory of the repository, including a third-party lib and Poker runtime.
-
-3. Benchmarks are available in the [`benchmarks/`]() directory of the repository.
-
-4. Additional scripts are available in the [`scripts/`]() directory of the repository.
-
-> AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are provided for efficiency.
-> We provide a kubernete cluster with X machines for each reviwer, with all dependencies satisfied.
+> AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are also pre-built for efficiency.
+> We provide a kubernete cluster with 13 machines for each reviwer, with all dependencies pre-installed.
 > To request access to the control node, please comment your public keys on hotcrp. 
 > Once the access is granted, reviwers can start/stop the clusters as needed.
-</details>
+</details>-->
 
 # Artifact Functional (20 minutes)
 
 Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
 
+In this repository, the reviewer is expected to verify
+
 * Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
 * Completeness:
-  * Slowpoke: [User-level library]() and [Poker runtime]().
-  * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
+  * Slowpoke's user-level library: [initialization code](pkg/slowpoke/utils.go), [request handler wrapper](pkg/wrapper/wrappers.go) 
+  * Poker, the controller that pauses services: [Go component](pkg/slowpoke/pause.go) [C component](slowpoke/poker/poker.c).
+  * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files and [108 example configuration files]() used in our evaluation.
 * Exercisability: See below
 
 To run Slowpoke, one needs to set up a kubernetes cluster. For artifact reviewers, we prepared the clusters on AWS. 
@@ -121,7 +120,18 @@ Then run (takes about 5 minutes)
 $ ./run_functional.sh
 ```
 This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
-However, for simplicity, we chose run the benchmarking part for a very short period of time and do not repeat the measurement, so the prediction may be very inaccurate.
+
+The reviewer should expect to see a file created at `results/boutique_tiny.log`, and at the end of it something like
+```console
+$ tail -n 20 results/boutique_tiny.log
+...
+    Baseline throughput: 4008.7682284172083
+    Groundtruth: [5829.637692207481]
+    Slowdown:    [2545.670613587085]
+    Predicted:   [5989.933238198921]
+    Error Perc:  [2.7496656645696422]
+```
+However, for simplicity, we chose run the benchmarking part for a very short period of time and do not repeat the measurement, so the prediction much more inaccurate than the sample output above.
 
 <details>
  <summary>Explaination</summary>
