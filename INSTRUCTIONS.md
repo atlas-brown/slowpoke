@@ -120,7 +120,18 @@ Then run (takes about 5 minutes)
 $ ./run_functional.sh
 ```
 This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
-However, for simplicity, we chose run the benchmarking part for a very short period of time and do not repeat the measurement, so the prediction may be very inaccurate.
+
+The reviewer should expect to see a file created at `results/boutique_tiny.log`, and at the end of it something like
+```console
+$ tail -n 20 results/boutique_tiny.log
+...
+    Baseline throughput: 4008.7682284172083
+    Groundtruth: [5829.637692207481]
+    Slowdown:    [2545.670613587085]
+    Predicted:   [5989.933238198921]
+    Error Perc:  [2.7496656645696422]
+```
+However, for simplicity, we chose run the benchmarking part for a very short period of time and do not repeat the measurement, so the prediction much more inaccurate than the sample output above.
 
 <details>
  <summary>Explaination</summary>
