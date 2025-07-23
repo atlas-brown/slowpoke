@@ -51,7 +51,7 @@ if __name__ == "__main__":
         x = list(range(1, len(groundtruth) + 1))
         # Or to plot vs slowdown factors, uncomment:
         # x = slowdown
-        x = [e * 20 for e in x]
+        x = [e * 10 for e in x]
 
         plt.figure()
         plt.plot(x, list(reversed(groundtruth)), label='Groundtruth', marker='o')
