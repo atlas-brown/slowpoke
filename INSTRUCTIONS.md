@@ -10,7 +10,7 @@ The paper makes the following contributions on pg. 2:
 
 * **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables acurate prediction.
 
-This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform what-if analysis on end-to-end throughput on four established microservice benchmarks.
+This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform what-if analysis on end-to-end throughput, targetting four established microservice benchmarks (and optionally 108 synthetic microservice applications).
 
 <!-- **(C1) Slowpoke accurately quantifies throughput optimizations on four real-world microservice applications.** -->
 
