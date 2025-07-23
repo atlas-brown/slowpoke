@@ -150,14 +150,14 @@ ssh -i slowpoke.pem ubuntu@$IP
 ```
 </details>
 
-# Results Reproducible (about 1.5 hours)
+# Results Reproducible (about 2.5 hours)
 
 For this step we strongly recommend the reviewers using `screen` or `tmux` to avoid accidental disconnect.
 The key results of Slowpoke's accuracy is represented by the following experiment
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
 
-The results in the paper is done with each benchmark having 10 hypothetical optimization points and 3 repetitions. To make the artifact evaluation process faster, we take only every other optimization point (5 optimization points) and run them once. The entire process should take about 1.5 hours. To run them, make sure you are in `~/slowpoke`, then
+The results in the paper is done with each benchmark having 10 hypothetical optimization points and 3 repetitions. To make the artifact evaluation process faster, we only run 10 points once. The entire process should take about 2.5 hours. To run them, make sure you are in `~/slowpoke`, then
 
 ```console
 $ # Recommend doing the following command in screen or tmux
@@ -169,7 +169,7 @@ To visualize the results, run:
 python3 /home/ubuntu/slowpoke/draw.py /home/ubuntu/slowpoke/results
 ```
 
-There will not be intermediate output. Although the log file `results/boutique_medium.log`, `results/hotel_medium.log`, `results/social_medium.log`, and `results/movie_medium.log` will grow overtime and should make progress at least once per minute.
+The log file `results/boutique_medium.log`, `results/hotel_medium.log`, `results/social_medium.log`, and `results/movie_medium.log` will grow overtime and should make progress at least once per minute.
 
 To see the results, run (as the previous script suggested)
 
@@ -179,7 +179,7 @@ Result for /home/ubuntu/slowpoke/results/boutique_medium.log is available at
 http://xx.xx.xx.xx/boutique_medium.png
 ...
 ```
-Open the links printed, and the files will be served from there.
+Open the links printed, and the files will be served from there. You can also inspect the log files directly.
 
 <details>
  <summary>
