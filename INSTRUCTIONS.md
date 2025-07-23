@@ -119,7 +119,7 @@ Then run (takes about 5 minutes)
 ```console
 $ ./run_functional.sh
 ```
-This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `productCatalog` service by 1 ms and compare the result against the ground truth.
+This will predict the throughput of the `online-boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
 
 The reviewer should expect to see a file created at `results/boutique_tiny.log`, and at the end of it something like
 ```console
