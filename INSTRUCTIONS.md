@@ -37,7 +37,7 @@ $ cd slowpoke
 $ git checkout XXXX
 ```
 
-<details><summary>other stuff</summary>
+<details><summary>Basic directory structure</summary>
   * EC2 cluster setup: We provide automation scripts and instructions in `scripts/setup/` to create, initialize, start, stop, and terminate EC2 clusters.
   * Building and deploying applications with Slowpoke: Instructions are available in `scripts/build/` for instrumenting applications and deploying them with Slowpoke, including modifying YAML configuration files.
   * Automated testing framework: Scripts in `scripts/test/` support end-to-end experiment orchestration with Slowpoke, enabling reproducible and automated testing.
@@ -51,8 +51,8 @@ $ git checkout XXXX
 
 4. Benchmarks is available in [`cmd/`](cmd) (Command line entry points) and [`internal/`](inernal) (Request handlers).
 
-> AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are provided for efficiency.
-> We provide a kubernete cluster with X machines for each reviwer, with all dependencies satisfied.
+> AEC Reviewers: From this point on, scripts use the provided AWS EC2 instances. All preprofiling results, Docker images are also pre-built for efficiency.
+> We provide a kubernete cluster with 13 machines for each reviwer, with all dependencies pre-installed.
 > To request access to the control node, please comment your public keys on hotcrp. 
 > Once the access is granted, reviwers can start/stop the clusters as needed.
 </details>
@@ -65,7 +65,7 @@ Confirm sufficient documentation, key components as described in the paper, and 
 * Completeness:
   * Slowpoke's user-level library: [initialization code](pkg/slowpoke/utils.go), [request handler wrapper](pkg/wrapper/wrappers.go) 
   * Poker, the controller that pauses services: [Go component](pkg/slowpoke/pause.go) [C component](slowpoke/poker/poker.c).
-  * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files, e.g., [108 example configuration files]().
+  * Four real-world benchmarks (i.e., [hotel-res](), [online-boutique](), [social-net](), and [media-review]()) and a [synthetic benchmark emulator]() that dynamically changes behavior based on configuration files and [108 example configuration files]() used in our evaluation.
 * Exercisability: See below
 
 To run Slowpoke, one needs to set up a kubernetes cluster. For artifact reviewers, we prepared the clusters on AWS. 
