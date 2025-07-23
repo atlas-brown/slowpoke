@@ -131,7 +131,7 @@ $ tail -n 20 results/boutique_tiny.log
     Predicted:   [5989.933238198921]
     Error Perc:  [2.7496656645696422]
 ```
-However, for simplicity, we chose run the benchmarking part for a very short period of time and do not repeat the measurement, so the prediction much more inaccurate than the sample output above.
+However, for simplicity, we chose run the benchmarking part for a very short period of time and do not repeat the measurement, so the prediction will be much more inaccurate than the sample output above.
 
 <details>
  <summary>Explaination</summary>
