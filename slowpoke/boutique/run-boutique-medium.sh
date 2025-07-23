@@ -10,18 +10,13 @@ cd $(dirname "$0")/..
 
 target=cart
 thread=8
-conn=512
+conn=1024
 repetitions=1
-num_req=40000
+num_req=80000
 poker_batch_req=100
-num_exp=5
+num_exp=10
 DIR=boutique/04-15-pokerpp-fixed-deadlock
 FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-poker_batch_req$poker_batch_req.log
-mkdir -p $DIR
-if [ -f $DIR/$FILE ]; then
-    echo "File $DIR/$FILE already exists. Skipping test."
-    exit 0
-fi
 
 kubectl delete deployments --all
 kubectl delete services --all

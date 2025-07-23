@@ -56,9 +56,10 @@ if __name__ == "__main__":
         plt.figure()
         plt.plot(x, list(reversed(groundtruth)), label='Groundtruth', marker='o')
         plt.plot(x, list(reversed(predicted)),   label='Predicted',   marker='s')
-
+        y_max = max([max(groundtruth), max(predicted)]) * 1.2
         plt.xlabel('Optimized processing time (%)')            # or 'Slowdown factor' if using slowdown
         plt.ylabel('Throughput')
+        plt.ylim(0, y_max)
         plt.title('Predicted vs. Groundtruth Throughput')
         plt.legend()
         plt.tight_layout()

@@ -2,10 +2,10 @@
 
 cd $(dirname $0)
 mkdir -p results
-# bash ./slowpoke/boutique/run-boutique-medium.sh results/boutique_medium.log
-# bash ./slowpoke/hotel/run-hotel-medium.sh results/hotel_medium.log
-# bash ./slowpoke/social/run-social-medium.sh results/social_medium.log
-# bash ./slowpoke/movie/run-movie-medium.sh results/movie_medium.log
+time bash ./slowpoke/boutique/run-boutique-medium.sh results/boutique_medium.log
+time bash ./slowpoke/hotel/run-hotel-medium.sh results/hotel_medium.log
+time bash ./slowpoke/social/run-social-medium.sh results/social_medium.log
+time bash ./slowpoke/movie/run-movie-medium.sh results/movie_medium.log
 
 outdir=$(realpath ./results)
 draw_script=$(realpath ./draw.py)
