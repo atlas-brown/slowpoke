@@ -127,17 +127,17 @@ However, for simplicity, we chose run the benchmarking part for a very short per
  <summary>Explaination</summary>
 
 `./run_functional.sh` runs [`./slowpoke/boutique/run-boutique-tiny.sh`](slowpoke/boutique/run-boutique-tiny.sh), which runs the main testing script with appropriate arguments
-```
+
 </details>
 
-# Results Reproducible (about 2.5 hours)
+# Results Reproducible (2.5 hours)
 
 For this step we strongly recommend the reviewers using `screen` or `tmux` to avoid accidental disconnect.
 The key results of Slowpoke's accuracy is represented by the following experiments
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
 
-The results in the paper is done with each benchmark having 10 hypothetical optimization points and 3 repetitions. To make the artifact evaluation process faster, we only run them once. The entire process should take about 2.5 hours. To run them, make sure you are in `~/slowpoke`, then
+The results in the paper is done with 5 repetitions and taking 3 central points, to mitigate noise from the application itself. To make the artifact evaluation process faster, we only run the the experiment once. The entire process should take about 2.5 hours. To run them, make sure you are in `~/slowpoke`, then
 
 ```console
 $ # Recommend doing the following command in screen or tmux
