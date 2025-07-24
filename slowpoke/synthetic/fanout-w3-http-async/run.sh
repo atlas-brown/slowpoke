@@ -1,17 +1,18 @@
 #!/bin/bash
 
-cd $(dirname $0)/../..
+EXP="$(basename "$(dirname "$(realpath "$0")")")"
 
-EXP=fanout-w3-http-async
-DIR=synthetic/$EXP/all-flush-time-based-sleep
+cd $(dirname $0)/../..
+DIR=synthetic/$EXP/results
 mkdir -p $DIR
 
 # config
 THREAD=8
 CONN=512
-NUM_REQ=40000
+NUM_REQ=20000
 POKER_BATCH=30000000
-NUM_EXP=10
+POKER_BATCH_REQ=100
+NUM_EXP=5
 REPETITION=1
 
 # Make it reproducible
@@ -41,5 +42,6 @@ do
         --random_seed $random_seed \
         --repetition $REPETITION \
         --poker_batch $POKER_BATCH \
+        --poker_batch_req $POKER_BATCH_REQ \
         >$output_file
 done

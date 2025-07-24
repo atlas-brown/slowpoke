@@ -1,26 +1,29 @@
 #!/bin/bash
 
 # Change this!!
-target_service_random_pairs="4:8264" # Make it reproducible 1:2560 4:8264 5:6318
+target_service_random_pairs="1:2560 4:8264 5:6318" # Make it reproducible 
+EXP="$(basename "$(dirname "$(realpath "$0")")")"
 
 cd $(dirname $0)/../..
-
-EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-24-pokerpp-lower-conn
+DIR=synthetic/$EXP/results
 mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=256
+CONN=512
 NUM_REQ=20000
 POKER_BATCH_REQ=100
-NUM_EXP=10
-REPETITION=5
+NUM_EXP=5
+REPETITION=1
 
 for pair in $target_service_random_pairs
 do 
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
+
+    if [[ $target_service -eq 4 ]]; then
+        CONN=256
+    fi
 
     output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker_batch_req$POKER_BATCH_REQ-n$NUM_EXP-rep$REPETITION.log
     

@@ -48,7 +48,7 @@ Confirm sufficient documentation, key components as described in the paper, and 
 <details>
  <summary>Explaination</summary>
 
-The cluster is already set up using scripts in this repo under [`scripts/setup/`]() (see. The cluster contains 2 AWS `m5.xlarge` and 12 `m5.large` EC2 instances. The public IPs of the EC2 machines will be stored in `~/cluster_info/ec2_ips`, first one is the kubernetes control node, the second one is worker node that runs the workload generator, the rest are worker nodes that run the services in each benchmark.
+The cluster is already set up using scripts in this repo under [`scripts/setup/`](scripts/setup) (The cluster contains 2 AWS `m5.xlarge` and 12 `m5.large` EC2 instances. The public IPs of the EC2 machines will be stored in `~/cluster_info/ec2_ips`, first one is the kubernetes control node, the second one is worker node that runs the workload generator, the rest are worker nodes that run the services in each benchmark.
 
 </details>
 
@@ -68,28 +68,18 @@ $ tail -n 20 results/boutique_tiny.log
 <details>
  <summary>Explaination</summary>
 
-`./run_functional.sh` runs [`./slowpoke/boutique/run-boutique-tiny.sh`](), which runs the main testing script with appropriate arguments
+`./run_functional.sh` runs [`./slowpoke/boutique/run-boutique-tiny.sh`](slowpoke/boutique/run-boutique-tiny.sh), which runs the main testing script with appropriate arguments
 
-**Setup (optional):** We provide fully initialized and configured Kubernetes clusters for convenience.  
-Optionally, reviewers may set up their own EC2 machines using the following script:
-```
-# Create a EC2 cluster with 8 worker nodes and one control node
-python3 script/setup/ec2_cluster -n 8
-# Initialize the Kubernete clusters and return the control node IP
-IP=$(./script/setup/initialize-aws.sh)
-# ssh into the control node
-ssh -i slowpoke.pem ubuntu@$IP
-```
 </details>
 
-# Results Reproducible (about 2.5 hours)
+# Results Reproducible (2.5 hours)
 
 For this step we strongly recommend the reviewers using `screen` or `tmux` to avoid accidental disconnect.
 The key results of Slowpoke's accuracy is represented by the following experiments
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
 
-The results in the paper is done with each benchmark having 10 hypothetical optimization points and 3 repetitions. To make the artifact evaluation process faster, we only run them once. The entire process should take about 2.5 hours. To run them, make sure you are in `~/slowpoke`, then
+The results in the paper is done with 5 repetitions and taking 3 central points, to mitigate noise from the application itself. To make the artifact evaluation process faster, we only run the the experiment once. The entire process should take about 2.5 hours. To run them, make sure you are in `~/slowpoke`, then
 
 ```console
 $ # Recommend doing the following command in screen or tmux
@@ -137,7 +127,7 @@ Social
 ![social](sample_output/social_medium.png)
 </details>
 
-To recreate Fig. 8 similar to the paper, run
+To create the plot similar to Fig. 8 in the paper, run
 
 ```console
 $ python3 plot_macro.py
@@ -145,8 +135,8 @@ Result for plot_macro.pdf is available at
 http://xx.xx.xx.xx/plot_macro.pdf
 ```
 
-Sample output
-![Sample macro](sample_output/plot_macro.pdf)
+The figure we created using this artifact
+![Sample macro](sample_output/plot_macro.png)
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
