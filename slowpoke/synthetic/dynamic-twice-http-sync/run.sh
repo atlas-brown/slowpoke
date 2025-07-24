@@ -3,19 +3,18 @@
 # Change this!!
 target_service_random_pairs="0:24737 3:1492 5:19356" # Make it reproducible
 
+EXP="$(basename "$(dirname "$(realpath "$0")")")"
+
 cd $(dirname $0)/../..
-
-EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-09-pokerpp-rm-deadlock-0maxconn
+DIR=synthetic/$EXP/results
 mkdir -p $DIR
-
 # config
 THREAD=8
 CONN=512
 NUM_REQ=20000
 POKER_BATCH_REQ=100
-NUM_EXP=10
-REPETITION=5
+NUM_EXP=5
+REPETITION=1
 
 for pair in $target_service_random_pairs
 do 
