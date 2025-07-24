@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# Change this!! 2:12895 3:19434 
-target_service_random_pairs="4:1348"
+# Change this!! 
+target_service_random_pairs="2:12895 3:19434 4:1348"
 
 cd $(dirname $0)/../..
-
-EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-23-pokerpp-lower-conn
+DIR=synthetic/$EXP/results
 mkdir -p $DIR
 
 # config
@@ -14,8 +12,8 @@ THREAD=8
 CONN=256
 NUM_REQ=20000
 POKER_BATCH_REQ=100
-NUM_EXP=10
-REPETITION=2
+NUM_EXP=5
+REPETITION=1
 
 for pair in $target_service_random_pairs
 do 

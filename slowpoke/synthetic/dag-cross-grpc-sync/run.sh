@@ -1,13 +1,12 @@
 #!/bin/bash
 
 # Change this!!
-#2:12895 3:19434 
 target_service_random_pairs="2:12895 3:19434 4:1348"
 
-cd $(dirname $0)/../..
+EXP="$(basename "$(dirname "$(realpath "$0")")")"
 
-EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-22-less-conn
+cd $(dirname $0)/../..
+DIR=synthetic/$EXP/results
 mkdir -p $DIR
 
 # config
@@ -15,13 +14,17 @@ THREAD=8
 CONN=256
 NUM_REQ=20000
 POKER_BATCH_REQ=100
-NUM_EXP=10
-REPETITION=5
+NUM_EXP=5
+REPETITION=1
 
 for pair in $target_service_random_pairs
 do 
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
+
+    if [[ $target_service == "3" ]]; then 
+        CONN=512
+    fi
 
     output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker_batch_req$POKER_BATCH_REQ-n$NUM_EXP-rep$REPETITION.log
     
