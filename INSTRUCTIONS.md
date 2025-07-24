@@ -195,7 +195,7 @@ Social
 ![social](sample_output/social_medium.png)
 </details>
 
-To recreate Fig. 8 similar to the paper, run
+To create the plot similar to Fig. 8 in the paper, run
 
 ```console
 $ python3 plot_macro.py
