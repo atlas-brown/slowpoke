@@ -14,8 +14,8 @@ THREAD=8
 CONN=512
 NUM_REQ=20000
 POKER_BATCH_REQ=100
-NUM_EXP=10
-REPETITION=5
+NUM_EXP=5
+REPETITION=1
 
 for pair in $target_service_random_pairs
 do 
