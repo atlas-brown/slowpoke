@@ -1,6 +1,3 @@
-**TODO: change repo permission**
-**TODO: document the docker problem**
-
 # Overview
 
 The paper makes the following contributions, stated in page 2:
@@ -21,14 +18,14 @@ This artifact targets the following badges:
 
 # Artifact Available (10 minutes)
 
-The Slowpoke artifact is available at https://github.com/atlas-brown/slowpoke, commit hash XXXX.
+The Slowpoke artifact is available at https://github.com/atlas-brown/slowpoke, frozen branch `nsdi26-ae`.
 
 To confim this, run
 
 ```bash
 $ git clone https://github.com/atlas-brown/slowpoke
 $ cd slowpoke
-$ git checkout XXXX
+$ git checkout nsdi26-ae
 ```
 
 The reviewer should be able to confirm that the repository is available and contains the following components:
@@ -104,13 +101,15 @@ The cluster is already set up using scripts in this repo under [`scripts/setup/`
 
 **On the cluster control node**, clone Slowpoke's repo
 ```console
-$ git clone https://github.com/atlas-brown/slowpoke; cd slowpoke; git checkout XXXX
+$ git clone https://github.com/atlas-brown/slowpoke; cd slowpoke; git checkout nsdi26-ae
 ```
 Then run (takes about 5 minutes)
 ```console
 $ ./run_functional.sh
 ```
 This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
+
+> During our own testing, we discovered kubernetes issue that shows up non-deterministically. Specifically, the `wrk`'s worker node occationally stop responding. If the reviewer notice the time spent in one of the steps take much longer than our estimation, we advise the reviewer to go back to the gateway machine, stop and restart the cluster, and try again.
 
 The reviewer should expect to see a file created at `results/boutique_tiny.log`, and at the end of it something like
 ```console
