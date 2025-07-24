@@ -1,21 +1,21 @@
 #!/bin/bash
 
 # Change this!!
-target_service_random_pairs="1:8422 " # Make it reproducible4:21912 5:2217 
+target_service_random_pairs="1:8422 4:21912" # Make it reproducible
+
+EXP="$(basename "$(dirname "$(realpath "$0")")")"
 
 cd $(dirname $0)/../..
-
-EXP=$(dirname $0 | xargs basename)
-DIR=synthetic/$EXP/04-23-pokerpp-lower-conn
+DIR=synthetic/$EXP/results
 mkdir -p $DIR
 
 # config
 THREAD=8
-CONN=256
+CONN=512
 NUM_REQ=20000
 POKER_BATCH_REQ=100
-NUM_EXP=10
-REPETITION=5
+NUM_EXP=5
+REPETITION=1
 
 for pair in $target_service_random_pairs
 do 
@@ -23,6 +23,10 @@ do
     random_seed=$(echo $pair | cut -d':' -f2)
 
     output_file=$DIR/$EXP-service$target_service-t$THREAD-c$CONN-req$NUM_REQ-poker_batch_req$POKER_BATCH_REQ-n$NUM_EXP-rep$REPETITION.log
+
+    if [[ $target_service -eq 1 ]]; then
+        CONN=256
+    fi
     
     if [[ -e $output_file ]]; then
         echo "File $output_file already exists. Skipping..."
