@@ -56,15 +56,17 @@ In this repository, the reviewer is expected to verify
 
 To run Slowpoke, one needs to set up a kubernetes cluster. For artifact reviewers, we prepared the clusters on AWS. 
 
-**IMPORTANT: Make sure you contact the authors for the account and ssh key setup**
+**IMPORTANT to AE reviewers: Make sure you are assigned an account and given the password through HotCRP**
 
 Here is how to use them:
 
 First, **From your local machine**, sign into the gateway machine we created on AWS
-(`ae1` is a placeholder username)
-```bash
+(assuming the username is `ae1`)
+```console
 $ ssh ae1@3.133.138.10
+ae1@3.133.138.10's password:
 ```
+Paste in <!PerReviewerPassword!> here and the reviewer should be able to log into the machine
 
 **On the gateway machine**, the reviewer will see two folders: `scripts` and `cluster_info`. To start the cluster and ssh into the cluster control node, run 
 ```console
