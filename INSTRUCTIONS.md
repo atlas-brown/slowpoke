@@ -203,7 +203,7 @@ Result for plot_macro.pdf is available at
 http://xx.xx.xx.xx/plot_macro.pdf
 ```
 
-Sample output
+The figure we created using this artifact
 ![Sample macro](sample_output/plot_macro.png)
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
