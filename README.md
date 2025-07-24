@@ -44,7 +44,7 @@ Currently Slowpoke supports microservices written in Go. Before using Slowpoke (
 2. Container: the application process now needs to start as a subprocess to the poker controller [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c). To do this, include Poker's compilation in the container configuration file as well as the entrypoint command change, similar to [`build/PrebuiltDockerfile`](build/PrebuiltDockerfile). 
 3. Deployment: Slowpoke's runtime changes inserts artificial pauses based on environment variables `SLOWPOKE_DELAY_MICROS`, `SLOWPOKE_PRERUN`, `SLOWPOKE_POKER_BATCH_THRESHOLD`, and `SLOWPOKE_IS_TARGET_SERVICE`. Set these values accordingly when launching a deployment, or programatically pass in the values similar to [`slowpoke/boutique/yamls/cart.yaml`](slowpoke/boutique/yamls/cart.yaml).
 
-Eventually, launcin lowpoke's end-to-end profiling by running `./slowpoke`: 
+**Launching Slowpoke:**Eventually, launcing Slowpoke's end-to-end profiling by running `./slowpoke`: 
 
 ```console
 $ slowpoke --help
