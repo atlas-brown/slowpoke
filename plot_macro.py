@@ -22,7 +22,7 @@ IP = get_public_ip()
 # plt.rcParams['mathtext.bf'] = 'Times New Roman:bold'
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-n', type=int, default=5, help='Number of optimizations')
+parser.add_argument('-n', type=int, default=10, help='Number of optimizations')
 args = parser.parse_args()
 NUM_OPTIMIZATIONS = args.n
 
