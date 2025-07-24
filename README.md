@@ -1,20 +1,23 @@
 # Slowpoke: End-to-end Throughput Optimization Modeling for Microservice Applications
+[Overview](#overview) | [Quick Setup](#quick-setup) | [More Info](#more-information) | [Structure](#repository-structure) | [Citing](#citing-slowpoke) | [License & Contrib](#license-and-contributing)
 
-Slowpoke is a causal profiling tool for microservice applications. It answers what-if throughput questions by predicting impact of service-level throughput optimization on end-to-end application-level throughput.
+> For issues and ideas, email [slowpoke@brown.edu](mailto:slowpoke@brown.edu) or, better, [open a GitHub issue](https://github.com/atlas-brown/slowpok/issues/new/choose).
+>
 
-## Citing Slowpoke
-```
-@inproceedings{slowpoke:nsdi:2026,
-  author = {Yizheng Xie and Di Jin and Oğuzhan Çölkesen and Vasiliki Kalavri and John Liagouris and Nikos Vasilakis},
-  title = {Slowpoke: End-to-end Throughput Optimization Modeling for Microservice Applications},
-  booktitle = {23rd USENIX Symposium on Networked Systems Design and Implementation (NSDI 26)},
-  year = {2026},
-  address = {Renton, WA},
-  publisher = {USENIX Association},
-  month = may
-}
-```
-## Requirement
+Slowpoke is a system for causally profiling microservice applications, by predicting the effects of service-level optimizations on end-to-end throughput of the entire service graph.
+It can answer what-if questions of the form "how will the overall throughput of my entire distributed microservice graph improve if I optimize the throughput of this service by 30%?".
+It does so by relying on a mathematical model parameterizable by service-level information, rather than end-to-end traces or other a priori information that might not be available at the time one wants to explore optimization opportunities.
+
+If you are interested in evaluating the Slowpoke artifact, switch to the frozen [`nsdi26-ae branch`](https://github.com/atlas-brown/slowpoke/tree/nsdi26-ae) and jump straight into the artifact [instructions](https://github.com/atlas-brown/slowpoke/tree/nsdi26-ae).
+
+## Overview
+
+Slowpoke is a causal profiling system for microservice applications that accurately quantifies the effect of hypothetical optimizations on end-to-end throughput, without relying on tracing or a priori knowledge of the call graph.
+Microservice operators can use Slowpoke to ask what-if performance analysis questions of the form "What throughput could my retail application sustain if I optimize the shopping cart service from 10K req/s to 20K req/s?". 
+Given a target service and optimization, Slowpoke employs a performance model that determines how to selectively slow down non-target services to preserve the relative effect of the optimization.
+It then performs service-local profiling experiments using its `poker` component to predict end-to-end throughput as if the candidate optimization was implemented.
+
+## Quick setup
 Using Slowpoke requires a Kubernetes cluster.
 
 <details><summary>(Optional) AWS Setup</summary>
@@ -32,16 +35,19 @@ AWS Cluster setup for different account and environment can be quite different. 
 10. Finally, if you wish to delete the cluster, run `python3 ./scripts/setup/teardown_ec2_cluster.py -d ~/mycluster`
 </details>
 
-## Using Slowpoke
+## More Info
 
-To use Slowpoke for a microservice application, changes in three places are needed.
+Currently Slowpoke supports microservices written in Go. Before using Slowpoke (1) add the Slowpoke runtime to the application, (2) update the container configuration to add Slowpoke's `poker` controller, (3) set appropriate per-service pauses when launching a deployment. Then, to launch Slowpoke using `./slowpoke`.
 
-1. Application: the current implementation of Slowpoke requires the application to be written in Go. To add in Slowpoke's runtime, modify http request handler registration to use slowpoke handler wrapper, similar to [`cmd/boutique/cart/main.go/`](cmd/boutique/cart/main.go/)
-2. Container configuration change: the application process now needs to start as a subprocess to the poker controller [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c). To do this, include Poker's compilation in the container configuration file as well as the entrypoint command change, similar to [`build/PrebuiltDockerfile`](build/PrebuiltDockerfile). 
-3. Deployment configuration change: Slowpoke's runtime changes inserts artificial pauses based on environment variables `SLOWPOKE_DELAY_MICROS`, `SLOWPOKE_PRERUN`, `SLOWPOKE_POKER_BATCH_THRESHOLD`, and `SLOWPOKE_IS_TARGET_SERVICE`. Set these values accordingly when launching a deployment, or programatically pass in the values similar to [`slowpoke/boutique/yamls/cart.yaml`](slowpoke/boutique/yamls/cart.yaml).
-4. Run slowpoke's end-to-end profiling by running `test.py`
+**Using Slowpoke:** In more detail, the required to use Slowpoke:
+1. Application: Add in Slowpoke's runtime, modify http request handler registration to use slowpoke handler wrapper, similar to [`cmd/boutique/cart/main.go/`](cmd/boutique/cart/main.go/)
+2. Container: the application process now needs to start as a subprocess to the poker controller [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c). To do this, include Poker's compilation in the container configuration file as well as the entrypoint command change, similar to [`build/PrebuiltDockerfile`](build/PrebuiltDockerfile). 
+3. Deployment: Slowpoke's runtime changes inserts artificial pauses based on environment variables `SLOWPOKE_DELAY_MICROS`, `SLOWPOKE_PRERUN`, `SLOWPOKE_POKER_BATCH_THRESHOLD`, and `SLOWPOKE_IS_TARGET_SERVICE`. Set these values accordingly when launching a deployment, or programatically pass in the values similar to [`slowpoke/boutique/yamls/cart.yaml`](slowpoke/boutique/yamls/cart.yaml).
+
+Eventually, launcin lowpoke's end-to-end profiling by running `./slowpoke`: 
+
 ```console
-$ python3 slowpoke/test.py --help
+$ slowpoke --help
 usage: test.py [-h] [-b BENCHMARK] [-t NUM_THREADS] [-c NUM_CONNS] [-x TARGET_SERVICE] [-r REQUEST_TYPE]
                [--repetitions REPETITIONS] [--num_exp NUM_EXP] [--pre_run] [--range RANGE RANGE] [--num_req NUM_REQ]
                [--clien_cpu_quota CLIEN_CPU_QUOTA] [--random_seed RANDOM_SEED] [--poker_batch POKER_BATCH]
@@ -72,12 +78,34 @@ options:
   --poker_relative_batch POKER_RELATIVE_BATCH
 ```
 
-For example
-```
-python3 test.py -b hotel -r mix -x profile --num_exp 10 -t 8 -c 1024 --poker_batch_req 100 --repetition 3 --num_req 50000
+For example:
+
+```sh
+./slowpoke -b hotel -r mix -x profile --num_exp 10 -t 8 -c 1024 --poker_batch_req 100 --repetition 3 --num_req 50000
 ```
 
-## Repo Structure
+## Repository Structure
 
 The top level repo is the Go package source code for benchmark applications, combined with Slowpoke's Go runtime [`pkg/slowpoke`](pkg/slowpoke).
 Slowpoke utility and model prediction scripts are in [`slowpoke`]
+
+## Citing Slowpoke
+
+If you are using Slowpoke, `poker`, or any of components in this repository, please cite the following research:
+
+```bibtex
+@inproceedings{slowpoke:nsdi:2026,
+  author = {Yizheng Xie and Di Jin and Oğuzhan Çölkesen and Vasiliki Kalavri and John Liagouris and Nikos Vasilakis},
+  title = {Slowpoke: End-to-end Throughput Optimization Modeling for Microservice Applications},
+  booktitle = {23rd USENIX Symposium on Networked Systems Design and Implementation (NSDI 26)},
+  year = {2026},
+  address = {Renton, WA},
+  publisher = {USENIX Association},
+  month = may
+}
+```
+
+## License & Contributing
+
+
+
