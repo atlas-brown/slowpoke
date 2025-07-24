@@ -2,7 +2,7 @@
 CRI_DOCKER_VER=0.3.1
 
 docker_install () {
-    # Add DocÃ¥ker's official GPG key:
+    # Add Docker's official GPG key:
     sudo apt-get update
     sudo apt-get -y install ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
