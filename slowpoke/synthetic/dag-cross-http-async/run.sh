@@ -3,6 +3,8 @@
 # Change this!!
 target_service_random_pairs="2:16181 3:23541 4:21636" # Make it reproducible
 
+EXP="$(basename "$(dirname "$(realpath "$0")")")"
+
 cd $(dirname $0)/../..
 DIR=synthetic/$EXP/results
 mkdir -p $DIR
