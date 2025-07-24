@@ -1,98 +1,49 @@
 # Overview
 
-The paper makes the following contributions, stated in page 2:
+The paper makes the following contributions:
 
-* **Slowpoke**: the system for accurate what-if analysis of throughput optimizations in complex microservice architectures.
+1. **Throughput predictor(§2)**: A system, Slowpoke, for predicting throughput optimizations in complex microservice architectures.
+2. **Performance model (§3)**: a mathematical model underpinning the Slowpoke optimizations; this model is described in the paper.
+3. **Distributed slowdown mechanism (§4)**: a service-local controller for slowing down microservices, Poker, providing runtime information to the model.
 
-* **A performance model**: a formal model that explains why Slowpoke can accurately predict end-to-end throughput improvements.
-
-* **A lightweight distributed slowdown mechanism**: a per-node service controller that pause microservices in a coordinated way that enables accurate prediction.
-
-This artifact validates the claims by running the Slowpoke system, empowered by the performance model and an effective implementation of the slowdown mechanism, to perform accurate what-if analysis on end-to-end throughput, targeting four real-world microservice benchmarks (and optionally 108 synthetic microservice applications).
+Slowpoke is characterized via (1) four real-world microservice applications and (2) synthetic microbenchmarks that cover many different micorservice configurations. The artifact focuses on claims no. 1 and 3 (the mathematical model is described the paper), and primarily evaluations with real-world applications (but validating microbenchmarks is tagged as optional, for reviewers).
 
 This artifact targets the following badges:
 
-* [ ] [Artifact available](#artifact-available): Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available (about 10 minutes).
-* [ ] [Artifact functional](#artifact-functional): Reviewers are expected to confirm sufficient documentation, key components as described in the paper, and execution with one experiment (about 20 minutes).
-* [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce _key_ results of section 5 of the paper (1.5 hours).
+* [ ] [Artifact available](#artifact-available): Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available (~10 minutes).
+* [ ] [Artifact functional](#artifact-functional): Reviewers are expected to confirm sufficient documentation, key components described in the paper, and execution with one experiment (about 20 minutes).
+* [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce key results of section 5 of the paper (about 2.5 hours for real-world benchmarks, optionally 2–3 days for the synthetic benchmarks).
+
+> [!IMPORTANT]
+> To reproduce results, this artifact uses a real distributed system on AWS. Remember:
+> * Each reviewer's username and password has been shared with HotCRP, *please do not share them outside the AEC*.
+> * Remember to freeze or turn off evaluation when you're done, as this evaluation is expensive! If you do not know how, ask us via HotCRP—thank you!
 
 # Artifact Available (10 minutes)
 
-The Slowpoke artifact is available at https://github.com/atlas-brown/slowpoke, frozen branch `nsdi26-ae`.
+Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available:
 
-To confim this, run
+* Slowpoke is available at [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke) (`nsdi26-ae` will be frozen).
 
-```bash
-$ git clone https://github.com/atlas-brown/slowpoke
-$ cd slowpoke
-$ git checkout nsdi26-ae
-```
+* The [Slowpoke analysis component](pkg/slowpoke), [the Poker slowdown component](slowpoke/poker/poker.c), the [`benchmarks`](cmd/) (command-line entry points) and [`internal/`](inernal) (request handlers).
 
-The reviewer should be able to confirm that the repository is available and contains the following components:
-
-The reviewers are expected to see 
-
-1. Slowpoke's Go runtime is available in the [`pkg/slowpoke/`](pkg/slowpoke), the controller program (Poker) is located at [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c).
-
-2. The testing scripts are in [`slowpoke/`](slowpoke) as well as top-level scripts [`run_function.sh`](run_functional.sh) and [`run_reproducible.sh`](run_reproducible.sh).
-
-3. Benchmarks is available in [`cmd/`](cmd) (Command line entry points) and [`internal/`](inernal) (Request handlers).
-
+* Top-level scripts in [`slowpoke/`](slowpoke) and ones related to the artifact reproducilbility: [`run_function.sh`](run_functional.sh) and [`run_reproducible.sh`](run_reproducible.sh).
 
 # Artifact Functional (20 minutes)
 
-Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs (approximately 20 minutes):
+Confirm sufficient documentation, key components as described in the paper, and execution with minimal inputs:
 
-In this repository, the reviewer is expected to verify
+* Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments.
+ 
+* Completeness: (1)Slowpoke user-level library ([initialization](pkg/slowpoke/utils.go), [request handler](pkg/wrapper/wrappers.go)), (2) Poker slowdown mechanism ([Pause[(pkg/slowpoke/pause.go), [poker](slowpoke/poker/poker.c)), (3) four real-world benchmarks [[1](XXX)_, [2](XXX), [3](XXX), [4](XXX)], and [108 synthetic configuration files](slowpoke/synthetic/) used with an ([emulator](cmd/synthetic/service)) that dynamically changes behavior based on configuration files.
+ 
+* Exercisability: Instructions below access an AWS cluster via a gateaway (to allow multiple reviewers to log in at the same time without interferring with each other).
 
-* Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments. 
-* Completeness:
-  * Slowpoke's user-level library: [initialization code](pkg/slowpoke/utils.go), [request handler wrapper](pkg/wrapper/wrappers.go) 
-  * Poker, the controller that pauses services: [Go component](pkg/slowpoke/pause.go) [C component](slowpoke/poker/poker.c).
-  * Benchmarks:
-    * Four real-world benchmarks: hotel (hotelReservation), boutique (Online Boutique), social (socialNetwork), and movie (mediaMicroservices), located in [entry points](cmd/) and [request handlers](internal)), adopted from [MuCache](https://www.usenix.org/conference/nsdi24/presentation/zhang-haoran)'s porting of the original benchmarks
-    * A synthetic benchmark emulator ([source](cmd/synthetic/service)) that dynamically changes behavior based on configuration files and [108 example configuration files](slowpoke/synthetic/) used in our evaluation.
-* Exercisability: See below
-
-To run Slowpoke, one needs to set up a kubernetes cluster. For artifact reviewers, we prepared the clusters on AWS. 
-
-**IMPORTANT to AE reviewers: Make sure you are assigned an account and given the password through HotCRP**
-
-Here is how to use them:
-
-First, **From your local machine**, sign into the gateway machine we created on AWS
-(assuming the username is `ae1`)
-```console
-$ ssh ae1@3.133.138.10
-ae1@3.133.138.10's password:
-```
-Paste in <!PerReviewerPassword!> here and the reviewer should be able to log into the machine
-
-**On the gateway machine**, the reviewer will see two folders: `scripts` and `cluster_info`. To start the cluster and ssh into the cluster control node, run 
-```console
-$ python3 ./scripts/start_ec2_cluster.py -d cluster_info
-using default VPC vpc-0170055cc6bacbb5d
-[parse_args] args: ['./scripts/start_ec2_cluster.py', '-d', '/home/ubuntu/cluster_info/']
-checking i-0e5e2e2c2666060d0
-done
-checking i-0b3ed057f8e1dc60a
-done
-...
-$ ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)
-```
-And when you want to stop the cluster, exit the ssh session and run
-```console
-$ python3 ./scripts/stop_ec2_cluster.py -d cluster_info
-using default VPC vpc-0170055cc6bacbb5d
-[parse_args] args: ['./scripts/stop_ec2_cluster.py', '-d', '/home/ubuntu/cluster_info/']
-checking i-0e5e2e2c2666060d0
-done
-checking i-0b3ed057f8e1dc60a
-done
-...
-```
-
-**The cluster costs around $2/hour. So we advise the reviewers not to leave them up when unused.**
+**Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `ae1` and  `<!PerReviewerPassword!>` with the user ID and password shared over HotCRP. 
+* `ssh ae1@3.133.138.10` (use `<!PerReviewerPassword!>` when asked for a password).
+* To start the cluster and ssh into the cluster control node, run `python3 ./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem`—this starts a cluster and `ssh` into it.
+* To confirm it's functional, clone the repo, `cd` into it, and run `./run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
+* To stop the cluster, run `exit` (to exit the cluster) and then (back into the original machine) `python3 ./scripts/stop_ec2_cluster.py -d cluster_info`
 
 <details>
  <summary>Explaination</summary>
@@ -101,19 +52,9 @@ The cluster is already set up using scripts in this repo under [`scripts/setup/`
 
 </details>
 
-**On the cluster control node**, clone Slowpoke's repo
-```console
-$ git clone https://github.com/atlas-brown/slowpoke; cd slowpoke; git checkout nsdi26-ae
-```
-Then run (takes about 5 minutes)
-```console
-$ ./run_functional.sh
-```
-This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
+> While testing the artifact, we discovered kubernetes issue that shows up non-deterministically. Specifically, the `wrk`'s worker node occationally stop responding. If you notice the time spent in one of the steps take much longer than our estimation below, we advise going back to the gateway machine, stopping and restarting the cluster, and then trying again.
 
-> During our own testing, we discovered kubernetes issue that shows up non-deterministically. Specifically, the `wrk`'s worker node occationally stop responding. If the reviewer notice the time spent in one of the steps take much longer than our estimation, we advise the reviewer to go back to the gateway machine, stop and restart the cluster, and try again.
-
-The reviewer should expect to see a file created at `results/boutique_tiny.log`, and at the end of it something like
+You should expect a file created at `results/boutique_tiny.log` ending with:
 ```console
 $ tail -n 20 results/boutique_tiny.log
 ...
@@ -123,7 +64,6 @@ $ tail -n 20 results/boutique_tiny.log
     Predicted:   [5989.933238198921]
     Error Perc:  [2.7496656645696422]
 ```
-However, for simplicity, we chose run the benchmarking part for a very short period of time and do not repeat the measurement, so the prediction will be much more inaccurate than the sample output above.
 
 <details>
  <summary>Explaination</summary>
