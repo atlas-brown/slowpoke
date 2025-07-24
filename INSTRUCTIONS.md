@@ -204,7 +204,7 @@ http://xx.xx.xx.xx/plot_macro.pdf
 ```
 
 Sample output
-![Sample macro](sample_output/macro_plot.pdf)
+![Sample macro](sample_output/plot_macro.pdf)
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
