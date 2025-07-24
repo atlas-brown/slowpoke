@@ -80,4 +80,4 @@ python3 test.py -b hotel -r mix -x profile --num_exp 10 -t 8 -c 1024 --poker_bat
 ## Repo Structure
 
 The top level repo is the Go package source code for benchmark applications, combined with Slowpoke's Go runtime [`pkg/slowpoke`](pkg/slowpoke).
-Slowpoke utility and model prediction scripts are in [`slowpoke`]
+Slowpoke utility and model prediction scripts are in [`slowpoke`](slowpoke)
