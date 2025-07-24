@@ -173,7 +173,7 @@ The reviewer can expect to see plots comparing predicted throughput and groundtr
 
 <details>
  <summary>
-  Sample results
+  Sample results for individual plots
  </summary>
  
 We did a run on the same environment and the results are stored in [`sample_output/`](sample_output)
@@ -195,23 +195,16 @@ Social
 ![social](sample_output/social_medium.png)
 </details>
 
-<!--**(§5.2, Fig.9) Across synthetic microservice applications**
+To recreate Fig. 8 similar to the paper, run
 
-The results presented in the paper are based on 10 optimizations, each reducing the target service's processing time by increments ranging from 10\% to 100\%.  
-Executing the full set of experiments takes several days to complete.  
-To enable more efficient reproduction without loss of insight, we sample 5 optimizations from the same range.  -->
+```console
+$ python3 plot_macro.py
+Result for plot_macro.pdf is available at
+http://xx.xx.xx.xx/plot_macro.pdf
+```
 
-
-
-
-
-
-<!-- The results in the paper are generated from 9 synthetic topologies (Fig. 7), each evaluated under three different configuration parameters, resulting in a total of 108 applications.  
-This exhaustive exploration is time-consuming. 
-To reduce evaluation time, we sample one application from each topology.  
-**C2 (X minutes):** Invoke the top-level `main.sh` script with the `--synthetic` flag. 
-This runs experiments for both predictions and ground truth, and outputs Figure 9 with 45 data points.  -->
-
+Sample output
+![Sample macro](sample_output/macro_plot.pdf)
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
