@@ -1,9 +1,9 @@
 #!/bin/bash
 
-cd $(dirname $0)/../..
+EXP="$(basename "$(dirname "$(realpath "$0")")")"
 
-EXP=fanout-w3-grpc-sync
-DIR=synthetic/$EXP/04-09-pokerpp-rm-deadlock
+cd $(dirname $0)/../..
+DIR=synthetic/$EXP/results
 mkdir -p $DIR
 
 # config
@@ -12,8 +12,8 @@ CONN=512
 NUM_REQ=20000
 POKER_BATCH=30000000
 POKER_BATCH_REQ=100
-NUM_EXP=10
-REPETITION=5
+NUM_EXP=5
+REPETITION=1
 
 # Make it reproducible
 target_service_random_pairs="0:24479 2:22197"
