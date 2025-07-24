@@ -95,7 +95,7 @@ done
 <details>
  <summary>Explaination</summary>
 
-The cluster is already set up using scripts in this repo under [`scripts/setup/`]() (see. The cluster contains 2 AWS `m5.xlarge` and 12 `m5.large` EC2 instances. The public IPs of the EC2 machines will be stored in `~/cluster_info/ec2_ips`, first one is the kubernetes control node, the second one is worker node that runs the workload generator, the rest are worker nodes that run the services in each benchmark.
+The cluster is already set up using scripts in this repo under [`scripts/setup/`](scripts/setup) (The cluster contains 2 AWS `m5.xlarge` and 12 `m5.large` EC2 instances. The public IPs of the EC2 machines will be stored in `~/cluster_info/ec2_ips`, first one is the kubernetes control node, the second one is worker node that runs the workload generator, the rest are worker nodes that run the services in each benchmark.
 
 </details>
 
@@ -126,17 +126,7 @@ However, for simplicity, we chose run the benchmarking part for a very short per
 <details>
  <summary>Explaination</summary>
 
-`./run_functional.sh` runs [`./slowpoke/boutique/run-boutique-tiny.sh`](), which runs the main testing script with appropriate arguments
-
-**Setup (optional):** We provide fully initialized and configured Kubernetes clusters for convenience.  
-Optionally, reviewers may set up their own EC2 machines using the following script:
-```
-# Create a EC2 cluster with 8 worker nodes and one control node
-python3 script/setup/ec2_cluster -n 8
-# Initialize the Kubernete clusters and return the control node IP
-IP=$(./script/setup/initialize-aws.sh)
-# ssh into the control node
-ssh -i slowpoke.pem ubuntu@$IP
+`./run_functional.sh` runs [`./slowpoke/boutique/run-boutique-tiny.sh`](slowpoke/boutique/run-boutique-tiny.sh), which runs the main testing script with appropriate arguments
 ```
 </details>
 
