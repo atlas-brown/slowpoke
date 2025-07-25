@@ -1,6 +1,9 @@
 #!/bin/bash
 
-export SLOWPOKE_TOP=${SLOWPOKE_TOP:-$(dirname "$(realpath "$0")")/..}
+export SLOWPOKE_TOP=${SLOWPOKE_TOP:-$(cd "${BASH_SOURCE%/*}/.." && pwd -P)}
+
+kubectl delete deployments --all
+kubectl delete services --all
 
 cd $(dirname $0)
 mkdir -p results

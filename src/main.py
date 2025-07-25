@@ -5,8 +5,9 @@ import subprocess
 import copy
 import argparse
 import config
+from pathlib import Path
 
-SLOWPOKE_TOP = os.environ.get("SLOWPOKE_TOP", os.path.dirname(os.path.abspath(__file__)) + "/..")
+SLOWPOKE_TOP = os.environ.get("SLOWPOKE_TOP") or str(Path(__file__).parent.parent.resolve())
 
 class Runner:
     def __init__(self, args):
@@ -79,7 +80,7 @@ class Runner:
                 env[f"SLOWPOKE_IS_TARGET_SERVICE_{service.upper()}"] = "false"
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
-        cmd = f"bash ${SLOWPOKE_TOP}/src/run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
+        cmd = f"bash {SLOWPOKE_TOP}/src/run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
         print(f"    [exp] Running (pre_run: {self.pre_run}) workload {self.benchmark}/{self.request_type} request with the following configuration: {self.get_env_for_print(env)}", flush=True)
         process = subprocess.Popen(cmd, shell=True, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(f"    [exp] Executing cmd `{cmd}`:")

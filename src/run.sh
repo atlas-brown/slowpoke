@@ -1,6 +1,7 @@
 #!/bin/bash
 
-export SLOWPOKE_TOP=${SLOWPOKE_TOP:-$(realpath "$(dirname "$0")")/..}
+export SLOWPOKE_TOP=${SLOWPOKE_TOP:-$(cd "${BASH_SOURCE%/*}/.." && pwd -P)}
+echo "SLOWPOKE_TOP is set to $SLOWPOKE_TOP"
 
 cd $(dirname $0)
 
@@ -12,9 +13,9 @@ TOTAL_REQ=${5:-50000}
 
 duration=60
 
-YAML_PATH=$SOLWPOKE_TOP/evaluation/$benchmark/yamls
+YAML_PATH=$SLOWPOKE_TOP/evaluation/$benchmark/yamls
 if [[ $benchmark == "synthetic" ]]; then
-    YAML_PATH=$SOLWPOKE_TOP/$benchmark/$request/yamls
+    YAML_PATH=$SLOWPOKE_TOP/$benchmark/$request/yamls
 fi
 
 supported_benchmarks=("boutique" "social" "movie" "hotel" "synthetic")
