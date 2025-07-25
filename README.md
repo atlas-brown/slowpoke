@@ -12,6 +12,8 @@ If you are interested in evaluating the Slowpoke artifact, switch to the frozen 
 
 ## Overview
 
+![prediction plot](sample_output/plot_macro.png)
+
 Slowpoke is a causal profiling system for microservice applications that accurately quantifies the effect of hypothetical optimizations on end-to-end throughput, without relying on tracing or a priori knowledge of the call graph.
 Microservice operators can use Slowpoke to ask what-if performance analysis questions of the form "What throughput could my retail application sustain if I optimize the shopping cart service from 10K req/s to 20K req/s?". 
 Given a target service and optimization, Slowpoke employs a performance model that determines how to selectively slow down non-target services to preserve the relative effect of the optimization.
@@ -107,5 +109,5 @@ If you are using Slowpoke, `poker`, or any of components in this repository, ple
 
 ## License & Contributing
 
-Slowpoke is an open-source, collaborative, [MIT-licensed](https://github.com/atlas-brown/slowpoke/blob/main/LICENSE) project developed between the [ATLAS group](XXX) at [Brown University](XXX) and the [CASP group](XXX) at [Boston University](XXX). If you'd like to contribute, please see the [`CONTRIBUTING.md`](XXX) file—we welcome contributions! And please come talk to us if you're looking to optimize microservices!
+Slowpoke is an open-source, collaborative, [MIT-licensed](https://github.com/atlas-brown/slowpoke/blob/main/LICENSE) project developed between the [ATLAS group](https://atlas.cs.brown.edu/) at [Brown University](https://cs.brown.edu/) and the [CASP group](https://sites.bu.edu/casp/) at [Boston University](https://www.bu.edu/cs/). If you'd like to contribute, please see the [`CONTRIBUTING.md`](CONTRIBUTING.md) file—we welcome contributions! And please come talk to us if you're looking to optimize microservices!
 
