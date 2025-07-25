@@ -8,7 +8,7 @@ Slowpoke is a system for causally profiling microservice applications, by predic
 It can answer what-if questions of the form "how will the overall throughput of my entire distributed microservice graph improve if I optimize the throughput of this service by 30%?".
 It does so by relying on a mathematical model parameterizable by service-level information, rather than end-to-end traces or other a priori information that might not be available at the time one wants to explore optimization opportunities.
 
-If you are interested in evaluating the Slowpoke artifact, switch to the frozen [`nsdi26-ae branch`](https://github.com/atlas-brown/slowpoke/tree/nsdi26-ae) and jump straight into the artifact [instructions](https://github.com/atlas-brown/slowpoke/tree/nsdi26-ae).
+If you are interested in evaluating the Slowpoke artifact, switch to the frozen [`nsdi26-ae branch`](https://github.com/atlas-brown/slowpoke/tree/nsdi26-ae) and jump straight into the artifact [instructions](https://github.com/atlas-brown/slowpoke/tree/nsdi26-ae/INSTRUCTIONS.md).
 
 ## Overview
 
