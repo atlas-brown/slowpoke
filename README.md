@@ -107,5 +107,5 @@ If you are using Slowpoke, `poker`, or any of components in this repository, ple
 
 ## License & Contributing
 
-
+Slowpoke is an open-source, collaborative, [MIT-licensed](https://github.com/atlas-brown/slowpoke/blob/main/LICENSE) project developed between the [ATLAS group](XXX) at [Brown University](XXX) and the [CASP group](XXX) at [Boston University](XXX). If you'd like to contribute, please see the [`CONTRIBUTING.md`](XXX) file—we welcome contributions! And please come talk to us if you're looking to optimize microservices!
 
