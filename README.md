@@ -50,7 +50,7 @@ Currently Slowpoke supports microservices written in Go. Before using Slowpoke (
    - `SLOWPOKE_POKER_BATCH_THRESHOLD`: This variable is used for specifying number of pauses to batch together
    - `SLOWPOKE_IS_TARGET_SERVICE`: This variable indicates that the service is the target service
 
-**Launching Slowpoke:**Eventually, launcing Slowpoke's end-to-end profiling by running `./slowpoke`: 
+**Launching Slowpoke:** Eventually, launcing Slowpoke's end-to-end profiling by running `./slowpoke`: 
 
 ```console
 $ slowpoke --help
