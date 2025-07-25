@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export SLOWPOKE_TOP=${SLOWPOKE_TOP:-$(realpath "$(dirname "$0")")/..}
+
 cd $(dirname $0)
 
 benchmark=${1:-boutique}
