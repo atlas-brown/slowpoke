@@ -25,9 +25,9 @@ Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing 
 
 * Slowpoke is available at [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke) (`nsdi26-ae` will be frozen).
 
-* The [Slowpoke analysis component](pkg/slowpoke), [the Poker slowdown component](slowpoke/poker/poker.c), the [`benchmarks`](cmd/) (command-line entry points) and [`internal/`](inernal) (request handlers).
+* The [Slowpoke analysis component](app/pkg/slowpoke), [the Poker slowdown component](src/poker/poker.c), the [`benchmarks`](app/cmd/) (command-line entry points) and [`internal/`](app/inernal) (request handlers).
 
-* Top-level scripts in [`slowpoke/`](slowpoke) and ones related to the artifact reproducilbility: [`run_function.sh`](run_functional.sh) and [`run_reproducible.sh`](run_reproducible.sh).
+* Top-level scripts in [`slowpoke/`](slowpoke) and ones related to the artifact reproducilbility: [`run_function.sh`](evaluation/run_functional.sh) and [`run_reproducible.sh`](evaluation/run_reproducible.sh).
 
 # Artifact Functional (20 minutes)
 
@@ -35,18 +35,18 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 * Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments.
  
-* Completeness: (1)Slowpoke user-level library ([initialization](pkg/slowpoke/utils.go), [request handler](pkg/wrapper/wrappers.go)), (2) Poker slowdown mechanism ([Pause](pkg/slowpoke/pause.go), [poker](slowpoke/poker/poker.c)), (3) four real-world benchmarks 
+* Completeness: (1)Slowpoke user-level library ([initialization](app/pkg/slowpoke/utils.go), [request handler](app/pkg/wrapper/wrappers.go)), (2) Poker slowdown mechanism ([Pause](app/pkg/slowpoke/pause.go), [poker](src/poker/poker.c)), (3) four real-world benchmarks 
 ([hotel](https://github.com/delimitrou/DeathStarBench/tree/master/hotelReservation), 
  [boutique](https://github.com/GoogleCloudPlatform/microservices-demo),
  [social](https://github.com/delimitrou/DeathStarBench/tree/master/socialNetwork), 
- [movie](https://github.com/delimitrou/DeathStarBench/tree/master/mediaMicroservices)), and [108 synthetic configuration files](slowpoke/synthetic/) used with an ([emulator](cmd/synthetic/service)) that dynamically changes behavior based on configuration files.
+ [movie](https://github.com/delimitrou/DeathStarBench/tree/master/mediaMicroservices)), and [108 synthetic configuration files](evaluation/synthetic/) used with an ([emulator](app/cmd/synthetic/service)) that dynamically changes behavior based on configuration files.
  
 * Exercisability: Instructions below access an AWS cluster via a gateaway (to allow multiple reviewers to log in at the same time without interferring with each other).
 
 **Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `ae1` and  `<!PerReviewerPassword!>` with the user ID and password shared over HotCRP. 
 * `ssh ae1@3.133.138.10` (use `<!PerReviewerPassword!>` when asked for a password).
 * To start the cluster and ssh into the cluster control node, run `python3 ./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem`—this starts a cluster and `ssh` into it.
-* To confirm it's functional, clone the repo, `cd` into it, and run `./run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
+* To confirm it's functional, clone the repo, `cd` into it, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
 * To stop the cluster, run `exit` (to exit the cluster) and then (back into the original machine) `python3 ./scripts/stop_ec2_cluster.py -d cluster_info`
 
 <details>
@@ -72,7 +72,7 @@ $ tail -n 20 results/boutique_tiny.log
 <details>
  <summary>Explaination</summary>
 
-`./run_functional.sh` runs [`./slowpoke/boutique/run-boutique-tiny.sh`](slowpoke/boutique/run-boutique-tiny.sh), which runs the main testing script with appropriate arguments
+`./evaluation/run_functional.sh` runs [`./evaluation/boutique/run-boutique-tiny.sh`](evaluation/boutique/run-boutique-tiny.sh), which runs the main testing script with appropriate arguments
 
 </details>
 
@@ -87,21 +87,21 @@ The results in the paper is done with 5 repetitions and taking 3 central points,
 
 ```console
 $ # Recommend doing the following command in screen or tmux
-$ ./run_reproducible.sh
+$ ./evaluation/run_reproducible.sh
 ...
 The results are stored in /home/ubuntu/slowpoke/results
 To visualize the results, run: 
 
-python3 /home/ubuntu/slowpoke/draw.py /home/ubuntu/slowpoke/results
+python3 /home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/results
 ```
 
-The log file `results/boutique_medium.log`, `results/hotel_medium.log`, `results/social_medium.log`, and `results/movie_medium.log` will grow overtime and should make progress at least once per minute.
+The log file `evaluation/results/boutique_medium.log`, `evaluation/results/hotel_medium.log`, `evaluation/results/social_medium.log`, and `evaluation/results/movie_medium.log` will grow overtime and should make progress at least once per minute.
 
 To see the results, run (as the previous script suggested)
 
 ```console
-$ python3 /home/ubuntu/slowpoke/draw.py /home/ubuntu/slowpoke/results
-Result for /home/ubuntu/slowpoke/results/boutique_medium.log is available at
+$ python3 /home/ubuntu/slowpoke/evaluationdraw.py /home/ubuntu/slowpoke/evaluation/results
+Result for /home/ubuntu/slowpoke/evaluation/results/boutique_medium.log is available at
 http://xx.xx.xx.xx/boutique_medium.png
 ...
 ```
@@ -112,35 +112,35 @@ The reviewer can expect to see plots comparing predicted throughput and groundtr
   Sample results for individual plots
  </summary>
  
-We did a run on the same environment and the results are stored in [`sample_output/`](sample_output)
+We did a run on the same environment and the results are stored in [`sample_output/`](evaluation/sample_output)
 
 Boutique
 
-![boutique](sample_output/boutique_medium.png)
+![boutique](evaluation/sample_output/boutique_medium.png)
 
 Movie
 
-![movie](sample_output/movie_medium.png)
+![movie](evaluation/sample_output/movie_medium.png)
 
 Hotel
 
-![hotel](sample_output/hotel_medium.png)
+![hotel](evaluation/sample_output/hotel_medium.png)
 
 Social
 
-![social](sample_output/social_medium.png)
+![social](evaluation/sample_output/social_medium.png)
 </details>
 
 To create the plot similar to Fig. 8 in the paper, run
 
 ```console
-$ python3 plot_macro.py
+$ python3 evaluation/plot_macro.py
 Result for plot_macro.pdf is available at
 http://xx.xx.xx.xx/plot_macro.pdf
 ```
 
 The figure we created using this artifact
-![Sample macro](sample_output/plot_macro.png)
+![Sample macro](evaluation/sample_output/plot_macro.png)
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
