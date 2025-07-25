@@ -45,9 +45,9 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 **Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `ae1` and  `<!PerReviewerPassword!>` with the user ID and password shared over HotCRP. 
 * `ssh ae1@3.133.138.10` (use `<!PerReviewerPassword!>` when asked for a password).
-* To start the cluster and ssh into the cluster control node, run `python3 ./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem`—this starts a cluster and `ssh` into it.
+* To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem`—this starts a cluster and `ssh` into it.
 * To confirm it's functional, clone the repo, `cd` into it, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
-* To stop the cluster, run `exit` (to exit the cluster) and then (back into the original machine) `python3 ./scripts/stop_ec2_cluster.py -d cluster_info`
+* To stop the cluster, run `exit` (to exit the cluster) and then (back into the original machine) `./scripts/stop_ec2_cluster.py -d cluster_info`
 
 <details>
  <summary>Explaination</summary>
@@ -92,7 +92,7 @@ $ ./evaluation/run_reproducible.sh
 The results are stored in /home/ubuntu/slowpoke/results
 To visualize the results, run: 
 
-python3 /home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/results
+/home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/results
 ```
 
 The log file `evaluation/results/boutique_medium.log`, `evaluation/results/hotel_medium.log`, `evaluation/results/social_medium.log`, and `evaluation/results/movie_medium.log` will grow overtime and should make progress at least once per minute.
@@ -100,7 +100,7 @@ The log file `evaluation/results/boutique_medium.log`, `evaluation/results/hotel
 To see the results, run (as the previous script suggested)
 
 ```console
-$ python3 /home/ubuntu/slowpoke/evaluationdraw.py /home/ubuntu/slowpoke/evaluation/results
+$ /home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/results
 Result for /home/ubuntu/slowpoke/evaluation/results/boutique_medium.log is available at
 http://xx.xx.xx.xx/boutique_medium.png
 ...
@@ -134,7 +134,7 @@ Social
 To create the plot similar to Fig. 8 in the paper, run
 
 ```console
-$ python3 evaluation/plot_macro.py
+$ ./evaluation/plot_macro.py
 Result for plot_macro.pdf is available at
 http://xx.xx.xx.xx/plot_macro.pdf
 ```
@@ -142,12 +142,5 @@ http://xx.xx.xx.xx/plot_macro.pdf
 The figure we created using this artifact
 ![Sample macro](evaluation/sample_output/plot_macro.png)
 
-# Optional: Applying Slowpoke to All Benchmarks (2–3 days)
+<!--# Optional: Applying Slowpoke to All Benchmarks (2–3 days)-->
 
-We also provide scripts to reproduce all experiments from the paper using the full set of optimization samples, including the scenarios where the bottleneck is due to mutex contention (as described in §5.3).  
-To generate the complete set of results, invoke the main script for each case with the `--full` flag:
-
-```bash
-./main.sh --real-world --full
-./main.sh --synthetic --full
-./main.sh --mutex
