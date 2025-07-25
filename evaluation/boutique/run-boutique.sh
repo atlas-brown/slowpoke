@@ -2,7 +2,7 @@
 
 cd $(dirname "$0")/..
 
-# python3 test.py -b boutique -x cart -r mix -d 100
+# python3 $SLOWPOKE_TOP/src/main.py -b boutique -x cart -r mix -d 100
 
 target=frontend
 thread=8
@@ -18,4 +18,4 @@ if [ -f $DIR/$FILE ]; then
     echo "File $DIR/$FILE already exists. Skipping test."
     exit 0
 fi
-python3 test.py -b boutique -x frontend -r mix -t $thread -c $conn --num_exp $num_exp --repetitions $repetitions --num_req $num_req --poker_batch_req $poker_batch_req >$DIR/$FILE
+python3 $SLOWPOKE_TOP/src/main.py -b boutique -x frontend -r mix -t $thread -c $conn --num_exp $num_exp --repetitions $repetitions --num_req $num_req --poker_batch_req $poker_batch_req >$DIR/$FILE

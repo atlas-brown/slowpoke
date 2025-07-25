@@ -10,7 +10,7 @@
 #     echo "File $FILE already exists. Exiting..."
 #     exit 1  # Exit with status code 1 to indicate an error
 # fi
-# python3 test.py -b social -r mix -x hometimeline -t 4 -c 128 --num_exp 10 --poker_batch 60000000 --num_req 50000 >$FILE
+# python3 $SLOWPOKE/src/main.py -b social -r mix -x hometimeline -t 4 -c 128 --num_exp 10 --poker_batch 60000000 --num_req 50000 >$FILE
 
 #!/bin/bash
 
@@ -31,4 +31,4 @@ if [ -f $DIR/$FILE ]; then
     exit 0
 fi
 
-python3 test.py -b social -r mix -x hometimeline --num_exp $num_exp -t $thread -c $conn --poker_batch_req $poker_batch_req --repetition $repetitions --num_req $num_req >$DIR/$FILE
+python3 $SLOWPOKE/src/main.py -b social -r mix -x hometimeline --num_exp $num_exp -t $thread -c $conn --poker_batch_req $poker_batch_req --repetition $repetitions --num_req $num_req >$DIR/$FILE

@@ -17,4 +17,4 @@ if [ -f $DIR/$FILE ]; then
     exit 0
 fi
 
-python3 test.py -b hotel -r mix -x profile --num_exp $num_exp -t $thread -c $conn --poker_batch_req $poker_batch_req --repetition $repetitions --num_req $num_req >$DIR/$FILE
+python3 $SLOWPOKE_TOP/src/main.py -b hotel -r mix -x profile --num_exp $num_exp -t $thread -c $conn --poker_batch_req $poker_batch_req --repetition $repetitions --num_req $num_req >$DIR/$FILE

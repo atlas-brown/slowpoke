@@ -10,9 +10,9 @@ TOTAL_REQ=${5:-50000}
 
 duration=60
 
-YAML_PATH=$benchmark/yamls
+YAML_PATH=$SOLWPOKE_TOP/evaluation/$benchmark/yamls
 if [[ $benchmark == "synthetic" ]]; then
-    YAML_PATH=$benchmark/$request/yamls
+    YAML_PATH=$SOLWPOKE_TOP/$benchmark/$request/yamls
 fi
 
 supported_benchmarks=("boutique" "social" "movie" "hotel" "synthetic")
@@ -83,7 +83,7 @@ fix_req_num() {
     local benchmark=$1
     local client=$2
     counter=$((TOTAL_REQ / thread))
-    PER_THREAD_COUNTER=$counter envsubst < fix_req_n.lua > /tmp/temp_fix_req_n.lua
+    PER_THREAD_COUNTER=$counter envsubst < $SLOWPOKE_TOP/client/fix_req_n.lua > /tmp/temp_fix_req_n.lua
     kubectl cp /tmp/temp_fix_req_n.lua ${client}:/wrk/fix_req_n.lua
     rm /tmp/temp_fix_req_n.lua  # clean up
     if [[ $benchmark == *"boutique"* ]]; then
@@ -160,15 +160,15 @@ populate() {
         return
     fi
     if [[ $benchmark == "hotel" || $benchmark == "movie" ]]; then
-        echo "[run.sh] Copying $benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
-        kubectl cp $benchmark/data/analysis.txt $ubuntu_client:/analysis.txt
+        echo "[run.sh] Copying $SLOWPOKE_TOP/evaluation/$benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
+        kubectl cp $SLOWPOKE_TOP/evaluation/$benchmark/data/analysis.txt $ubuntu_client:/analysis.txt
         echo "[run.sh] Finished populating $benchmark"
         return
     fi
     echo "[run.sh] Populating social benchmark"
-    bash $benchmark/populate.sh 
-    echo "[run.sh] Copying $benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
-    kubectl cp $benchmark/data/analysis.txt $ubuntu_client:/analysis.txt
+    bash $SLOWPOKE_TOP/evaluation/$benchmark/populate.sh 
+    echo "[run.sh] Copying $SLOWPOKE_TOP/evaluation/$benchmark/analysis.txt to $ubuntu_client:/analysis.txt"
+    kubectl cp $SLOWPOKE_TOP/evaluation/$benchmark/analysis.txt $ubuntu_client:/analysis.txt
     echo "[run.sh] Finished populating $benchmark"
 }
 
@@ -201,7 +201,7 @@ kubectl get pod | grep ubuntu-client-
 if [ $? -ne 0 ]
 then
     echo "[run.sh] Client pod not found, deploying client"
-    envsubst < client.yaml | kubectl apply -f -
+    envsubst < $SLOWPOKE_TOP/client/client.yaml | kubectl apply -f -
 fi
 
 # wait until all pods are ready by checking the log to see if the "server started" message is printed

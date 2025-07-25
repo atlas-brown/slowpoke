@@ -19,4 +19,4 @@ mkdir -p $DIR
 
 kubectl delete deployments --all
 kubectl delete services --all
-python3 test.py -b movie -r mix -x $target --num_exp $num_exp -t $thread -c $conn --poker_batch_req $poker_batch_req --repetition $repetitions --num_req $num_req >$outfile
+python3 $SLOWPOKE_TOP/src/main.py -b movie -r mix -x $target --num_exp $num_exp -t $thread -c $conn --poker_batch_req $poker_batch_req --repetition $repetitions --num_req $num_req >$outfile

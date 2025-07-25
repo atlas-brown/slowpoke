@@ -6,6 +6,8 @@ import copy
 import argparse
 import config
 
+SLOWPOKE_TOP = os.environ.get("SLOWPOKE_TOP", os.path.dirname(os.path.abspath(__file__)) + "/..")
+
 class Runner:
     def __init__(self, args):
         self.benchmark = args.benchmark
@@ -47,6 +49,7 @@ class Runner:
         env = os.environ.copy()
         env["CLIENT_CPU_QUOTA"] = str(self.client_cpu_quota)
         env["SLOWPOKE_POKER_BATCH_THRESHOLD"] = str(self.poker_batch)
+        env["SLOWPOKE_TOP"] = SLOWPOKE_TOP
         if self.benchmark == "synthetic":
             # This is used to set the processing time for synthetic benchmarks
             for service, processing_time in processing_time.items():
@@ -76,7 +79,7 @@ class Runner:
                 env[f"SLOWPOKE_IS_TARGET_SERVICE_{service.upper()}"] = "false"
         if self.pre_run:
             env["SLOWPOKE_PRERUN"] = "true" # Disable request counting during normal execution
-        cmd = f"bash run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
+        cmd = f"bash ${SLOWPOKE_TOP}/src/run.sh {self.benchmark} {self.request_type} {self.num_threads} {self.num_conns} {self.num_req}"
         print(f"    [exp] Running (pre_run: {self.pre_run}) workload {self.benchmark}/{self.request_type} request with the following configuration: {self.get_env_for_print(env)}", flush=True)
         process = subprocess.Popen(cmd, shell=True, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(f"    [exp] Executing cmd `{cmd}`:")

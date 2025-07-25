@@ -6,7 +6,7 @@ name=$(basename $outfile)
 outfile=$outdir/$name
 cd $(dirname "$0")/..
 
-# python3 test.py -b boutique -x cart -r mix -d 100
+# python3 $SLOWPOKE_TOP/src/main.py -b boutique -x cart -r mix -d 100
 
 target=cart
 thread=8
@@ -20,4 +20,4 @@ FILE=mix-$target-t$thread-c$conn-r$repetitions-req$num_req-n$num_exp-poker_batch
 
 kubectl delete deployments --all
 kubectl delete services --all
-python3 test.py -b boutique -x $target -r mix -t $thread -c $conn --num_exp $num_exp --repetitions $repetitions --num_req $num_req --poker_batch_req $poker_batch_req >$outfile
+python3 $SLOWPOKE_TOP/src/main.py -b boutique -x $target -r mix -t $thread -c $conn --num_exp $num_exp --repetitions $repetitions --num_req $num_req --poker_batch_req $poker_batch_req >$outfile
