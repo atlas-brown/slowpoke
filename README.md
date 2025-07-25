@@ -12,7 +12,7 @@ If you are interested in evaluating the Slowpoke artifact, switch to the frozen 
 
 ## Overview
 
-![prediction plot](sample_output/plot_macro.png)
+![prediction plot](evaluation/sample_output/plot_macro.png)
 
 Slowpoke is a causal profiling system for microservice applications that accurately quantifies the effect of hypothetical optimizations on end-to-end throughput, without relying on tracing or a priori knowledge of the call graph.
 Microservice operators can use Slowpoke to ask what-if performance analysis questions of the form "What throughput could my retail application sustain if I optimize the shopping cart service from 10K req/s to 20K req/s?". 
@@ -42,9 +42,9 @@ AWS Cluster setup for different account and environment can be quite different. 
 Currently Slowpoke supports microservices written in Go. Before using Slowpoke (1) add the Slowpoke runtime to the application, (2) update the container configuration to add Slowpoke's `poker` controller, (3) set appropriate per-service pauses when launching a deployment. Then, to launch Slowpoke using `./slowpoke`.
 
 **Using Slowpoke:** In more detail, the required to use Slowpoke:
-1. Application: Add in Slowpoke's runtime, modify http request handler registration to use slowpoke handler wrapper, similar to [`cmd/boutique/cart/main.go/`](cmd/boutique/cart/main.go/)
-2. Container: the application process now needs to start as a subprocess to the poker controller [`slowpoke/poker/poker.c`](slowpoke/poker/poker.c). To do this, include Poker's compilation in the container configuration file as well as the entrypoint command change, similar to [`build/PrebuiltDockerfile`](build/PrebuiltDockerfile). 
-3. Deployment: Slowpoke's runtime changes inserts artificial pauses based on environment variables `SLOWPOKE_DELAY_MICROS`, `SLOWPOKE_PRERUN`, `SLOWPOKE_POKER_BATCH_THRESHOLD`, and `SLOWPOKE_IS_TARGET_SERVICE`. Set these values accordingly when launching a deployment, or programatically pass in the values similar to [`slowpoke/boutique/yamls/cart.yaml`](slowpoke/boutique/yamls/cart.yaml).
+1. Application: Add in Slowpoke's runtime, modify http request handler registration to use slowpoke handler wrapper, similar to [`cmd/boutique/cart/main.go/`](app/cmd/boutique/cart/main.go/)
+2. Container: the application process now needs to start as a subprocess to the poker controller [`slowpoke/poker/poker.c`](src/poker/poker.c). To do this, include Poker's compilation in the container configuration file as well as the entrypoint command change, similar to [`build/PrebuiltDockerfile`](scripts/build/PrebuiltDockerfile). 
+3. Deployment: Slowpoke's runtime changes inserts artificial pauses based on environment variables `SLOWPOKE_DELAY_MICROS`, `SLOWPOKE_PRERUN`, `SLOWPOKE_POKER_BATCH_THRESHOLD`, and `SLOWPOKE_IS_TARGET_SERVICE`. Set these values accordingly when launching a deployment, or programatically pass in the values similar to [`slowpoke/boutique/yamls/cart.yaml`](evaluation/boutique/yamls/cart.yaml).
 
 **Launching Slowpoke:**Eventually, launcing Slowpoke's end-to-end profiling by running `./slowpoke`: 
 
@@ -88,7 +88,7 @@ For example:
 
 ## Repository Structure
 
-The top level repo is the Go package source code for benchmark applications, combined with Slowpoke's Go runtime [`pkg/slowpoke`](pkg/slowpoke).
+The top level repo is the Go package source code for benchmark applications, combined with Slowpoke's Go runtime [`pkg/slowpoke`](app/pkg/slowpoke).
 Slowpoke utility and model prediction scripts are in [`slowpoke`]
 
 ## Citing Slowpoke
