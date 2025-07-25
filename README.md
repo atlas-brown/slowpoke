@@ -88,8 +88,13 @@ For example:
 
 ## Repository Structure
 
-The top level repo is the Go package source code for benchmark applications, combined with Slowpoke's Go runtime [`pkg/slowpoke`](app/pkg/slowpoke).
-Slowpoke utility and model prediction scripts are in [`slowpoke`]
+This repository contains the core development for Slowpoke. The directory structure is organized as follows:
+
+* [app](app): Real-world and synthetic applications augmented with the Slowpoke user [library](app/pkg/slowpoke).
+* [asrc](src): Control node component that orchestrates experiments, computes delays, and predicts end-to-end throughput improvement.
+* [scripts](scripts): Helper scripts for building application images and setting up EC2 clusters.
+* [client](client): Load generator for benchmarking different applications.
+* [evaluation](evaluation): YAML files and scripts used to evaluate Slowpoke's accuracy across four real-world and 108 synthetic applications.
 
 ## Citing Slowpoke
 
