@@ -12,6 +12,8 @@ If you are interested in evaluating the Slowpoke artifact, switch to the frozen 
 
 ## Overview
 
+![prediction plot](sample_output/plot_macro.png)
+
 Slowpoke is a causal profiling system for microservice applications that accurately quantifies the effect of hypothetical optimizations on end-to-end throughput, without relying on tracing or a priori knowledge of the call graph.
 Microservice operators can use Slowpoke to ask what-if performance analysis questions of the form "What throughput could my retail application sustain if I optimize the shopping cart service from 10K req/s to 20K req/s?". 
 Given a target service and optimization, Slowpoke employs a performance model that determines how to selectively slow down non-target services to preserve the relative effect of the optimization.
