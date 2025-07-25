@@ -39,7 +39,7 @@ Confirm sufficient documentation, key components as described in the paper, and 
 ([hotel](https://github.com/delimitrou/DeathStarBench/tree/master/hotelReservation), 
  [boutique](https://github.com/GoogleCloudPlatform/microservices-demo),
  [social](https://github.com/delimitrou/DeathStarBench/tree/master/socialNetwork), 
- [movie](https://github.com/delimitrou/DeathStarBench/tree/master/mediaMicroservices), and [108 synthetic configuration files](slowpoke/synthetic/) used with an ([emulator](cmd/synthetic/service)) that dynamically changes behavior based on configuration files.
+ [movie](https://github.com/delimitrou/DeathStarBench/tree/master/mediaMicroservices)), and [108 synthetic configuration files](slowpoke/synthetic/) used with an ([emulator](cmd/synthetic/service)) that dynamically changes behavior based on configuration files.
  
 * Exercisability: Instructions below access an AWS cluster via a gateaway (to allow multiple reviewers to log in at the same time without interferring with each other).
 
