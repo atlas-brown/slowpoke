@@ -58,9 +58,9 @@ The cluster is already set up using scripts in this repo under [`scripts/setup/`
 
 > While testing the artifact, we discovered kubernetes issue that shows up non-deterministically. Specifically, the `wrk`'s worker node occationally stop responding. If you notice the time spent in one of the steps take much longer than our estimation below, we advise going back to the gateway machine, stopping and restarting the cluster, and then trying again.
 
-You should expect a file created at `results/boutique_tiny.log` ending with:
+You should expect a file created at `evaluation/results/boutique_tiny.log` ending with:
 ```console
-$ tail -n 20 results/boutique_tiny.log
+$ tail -n 20 evaluation/results/boutique_tiny.log
 ...
     Baseline throughput: 4008.7682284172083
     Groundtruth: [5829.637692207481]

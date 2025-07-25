@@ -91,7 +91,7 @@ For example:
 This repository contains the core development for Slowpoke. The directory structure is organized as follows:
 
 * [app](app): Real-world and synthetic applications augmented with the Slowpoke user [library](app/pkg/slowpoke).
-* [`src`](src): Control node component that orchestrates experiments, computes delays, and predicts end-to-end throughput improvement. Also includes [`poker`](src/poker/poker.c), the control process that runs alongside the application within the same container.
+* [src](src): Control node component that orchestrates experiments, computes delays, and predicts end-to-end throughput improvement. Also includes [`poker`](src/poker/poker.c), the control process that runs alongside the application within the same container.
 * [scripts](scripts): Helper scripts for building application images and setting up EC2 clusters.
 * [client](client): Load generator for benchmarking different applications.
 * [evaluation](evaluation): YAML files and scripts used to evaluate Slowpoke's accuracy across four real-world and 108 synthetic applications.
