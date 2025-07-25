@@ -186,7 +186,7 @@ echo "[run.sh] Running benchmark $benchmark with request $request, thread $threa
 # delete all services
 echo "[run.sh] Deleting all services"
 kubectl delete -f $YAML_PATH --ignore-not-found=true
-kubectl delete -f client.yaml --ignore-not-found=true
+kubectl delete -f $SLOWPOKE_TOP/client/client.yaml --ignore-not-found=true
 # wait for all pods to be deleted
 echo "[run.sh] Waiting for all pods to be deleted"
 while [[ $(kubectl get pods | grep -v -E 'STATUS' | wc -l) -ne 0 ]]; do
