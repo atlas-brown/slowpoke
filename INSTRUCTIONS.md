@@ -35,7 +35,11 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 * Documentation: The top-level [README](README.md) file provides instructions for setting up Kubernetes clusters, installing dependencies, building application images with Slowpoke, generating synthetic benchmarks, and running experiments.
  
-* Completeness: (1)Slowpoke user-level library ([initialization](pkg/slowpoke/utils.go), [request handler](pkg/wrapper/wrappers.go)), (2) Poker slowdown mechanism ([Pause](pkg/slowpoke/pause.go), [poker](slowpoke/poker/poker.c)), (3) four real-world benchmarks [[1](XXX)_, [2](XXX), [3](XXX), [4](XXX)], and [108 synthetic configuration files](slowpoke/synthetic/) used with an ([emulator](cmd/synthetic/service)) that dynamically changes behavior based on configuration files.
+* Completeness: (1)Slowpoke user-level library ([initialization](pkg/slowpoke/utils.go), [request handler](pkg/wrapper/wrappers.go)), (2) Poker slowdown mechanism ([Pause](pkg/slowpoke/pause.go), [poker](slowpoke/poker/poker.c)), (3) four real-world benchmarks 
+([hotel](https://github.com/delimitrou/DeathStarBench/tree/master/hotelReservation), 
+ [boutique](https://github.com/GoogleCloudPlatform/microservices-demo),
+ [social](https://github.com/delimitrou/DeathStarBench/tree/master/socialNetwork), 
+ [movie](https://github.com/delimitrou/DeathStarBench/tree/master/mediaMicroservices), and [108 synthetic configuration files](slowpoke/synthetic/) used with an ([emulator](cmd/synthetic/service)) that dynamically changes behavior based on configuration files.
  
 * Exercisability: Instructions below access an AWS cluster via a gateaway (to allow multiple reviewers to log in at the same time without interferring with each other).
 
