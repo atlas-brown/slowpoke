@@ -50,10 +50,10 @@ Currently Slowpoke supports microservices written in Go. Before using Slowpoke (
 
 ```console
 $ slowpoke --help
-usage: test.py [-h] [-b BENCHMARK] [-t NUM_THREADS] [-c NUM_CONNS] [-x TARGET_SERVICE] [-r REQUEST_TYPE]
-               [--repetitions REPETITIONS] [--num_exp NUM_EXP] [--pre_run] [--range RANGE RANGE] [--num_req NUM_REQ]
-               [--clien_cpu_quota CLIEN_CPU_QUOTA] [--random_seed RANDOM_SEED] [--poker_batch POKER_BATCH]
-               [--poker_batch_req POKER_BATCH_REQ] [--poker_relative_batch POKER_RELATIVE_BATCH]
+usage: slowpoke [-h] [-b BENCHMARK] [-t NUM_THREADS] [-c NUM_CONNS] [-x TARGET_SERVICE] [-r REQUEST_TYPE]
+                [--repetitions REPETITIONS] [--num_exp NUM_EXP] [--pre_run] [--range RANGE RANGE] [--num_req NUM_REQ]
+                [--clien_cpu_quota CLIEN_CPU_QUOTA] [--random_seed RANDOM_SEED] [--poker_batch POKER_BATCH]
+                [--poker_batch_req POKER_BATCH_REQ] [--poker_relative_batch POKER_RELATIVE_BATCH]
 
 options:
   -h, --help            show this help message and exit
