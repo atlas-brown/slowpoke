@@ -37,7 +37,7 @@ AWS Cluster setup for different account and environment can be quite different. 
 10. Finally, if you wish to delete the cluster, run `python3 ./scripts/setup/teardown_ec2_cluster.py -d ~/mycluster`
 </details>
 
-## More Info
+## More Information
 
 Currently Slowpoke supports microservices written in Go. Before using Slowpoke (1) add the Slowpoke runtime to the application, (2) update the container configuration to add Slowpoke's `poker` controller, (3) set appropriate per-service pauses when launching a deployment. Then, to launch Slowpoke using `./slowpoke`.
 
