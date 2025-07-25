@@ -42,9 +42,13 @@ AWS Cluster setup for different account and environment can be quite different. 
 Currently Slowpoke supports microservices written in Go. Before using Slowpoke (1) add the Slowpoke runtime to the application, (2) update the container configuration to add Slowpoke's `poker` controller, (3) set appropriate per-service pauses when launching a deployment. Then, to launch Slowpoke using `./slowpoke`.
 
 **Using Slowpoke:** In more detail, the required to use Slowpoke:
-1. Application: Add in Slowpoke's runtime, modify http request handler registration to use slowpoke handler wrapper, similar to [`cmd/boutique/cart/main.go/`](app/cmd/boutique/cart/main.go/)
+1. Application: Add in Slowpoke's runtime, modify http request handler registration to use slowpoke handler wrapper, similar to [`cmd/boutique/cart/main.go`](app/cmd/boutique/cart/main.go)
 2. Container: the application process now needs to start as a subprocess to the poker controller [`slowpoke/poker/poker.c`](src/poker/poker.c). To do this, include Poker's compilation in the container configuration file as well as the entrypoint command change, similar to [`build/PrebuiltDockerfile`](scripts/build/PrebuiltDockerfile). 
-3. Deployment: Slowpoke's runtime changes inserts artificial pauses based on environment variables `SLOWPOKE_DELAY_MICROS`, `SLOWPOKE_PRERUN`, `SLOWPOKE_POKER_BATCH_THRESHOLD`, and `SLOWPOKE_IS_TARGET_SERVICE`. Set these values accordingly when launching a deployment, or programatically pass in the values similar to [`slowpoke/boutique/yamls/cart.yaml`](evaluation/boutique/yamls/cart.yaml).
+3. Deployment: Slowpoke's runtime inserts artificial pauses based on environment variables. Set the following variables similar to [`slowpoke/boutique/yamls/cart.yaml`](evaluation/boutique/yamls/cart.yaml) to enable Slowpoke tuning them automatically:
+   - `SLOWPOKE_DELAY_MICROS`: This variable is used to pass in pause time per request computed by Slowpoke
+   - `SLOWPOKE_PRERUN`: This variable is used for Slowpoke to specify request distribution collection
+   - `SLOWPOKE_POKER_BATCH_THRESHOLD`: This variable is used for specifying number of pauses to batch together
+   - `SLOWPOKE_IS_TARGET_SERVICE`: This variable indicates that the service is the target service
 
 **Launching Slowpoke:**Eventually, launcing Slowpoke's end-to-end profiling by running `./slowpoke`: 
 
