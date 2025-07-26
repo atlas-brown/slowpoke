@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $(dirname $0)/../..
+cd $(dirname $0)/../../..
 
 EXP=chain-d4-http-sync
 DIR=synthetic/$EXP/bus-theory-fixed-json-time-based-sleep
@@ -20,6 +20,8 @@ target_service_random_pairs="0:31122 2:28561 5:6536"
 
 for pair in $target_service_random_pairs
 do 
+    kubectl delete deployments --all
+    kubectl delete services --all
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
 
@@ -32,7 +34,7 @@ do
 
     touch $output_file
     
-    python3 test.py -b synthetic \
+    python3 src/main.py -b synthetic \
         -r $EXP \
         -x service$target_service \
         --num_exp $NUM_EXP \
@@ -43,4 +45,6 @@ do
         --repetition $REPETITION \
         --poker_batch $POKER_BATCH \
         >$output_file
+    kubectl delete deployments --all
+    kubectl delete services --all
 done

@@ -5,8 +5,8 @@ target_service_random_pairs="1:21827 2:16560"
 
 EXP="$(basename "$(dirname "$(realpath "$0")")")"
 
-cd $(dirname $0)/../..
-DIR=synthetic/$EXP/results
+cd $(dirname $0)/../../..
+DIR=./evaluation/results
 mkdir -p $DIR
 
 # config
@@ -19,6 +19,8 @@ REPETITION=1
 
 for pair in $target_service_random_pairs
 do 
+    kubectl delete deployments --all
+    kubectl delete services --all
     target_service=$(echo $pair | cut -d':' -f1)
     random_seed=$(echo $pair | cut -d':' -f2)
 
@@ -31,7 +33,7 @@ do
 
     touch $output_file
     
-    python3 test.py -b synthetic \
+    python3 src/main.py -b synthetic \
         -r $EXP \
         -x service$target_service \
         --num_exp $NUM_EXP \
@@ -42,4 +44,6 @@ do
         --repetition $REPETITION \
         --poker_batch_req $POKER_BATCH_REQ \
         >$output_file
+    kubectl delete deployments --all
+    kubectl delete services --all
 done
