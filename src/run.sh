@@ -15,7 +15,7 @@ duration=60
 
 YAML_PATH=$SLOWPOKE_TOP/evaluation/$benchmark/yamls
 if [[ $benchmark == "synthetic" ]]; then
-    YAML_PATH=$SLOWPOKE_TOP/$benchmark/$request/yamls
+    YAML_PATH=$SLOWPOKE_TOP/evaluation/$benchmark/$request/yamls
 fi
 
 supported_benchmarks=("boutique" "social" "movie" "hotel" "synthetic")
