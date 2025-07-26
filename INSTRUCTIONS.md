@@ -45,7 +45,7 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 **Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `ae1` and  `<!PerReviewerPassword!>` with the user ID and password shared over HotCRP. 
 * `ssh ae1@3.133.138.10` (use `<!PerReviewerPassword!>` when asked for a password).
-* To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem`—this starts a cluster and `ssh` into it.
+* To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)`—this starts a cluster and `ssh` into it.
 * To confirm it's functional, clone the repo, `cd` into it, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
 * To stop the cluster, run `exit` (to exit the cluster) and then (back into the original machine) `./scripts/stop_ec2_cluster.py -d cluster_info`
 
