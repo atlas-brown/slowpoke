@@ -11,9 +11,9 @@ cd $(dirname "$0")/..
 
 target=frontend
 thread=8
-conn=512
+conn=1024
 repetitions=1
-num_req=10000
+num_req=100000
 poker_batch_req=100
 num_exp=1
 # DIR=boutique/04-15-pokerpp-fixed-deadlock
