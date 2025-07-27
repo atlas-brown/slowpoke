@@ -43,11 +43,11 @@ Confirm sufficient documentation, key components as described in the paper, and 
  
 * Exercisability: Instructions below access an AWS cluster via a gateaway (to allow multiple reviewers to log in at the same time without interferring with each other).
 
-**Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `<UID>` and  `<PWD>` with the username and password shared over HotCRP. 
-* First `ssh <UID>@3.133.138.10` and use `<PWD>` when prompted for a password.
+**Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `<UID>` and  `<PASS>` with the username and password shared over HotCRP. 
+* First `ssh <UID>@3.133.138.10` and use `<PASS>` when prompted for a password.
 * To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)`—this starts a cluster and `ssh` into it.
-* To confirm it's functional, clone the repo, `cd` into it, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
-* To stop the cluster, run `exit` (to exit the cluster) and then (back into the original machine) `./scripts/stop_ec2_cluster.py -d cluster_info`
+* To confirm it's functional, clone the repo, `cd` into it, checkout `nsdi26-ae`, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
+* To stop the cluster, run `exit` (to exit the cluster) and then (back into the gateway machine) `./scripts/stop_ec2_cluster.py -d cluster_info`
 
 <details>
  <summary>Explaination</summary>
@@ -140,5 +140,18 @@ http://xx.xx.xx.xx/plot_macro.pdf
 Here is the figure we created using this artifact:
 ![Sample macro](evaluation/sample_output/plot_macro.png)
 
-<!--# Optional: Applying Slowpoke to All Benchmarks (2–3 days)-->
+# Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
+We also provide scripts that can recreate results on synthetic microbenchmarks. Each folder inside [`evaluation/synthetic/`](evaluation/synthetic) is a synthetic microbenchmark. To run one of them (for example `chain-d2-grpc-async`), run 
+
+```console
+$ ./evaluation/synthetic/chain-d2-grpc-async/run.sh
+```
+
+To see results, similar to the main results, do 
+
+```console
+$ /home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/results
+```
+
+or manually inspect the log files in the `./evaluation/results` folder. The reviewers should expect the relative prediction error to be within 15%, and mostly around 0-6%. The more extreme errors should appear around the right side of the plot (higher optimization percentages as described in the paper).
