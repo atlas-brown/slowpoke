@@ -6,7 +6,7 @@ The paper makes the following contributions:
 2. **Performance model (§3)**: a mathematical model underpinning the Slowpoke optimizations; this model is described in the paper.
 3. **Distributed slowdown mechanism (§4)**: a service-local controller for slowing down microservices, Poker, providing runtime information to the model.
 
-Slowpoke is characterized via (1) four real-world microservice applications and (2) synthetic microbenchmarks that cover many different micorservice configurations. The artifact focuses on claims no. 1 and 3 (the mathematical model is described the paper), and primarily evaluations with real-world applications (but validating microbenchmarks is tagged as optional, for reviewers).
+Slowpoke is characterized via (1) four real-world microservice applications and (2) synthetic microbenchmarks that cover many different microservice configurations. The artifact focuses on claims no. 1 and 3 (the mathematical model is described the paper), and primarily evaluations with real-world applications (but validating microbenchmarks is tagged as optional, for reviewers).
 
 This artifact targets the following badges:
 
@@ -27,7 +27,7 @@ Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing 
 
 * The [Slowpoke analysis component](app/pkg/slowpoke), [the Poker slowdown component](src/poker/poker.c), the [`benchmarks`](app/cmd/) (command-line entry points) and [`internal/`](app/inernal) (request handlers).
 
-* Top-level scripts in [`slowpoke/`](slowpoke) and ones related to the artifact reproducilbility: [`run_function.sh`](evaluation/run_functional.sh) and [`run_reproducible.sh`](evaluation/run_reproducible.sh).
+* Top-level scripts in [`slowpoke/`](slowpoke) and ones related to the artifact reproducibility: [`run_function.sh`](evaluation/run_functional.sh) and [`run_reproducible.sh`](evaluation/run_reproducible.sh).
 
 # Artifact Functional (20 minutes)
 
@@ -41,7 +41,7 @@ Confirm sufficient documentation, key components as described in the paper, and 
  [social](https://github.com/delimitrou/DeathStarBench/tree/master/socialNetwork), 
  [movie](https://github.com/delimitrou/DeathStarBench/tree/master/mediaMicroservices)), and [108 synthetic configuration files](evaluation/synthetic/) used with an ([emulator](app/cmd/synthetic/service)) that dynamically changes behavior based on configuration files.
  
-* Exercisability: Instructions below access an AWS cluster via a gateaway (to allow multiple reviewers to log in at the same time without interferring with each other).
+* Exercisability: Instructions below access an AWS cluster via a gateway (to allow multiple reviewers to log in at the same time without interfering with each other).
 
 **Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `<UID>` and  `<PWD>` with the username and password shared over HotCRP. 
 * First `ssh <UID>@3.133.138.10` and use `<PWD>` when prompted for a password.
@@ -50,13 +50,13 @@ Confirm sufficient documentation, key components as described in the paper, and 
 * To stop the cluster, run `exit` (to exit the cluster) and then (back into the original machine) `./scripts/stop_ec2_cluster.py -d cluster_info`
 
 <details>
- <summary>Explaination</summary>
+ <summary>Explanation</summary>
 
 The cluster is already set up using scripts in this repo under [`scripts/setup/`](scripts/setup) (The cluster contains 2 AWS `m5.xlarge` and 12 `m5.large` EC2 instances. The public IPs of the EC2 machines will be stored in `~/cluster_info/ec2_ips`, first one is the kubernetes control node, the second one is worker node that runs the workload generator, the rest are worker nodes that run the services in each benchmark.
 
 </details>
 
-> While testing the artifact, we discovered kubernetes issue that shows up non-deterministically. Specifically, the `wrk`'s worker node occationally stop responding. If you notice the time spent in one of the steps take much longer than our estimation below, we advise going back to the gateway machine, stopping and restarting the cluster, and then trying again.
+> While testing the artifact, we discovered kubernetes issue that shows up non-deterministically. Specifically, the `wrk`'s worker node occasionally stop responding. If you notice the time spent in one of the steps take much longer than our estimation below, we advise going back to the gateway machine, stopping and restarting the cluster, and then trying again.
 
 You should expect a file created at `evaluation/results/boutique_tiny.log` ending with:
 ```console
@@ -70,7 +70,7 @@ $ tail -n 20 evaluation/results/boutique_tiny.log
 ```
 
 <details>
- <summary>Explaination</summary>
+ <summary>Explanation</summary>
 
 `./evaluation/run_functional.sh` runs [`./evaluation/boutique/run-boutique-tiny.sh`](evaluation/boutique/run-boutique-tiny.sh), which runs the main testing script with appropriate arguments
 
@@ -82,7 +82,7 @@ $ tail -n 20 evaluation/results/boutique_tiny.log
 > For this step, we recommend using `screen` or `tmux` to avoid accidental disconnect.
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
-The key results of Slowpoke's accuracy are shown Fig.8, across several real-world applications. The results reported in the paper take 5 repetitions over 3 central points, to mitigate noise from the applications. To accelerate the artifact evaluation, we only run the the experiment once, which should complete in about 2.5 hours. After you `cd ~/slowpoke`:
+The key results of Slowpoke's accuracy are shown Fig.8, across several real-world applications. The results reported in the paper take 5 repetitions over 3 central points, to mitigate noise from the applications. To accelerate the artifact evaluation, we only run the experiment once, which should complete in about 2.5 hours. After you `cd ~/slowpoke`:
 
 ```console
 $ # Recommend doing the following command in screen or tmux
@@ -103,7 +103,7 @@ http://xx.xx.xx.xx/boutique_medium.png
 ...
 ```
 
-These URLs will depict plots comparing the predicted throughput (collected by running Slowpoke) with the actual groundtruth (collected by running the application on the cluster). The log files can also be inspected directly, including confirming that the relative prediction error (_viz._ `Error Perc:` in the log file) is within 10% and mostly around 0-4%. 
+These URLs will depict plots comparing the predicted throughput (collected by running Slowpoke) with the actual ground-truth (collected by running the application on the cluster). The log files can also be inspected directly, including confirming that the relative prediction error (_viz._ `Error Perc:` in the log file) is within 10% and mostly around 0-4%. 
 
 <details>
  <summary>
