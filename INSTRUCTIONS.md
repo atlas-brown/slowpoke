@@ -10,20 +10,20 @@ Slowpoke is characterized via (1) four real-world microservice applications and 
 
 This artifact targets the following badges:
 
-* [ ] [Artifact available](#artifact-available): Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available (~10 minutes).
-* [ ] [Artifact functional](#artifact-functional): Reviewers are expected to confirm sufficient documentation, key components described in the paper, and execution with one experiment (about 20 minutes).
-* [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce key results of section 5 of the paper (about 2.5 hours for real-world benchmarks, optionally 2–3 days for the synthetic benchmarks).
+* [ ] [Artifact available](#artifact-available): Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available (~10mins).
+* [ ] [Artifact functional](#artifact-functional): Reviewers are expected to confirm sufficient documentation, key components described in the paper, and execution with one experiment (~20mins).
+* [ ] [Results reproducible](#results-reproducible): Reviewers are expected to reproduce key results of section 5 of the paper (~2.5h for real-world benchmarks, optionally 2–3 days for the synthetic benchmarks).
 
 > [!IMPORTANT]
 > To reproduce results, this artifact uses a real distributed system on AWS. Remember:
-> * Each reviewer's username and password has been shared with HotCRP, *please do not share them outside the AEC*.
+> * Reviewer usernames and passwords have been shared with HotCRP, *please do not share them outside the AEC*.
 > * Remember to freeze or turn off evaluation when you're done, as this evaluation is expensive! If you do not know how, ask us via HotCRP—thank you!
 
 # Artifact Available (10 minutes)
 
 Reviewers are expected to confirm that Slowpoke system, benchmarks, and testing scripts are all publicly available:
 
-* Slowpoke is available at [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke) (`nsdi26-ae` will be frozen).
+* Slowpoke is available at [https://github.com/atlas-brown/slowpoke](https://github.com/atlas-brown/slowpoke) (`nsdi26-ae` will be frozen) and [Zenodo `16494184`](https://zenodo.org/records/16494184).
 
 * The [Slowpoke analysis component](app/pkg/slowpoke), [the Poker slowdown component](src/poker/poker.c), the [`benchmarks`](app/cmd/) (command-line entry points) and [`internal/`](app/inernal) (request handlers).
 
@@ -43,8 +43,8 @@ Confirm sufficient documentation, key components as described in the paper, and 
  
 * Exercisability: Instructions below access an AWS cluster via a gateaway (to allow multiple reviewers to log in at the same time without interferring with each other).
 
-**Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `ae1` and  `<!PerReviewerPassword!>` with the user ID and password shared over HotCRP. 
-* `ssh ae1@3.133.138.10` (use `<!PerReviewerPassword!>` when asked for a password).
+**Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `<UID>` and  `<PWD>` with the username and password shared over HotCRP. 
+* First `ssh <UID>@3.133.138.10` and use `<PWD>` when prompted for a password.
 * To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)`—this starts a cluster and `ssh` into it.
 * To confirm it's functional, clone the repo, `cd` into it, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
 * To stop the cluster, run `exit` (to exit the cluster) and then (back into the original machine) `./scripts/stop_ec2_cluster.py -d cluster_info`
@@ -78,12 +78,11 @@ $ tail -n 20 evaluation/results/boutique_tiny.log
 
 # Results Reproducible (2.5 hours)
 
-For this step we strongly recommend the reviewers using `screen` or `tmux` to avoid accidental disconnect.
-The key results of Slowpoke's accuracy is represented by the following experiments
+> [!IMPORTANT]
+> For this step, we recommend using `screen` or `tmux` to avoid accidental disconnect.
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
-
-The results in the paper is done with 5 repetitions and taking 3 central points, to mitigate noise from the application itself. To make the artifact evaluation process faster, we only run the the experiment once. The entire process should take about 2.5 hours. To run them, make sure you are in `~/slowpoke`, then
+The key results of Slowpoke's accuracy are shown Fig.8, across several real-world applications. The results reported in the paper take 5 repetitions over 3 central points, to mitigate noise from the applications. To accelerate the artifact evaluation, we only run the the experiment once, which should complete in about 2.5 hours. After you `cd ~/slowpoke`:
 
 ```console
 $ # Recommend doing the following command in screen or tmux
@@ -95,9 +94,7 @@ To visualize the results, run:
 /home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/results
 ```
 
-The log file `evaluation/results/boutique_medium.log`, `evaluation/results/hotel_medium.log`, `evaluation/results/social_medium.log`, and `evaluation/results/movie_medium.log` will grow overtime and should make progress at least once per minute.
-
-To see the results, run (as the previous script suggested)
+Several log files in `evaluation/results/` (_e.g._,`boutique_medium.log`, `hotel_medium.log`, `social_medium.log`, and `movie_medium.log`) will grow over time and typically in sub-minute intervals. To plot the results, run:
 
 ```console
 $ /home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/results
@@ -105,7 +102,8 @@ Result for /home/ubuntu/slowpoke/evaluation/results/boutique_medium.log is avail
 http://xx.xx.xx.xx/boutique_medium.png
 ...
 ```
-The reviewer can expect to see plots comparing predicted throughput and groundtruth by opening the links. The log files can also be inspected directly. The reviewer should see the relative prediction error (the `Error Perc:` row in the log file) to be within 10%, and most of them centers around 0-4%. 
+
+These URLs will depict plots comparing the predicted throughput (collected by running Slowpoke) with the actual groundtruth (collected by running the application on the cluster). The log files can also be inspected directly, including confirming that the relative prediction error (_viz._ `Error Perc:` in the log file) is within 10% and mostly around 0-4%. 
 
 <details>
  <summary>
@@ -131,7 +129,7 @@ Social
 ![social](evaluation/sample_output/social_medium.png)
 </details>
 
-To create the plot similar to Fig. 8 in the paper, run
+To create the plot similar to Fig. 8 in the paper, run:
 
 ```console
 $ ./evaluation/plot_macro.py
@@ -139,7 +137,7 @@ Result for plot_macro.pdf is available at
 http://xx.xx.xx.xx/plot_macro.pdf
 ```
 
-The figure we created using this artifact
+Here is the figure we created using this artifact:
 ![Sample macro](evaluation/sample_output/plot_macro.png)
 
 <!--# Optional: Applying Slowpoke to All Benchmarks (2–3 days)-->
