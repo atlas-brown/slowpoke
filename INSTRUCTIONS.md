@@ -138,6 +138,10 @@ Result for plot_macro.pdf is available at
 http://xx.xx.xx.xx/plot_macro.pdf
 ```
 
+> [!Reminder]
+> When exiting the cluster remember to run **(on the gateway machine)** `./scripts/stop_ec2_cluster.py -d cluster_info`
+
+
 Here is the figure we created using this artifact:
 ![Sample macro](evaluation/sample_output/plot_macro.png)
 
