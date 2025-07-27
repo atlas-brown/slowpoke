@@ -44,10 +44,9 @@ Confirm sufficient documentation, key components as described in the paper, and 
 * Exercisability: Instructions below access an AWS cluster via a gateway (to allow multiple reviewers to log in at the same time without interfering with each other).
 
 **Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `<UID>` and  `<PASS>` with the username and password shared over HotCRP. 
-* First `ssh <UID>@18.188.160.170` and use `<PASS>` when prompted for a password.
-* To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)`—this starts a cluster and `ssh` into it.
-* To confirm it's functional, clone the repo, `cd` into it, checkout `nsdi26-ae`, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
-* To stop the cluster, run `exit` (to exit the cluster) and then (back into the gateway machine) `./scripts/stop_ec2_cluster.py -d cluster_info`
+* **(On local machine)** First `ssh <UID>@18.188.160.170` and use `<PASS>` when prompted for a password.
+* **(On the gateway machine)** To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)`—this starts a cluster and `ssh` into it.
+* **(On the cluster control node)** To confirm it's functional, clone the repo, `cd` into it, checkout `nsdi26-ae`, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
 
 <details>
  <summary>Explanation</summary>
@@ -68,6 +67,8 @@ $ tail -n 20 evaluation/results/boutique_tiny.log
     Predicted:   [5989.933238198921]
     Error Perc:  [2.7496656645696422]
 ```
+
+* If you wish to stop the cluster, exit from the cluster control node, and **(on the gateway machine)** run `./scripts/stop_ec2_cluster.py -d cluster_info`. If you wish to continue testing "Result Reproducible", stay in the cluster control node for now.
 
 <details>
  <summary>Explanation</summary>
