@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', type=int, default=10, help='Number of optimizations')
-    parser.add_argument('-r', '--results', type=str, default='results', help='Directory containing the result log files')
+    parser.add_argument('-r', '--result_dir', type=str, default='results', help='Directory containing the result log files')
     args = parser.parse_args()
     NUM_OPTIMIZATIONS = args.n
     result_dir = Path(args.result_dir)  
