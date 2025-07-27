@@ -57,16 +57,17 @@ The cluster is already set up using scripts in this repo under [`scripts/setup/`
 
 > While testing the artifact, we discovered kubernetes issue that shows up non-deterministically. Specifically, the `wrk`'s worker node occasionally stop responding. If you notice the time spent in one of the steps take much longer than our estimation below, we advise going back to the gateway machine, stopping and restarting the cluster, and then trying again.
 
-You should expect a file created at `evaluation/results/boutique_tiny.log` ending with:
+The reviewer should expect a file created at `evaluation/results/boutique_tiny.log` ending with format:
 ```console
 $ tail -n 20 evaluation/results/boutique_tiny.log
 ...
-    Baseline throughput: 4008.7682284172083
-    Groundtruth: [5829.637692207481]
-    Slowdown:    [2545.670613587085]
-    Predicted:   [5989.933238198921]
-    Error Perc:  [2.7496656645696422]
+    Baseline throughput: 1468.873002048123
+    Groundtruth: [6274.111213326839]
+    Slowdown:    [855.4274013627517]
+    Predicted:   [1494.754290608112]
+    Error Perc:  [-76.17584005471397]
 ```
+It is worth noting that `run_functional.sh` runs trivially small number of requests so the prediction is not expected to be anywhere near accurate.
 
 * If you wish to stop the cluster, exit from the cluster control node, and **(on the gateway machine)** run `~/scripts/stop_ec2_cluster.py -d ~/cluster_info`. If you wish to continue testing "Result Reproducible", stay in the cluster control node for now.
 
