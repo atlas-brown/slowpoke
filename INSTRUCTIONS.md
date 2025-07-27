@@ -45,7 +45,7 @@ Confirm sufficient documentation, key components as described in the paper, and 
 
 **Exercisability**: To run Slowpoke, we prepared distributed clusters on AWS. To `ssh` into AWS, replace `<UID>` and  `<PASS>` with the username and password shared over HotCRP. 
 * **(On local machine)** First `ssh <UID>@18.188.160.170` and use `<PASS>` when prompted for a password.
-* **(On the gateway machine)** To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)`—this starts a cluster and `ssh` into it.
+* **(On the gateway machine)** To start the cluster and ssh into the cluster control node, run `./scripts/start_ec2_cluster.py -d cluster_info` and `ssh -i ~/cluster_info/slowpoke-expr.pem ubuntu@$(head -n 1 ~/cluster_info/ec2_ips)`—this starts a cluster and `ssh` into its control node.
 * **(On the cluster control node)** To confirm it's functional, clone the repo, `cd` into it, checkout `nsdi26-ae`, and run `./evaluation/run_functional.sh`. This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
 
 <details>
@@ -83,7 +83,7 @@ $ tail -n 20 evaluation/results/boutique_tiny.log
 > For this step, we recommend using `screen` or `tmux` to avoid accidental disconnect.
 
 **(§5.1, Fig.8) Across four real-world benchmarks**
-The key results of Slowpoke's accuracy are shown Fig.8, across several real-world applications. The results reported in the paper take 5 repetitions over 3 central points, to mitigate noise from the applications. To accelerate the artifact evaluation, we only run the experiment once, which should complete in about 2.5 hours. After you `cd ~/slowpoke`:
+The key results of Slowpoke's accuracy are shown Fig.8, across several real-world applications. The results reported in the paper take 5 repetitions over 3 central points, to mitigate noise from the applications. To accelerate the artifact evaluation, we only run the experiment once, which should complete in about 2.5 hours. If you have stopped the cluster in the previous step, restart it and `ssh` into it. **On the cluster control node**, first `cd ~/slowpoke`, then:
 
 ```console
 $ # Recommend doing the following command in screen or tmux
