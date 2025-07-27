@@ -26,8 +26,10 @@ IP = get_public_ip()
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', type=int, default=10, help='Number of optimizations')
+parser.add_argument('--result_dir', type=str, default='results', help='Directory containing the result log files')
 args = parser.parse_args()
 NUM_OPTIMIZATIONS = args.n
+result_dir = Path(args.result_dir)  
 
 def filter_outliers(baselines):
     # Sort the baselines
@@ -166,8 +168,6 @@ def parse_result_file(filename):
     # print(f"    Groundtruth Diff range: {np.min(groundtruth_diff)} - {np.max(groundtruth_diff)}")
 
     return experiments, errors
-
-result_dir = Path(sys.argv[1])
 
 # List of log files to process
 log_files = [
