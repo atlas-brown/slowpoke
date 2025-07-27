@@ -6,6 +6,8 @@ from scipy.interpolate import make_interp_spline
 import argparse
 import requests
 import warnings
+from pathlib import Path
+import sys
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 def get_public_ip():
@@ -165,12 +167,14 @@ def parse_result_file(filename):
 
     return experiments, errors
 
+result_dir = Path(sys.argv[1])
+
 # List of log files to process
 log_files = [
-    "results/hotel_medium.log",
-    "results/movie_medium.log", 
-    "results/boutique_medium.log",
-    "results/social_medium.log"
+    result_dir / "hotel_medium.log",
+    result_dir / "movie_medium.log",
+    result_dir / "boutique_medium.log",
+    result_dir / "social_medium.log"
 ]
 
 benchmark_names = [
