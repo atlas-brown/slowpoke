@@ -134,7 +134,7 @@ Social
 To create the plot similar to Fig. 8 in the paper, run:
 
 ```console
-$ ./evaluation/plot_macro.py
+$ ./evaluation/plot_macro.py -r ./evaluation/results
 Result for plot_macro.pdf is available at
 http://xx.xx.xx.xx/plot_macro.pdf
 ```
