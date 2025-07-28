@@ -105,7 +105,7 @@ http://xx.xx.xx.xx/boutique_medium.png
 ...
 ```
 
-These URLs will depict plots comparing the predicted throughput (collected by running Slowpoke) with the actual ground-truth (collected by running the application on the cluster). The log files can also be inspected directly, including confirming that the relative prediction error (_viz._ `Error Perc:` in the log file) is within 10% and mostly around 0-4%. However, it is possible that either baseline or 
+These URLs will depict plots comparing the predicted throughput (collected by running Slowpoke) with the actual ground-truth (collected by running the application on the cluster). The log files can also be inspected directly, including confirming that the relative prediction error (_viz._ `Error Perc:` in the log file) is within 10% and mostly around 0-4%. However, it is possible to encounter outlier measurement where the error rate can be as high as 35%. Rerunning the experiment should in most cases give normal results. The reviewer can also choose to rerun only selected benchmark by commenting out lines for other benchmarks in [`./evaluation/run_reproducible.sh`](./evaluation/run_reproducible.sh) before running it.
 
 <details>
  <summary>
