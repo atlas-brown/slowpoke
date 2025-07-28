@@ -74,16 +74,16 @@ init_cluster () {
 
 init_dependencies () {
     sudo apt-get -y install python3
-    sudo apt-get -y install python3-pip python3-matplotlib
+    sudo apt-get -y install python3-pip python3-matplotlib python3-progress
     sudo apt-get -y install screen
     sudo apt-get -y install nginx
     # enable anyone to drop things in shared directory
     sudo chmod 777 /var/www/html
-    sudo pip3 install --upgrade pip
-    sudo pip3 install pandas
+    # sudo pip3 install --upgrade pip
+    # sudo pip3 install pandas
     # sudo python3 -m pip install --upgrade Pillow
-    sudo pip3 install matplotlib
-    sudo pip3 install progress
+    # sudo pip3 install matplotlib
+    # sudo pip3 install progress
     kubectl apply -f https://raw.githubusercontent.com/pythianarora/total-practice/master/sample-kubernetes-code/metrics-server.yaml
 }
 

@@ -20,7 +20,7 @@ import argparse
 OBJDIR = Path('.')
 ARGS = None
 WORKER_NUM = 4
-IMAGE_ID = 'ami-0d1b5a8c13042c939'
+IMAGE_ID = 'ami-0b05d988257befbbe'
 SCRIPT_BASE = Path(__file__).parent
 KEY_FILE = 'slowpoke-expr.pem'
 KEYNAME_FILE = 'key_name'
