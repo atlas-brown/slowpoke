@@ -53,7 +53,7 @@ cd slowpoke
 git checkout nsdi26-ae
 ```
 
-Finally, to run the functional evaluation, run `./evaluation/run_functional.sh`.
+To run the functional evaluation, run `./evaluation/run_functional.sh` (it runs about 5 minutes).
 
 This will predict the throughput of the `boutique` benchmark after optimizing the execution time of the `cart` service by 1 ms and compare the result against the ground truth.
 
