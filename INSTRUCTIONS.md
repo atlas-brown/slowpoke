@@ -157,7 +157,7 @@ Here is the figure we created using this artifact:
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
-We also provide scripts that can recreate results on synthetic microbenchmarks. Each folder inside [`evaluation/synthetic/`](evaluation/synthetic) is a synthetic microbenchmark. To run one of them (for example `chain-d2-grpc-async`), run 
+We also provide scripts that can recreate results on synthetic microbenchmarks. Each folder inside [`evaluation/synthetic/`](evaluation/synthetic) is a synthetic microbenchmark. These results are used to draw Figure 9 in the paper. To run one of them (for example `chain-d2-grpc-async`), run 
 
 ```console
 $ ./evaluation/synthetic/chain-d2-grpc-async/run.sh
@@ -169,4 +169,4 @@ To see results, similar to the main results, do
 $ /home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/results
 ```
 
-or manually inspect the log files in the `./evaluation/results` folder. The reviewers should expect the relative prediction error to be within 15%, and mostly around 0-6%. The more extreme errors should appear around the right side of the plot (higher optimization percentages as described in the paper).
+or manually inspect the log files in the `./evaluation/results` folder. The reviewers should expect to see three output log files, corresponding to three service configurations. The relative prediction error to be within 15%, and mostly around 0-6%. The more extreme errors should appear around the right side of the plot (higher optimization percentages as described in the paper). 
