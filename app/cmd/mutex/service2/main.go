@@ -17,13 +17,13 @@ var is_locked bool
 var sleep_time int
 
 func ep1(ctx context.Context, request *trivial.TrivialRequest) *trivial.TrivialResponse {
-	slowpoke.SlowpokeCheck("ep1")
-	slowpoke.SlowpokePokerPPDelay()
 	if is_locked {
 		lock.Lock()
+		slowpoke.CPUSpinTime(sleep_time)
 		defer lock.Unlock()
+	} else {
+		slowpoke.CPUSpinTime(sleep_time)
 	}
-	slowpoke.CPUSpinTime(sleep_time)
 	resp := trivial.TrivialResponse{A: "ok"}
 	return &resp
 }
@@ -40,7 +40,7 @@ func main() {
 		is_locked = false
 	}
 	fmt.Println("IS_LOCKED:", is_locked)
-	http.HandleFunc("/ep1", wrappers.NonROWrapper[trivial.TrivialRequest, trivial.TrivialResponse](ep1))
+	http.HandleFunc("/ep1", wrappers.SlowpokeWrapper[trivial.TrivialRequest, trivial.TrivialResponse](ep1, "ep1"))
 	slowpoke.SlowpokeInit()
 	fmt.Println("Server started on :3000")
 	listener, err := net.Listen("tcp", ":3000")
