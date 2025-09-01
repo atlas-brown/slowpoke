@@ -36,6 +36,8 @@ class Runner:
         self.baseline_service_processing_time = config.get_baseline_service_processing_time(self.benchmark, self.request_type, self.target_service, self.random_seed)
         self.cpu_quota = config.get_cpu_quota(self.benchmark, self.request_type)
         self.target_processing_time_range = [0, self.baseline_service_processing_time[self.target_service]]
+        if self.benchmark == "mutex":
+            self.target_processing_time_range = [400, self.baseline_service_processing_time[self.target_service]]
         self.baseline_throughputs = []
         self.poker_batch = args.poker_batch
     

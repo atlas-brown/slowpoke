@@ -173,10 +173,9 @@ def get_baseline_service_processing_time(benchmark, request, target, random_seed
         return p_t
     elif benchmark == "mutex":
         p_t = {
-            "service1": 0,
-            "service2": 0,
+            "service1": 800,
+            "service2": 350,
         }
-        p_t[target] = 400
         return p_t
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
