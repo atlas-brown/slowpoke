@@ -100,6 +100,11 @@ def get_request_ratio(benchmark, request):
             "search": 0.8,
             "user": 0.198478617
         }
+    elif benchmark == "mutex":
+        return {
+            "service1": 1,
+            "service2": 1,
+        }
     else:
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
 
@@ -165,6 +170,13 @@ def get_baseline_service_processing_time(benchmark, request, target, random_seed
             "user": 0
         }
         p_t[target] = 1000
+        return p_t
+    elif benchmark == "mutex":
+        p_t = {
+            "service1": 0,
+            "service2": 0,
+        }
+        p_t[target] = 400
         return p_t
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")
@@ -280,6 +292,11 @@ def get_cpu_quota(benchmark, request):
             "reservation": 2,
             "search": 2,
             "user": 2
+        }
+    elif benchmark == "mutex":
+        return {
+            "service1": 2,
+            "service2": 2
         }
     else :
         raise ValueError(f"[config.py] Unknown benchmark: {benchmark}")

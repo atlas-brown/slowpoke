@@ -42,7 +42,7 @@ class Runner:
     def get_env_for_print(self, env):
         env_p = {}
         for key, value in env.items():
-            if key.startswith("SLOWPOKE") or key.startswith("PROCESSING_TIME") or key.startswith("CLIENT"):
+            if key.startswith("SLOWPOKE") or key.startswith("PROCESSING_TIME") or key.startswith("CLIENT") or "SERVICE" in key:
                 env_p[key] = value
         return env_p
     
@@ -55,6 +55,9 @@ class Runner:
             # This is used to set the processing time for synthetic benchmarks
             for service, processing_time in processing_time.items():
                 env[f"PROCESSING_TIME_{service.upper()}"] = str(round(processing_time/1e6, 8))
+        elif self.benchmark == "mutex":
+            for service, processing_time in processing_time.items():
+                env[f"SPIN_TIME_{service.upper()}"] = str(int(processing_time))
         else:
             for service, p_ in processing_time.items():
                 env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)

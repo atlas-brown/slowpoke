@@ -207,6 +207,37 @@ func getThreadCPUTime() int64 {
 	return time.Nano()
 }
 
+func CPUSpinTime(micro int) {
+	lockThread := true
+	if micro >= 0 {
+		// Threads need to be locked because otherwise util.ThreadCPUTime() can change in the middle of execution
+		takenSurplus := atomic.SwapInt64(&sleepSurplus, 0);
+		sleepTime := int64(micro*1000.0);
+		common := min(takenSurplus, sleepTime);
+		takenSurplus -= common;
+		sleepTime -= common;
+		if lockThread {
+			runtime.LockOSThread()
+		}
+
+		current := getThreadCPUTime()
+		target := current + sleepTime
+
+		for current < target {
+			for i := int64(0) ; i < 200000; i++ {
+			}
+			current = getThreadCPUTime();
+		}
+
+		takenSurplus += current - target;
+		atomic.AddInt64(&sleepSurplus, takenSurplus);
+
+		if lockThread {
+			runtime.UnlockOSThread()
+		}
+	}
+}
+
 func SlowpokePokerPPDelay() {
 	// Delay
 	sync_guard.Lock()
