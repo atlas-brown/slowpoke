@@ -11,15 +11,15 @@ RUN apk add --no-cache gcc musl-dev zeromq-dev iftop
 WORKDIR /app
 
 # Copy dependencies
-COPY go.mod go.sum ./
+COPY ./app/go.mod ./app/go.sum ./
 RUN go mod download
 
 # Copy source files
-COPY ./cmd ./cmd
-COPY ./internal ./internal
-COPY ./pkg ./pkg
+COPY ./app/cmd ./cmd
+COPY ./app/internal ./internal
+COPY ./app/pkg ./pkg
 RUN mkdir /slowpoke
-COPY ./slowpoke/poker /slowpoke/poker
+COPY ./src/poker /slowpoke/poker
 
 RUN gcc /slowpoke/poker/poker.c -O2 -o /usr/bin/poker
 # Build all applications inside /app/cmd/boutique/
