@@ -11,7 +11,7 @@ time bash mutex/run-no-lock.sh > results/mutex-microbenchmark-no-lock.log
 time bash mutex/run-lock.sh > results/mutex-microbenchmark-lock.log
 
 outdir=$(realpath ./results)
-draw_script=$(realpath ./draw.py)
+draw_script=$(realpath ./draw-mutex.py)
 
 echo "The results are stored in ${outdir}"
 echo "To visualize the results, run: "
