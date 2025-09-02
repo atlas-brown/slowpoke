@@ -40,7 +40,8 @@ class Runner:
             self.target_processing_time_range = [400, self.baseline_service_processing_time[self.target_service]]
         self.baseline_throughputs = []
         self.poker_batch = args.poker_batch
-    
+        self.mutex_lock = args.mutex_lock
+
     def get_env_for_print(self, env):
         env_p = {}
         for key, value in env.items():
@@ -63,6 +64,8 @@ class Runner:
         else:
             for service, p_ in processing_time.items():
                 env[f"SLOWPOKE_PROCESSING_MICROS_{service.upper()}"] = str(p_)
+        if self.mutex_lock:
+            env["SLOWPOKE_MUTEX_IS_LOCKED"] = "true"
         # expected_req_num = -1
         # for service, delay in service_delay.items():
         #     # we need to make sure the batch size for any service is larger than self.poker_relative_batch
@@ -250,6 +253,7 @@ def parse():
     parser.add_argument("--poker_batch", type=int, default=20000000)
     parser.add_argument("--poker_batch_req", type=int, default=100)
     parser.add_argument("--poker_relative_batch", type=int, default=20000000)
+    parser.add_argument("--mutex_lock", action="store_true", default=False)
     args = parser.parse_args()
     return args
 
