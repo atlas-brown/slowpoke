@@ -157,10 +157,15 @@ Here is the figure we created using this artifact:
 
 # Optional: Applying Slowpoke to All Benchmarks (2–3 days)
 
-We also provide scripts that can recreate results on synthetic microbenchmarks. Each folder inside [`evaluation/synthetic/`](evaluation/synthetic) is a synthetic microbenchmark. These results are used to draw Figure 9 in the paper. To run one of them (for example `chain-d2-grpc-async`), run 
+We also provide scripts that can recreate results on synthetic microbenchmarks and the mutex-induced bottlenecks (Section 5.3, "Handling mutex-protected resources") . Each folder inside [`evaluation/synthetic/`](evaluation/synthetic) is a synthetic microbenchmark. These results are used to draw Figure 9 and Figure 10 in the paper. To run one of synthetic benchmarks (for example `chain-d2-grpc-async`), run 
 
 ```console
 $ ./evaluation/synthetic/chain-d2-grpc-async/run.sh
+```
+
+To run the mutex experiment:
+```console
+$ ./evaluation/run_mutex.sh
 ```
 
 To see results, similar to the main results, do 
