@@ -163,11 +163,6 @@ We also provide scripts that can recreate results on synthetic microbenchmarks a
 $ ./evaluation/synthetic/chain-d2-grpc-async/run.sh
 ```
 
-To run the mutex experiment (1 hour):
-```console
-$ ./evaluation/run_mutex.sh
-```
-
 To see results, similar to the main results, do 
 
 ```console
@@ -175,3 +170,15 @@ $ /home/ubuntu/slowpoke/evaluation/draw.py /home/ubuntu/slowpoke/evaluation/resu
 ```
 
 or manually inspect the log files in the `./evaluation/results` folder. The reviewers should expect to see output log files corresponding to different service configurations. The relative prediction error to be within 15%, and mostly around 0-6%. The more extreme errors should appear around the right side of the plot (higher optimization percentages as described in the paper). 
+
+To run the mutex experiment (1 hour):
+```console
+$ ./evaluation/run_mutex.sh
+```
+
+To see results, do 
+```console
+$ python3 /home/ubuntu/slowpoke-reorg/evaluation/draw-mutex.py /home/ubuntu/slowpoke-reorg/evaluation/results
+```
+
+Reviewers should expect to observe similar trends in Figure 10, where Slowpoke effectively predicts throughput even in the presence of mutex-induced bottlenecks. However, as noted earlier, outlier measurements may occur, leading to higher error rates. In most cases, rerunning the experiment yields results consistent with the expected trend.
