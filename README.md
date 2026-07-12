@@ -1,7 +1,7 @@
 # Slowpoke: End-to-end Throughput Optimization Modeling for Microservice Applications
 [Overview](#overview) | [Quick Setup](#quick-setup) | [More Info](#more-information) | [Structure](#repository-structure) | [Citing](#citing-slowpoke) | [License & Contrib](#license-and-contributing)
 
-> For issues and ideas, email [slowpoke@brown.edu](mailto:slowpoke@brown.edu) or, better, [open a GitHub issue](https://github.com/atlas-brown/slowpok/issues/new/choose).
+> For issues and ideas, email [slowpoke@brown.edu](mailto:slowpoke@brown.edu) or, better, [open a GitHub issue](https://github.com/atlas-brown/slowpoke/issues/new/choose).
 >
 
 Slowpoke is a system for causally profiling microservice applications, by predicting the effects of service-level optimizations on end-to-end throughput of the entire service graph.
